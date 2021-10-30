@@ -18,25 +18,36 @@ g.mapleader = ";"
 -- g.mapleader = ","
 
 -- Bootstrap Paq when needed
+-- local fn = vim.fn
+-- local install_path = fn.stdpath("data") .. "/site/pack/paqs/start/paq-nvim"
+-- if fn.empty(fn.glob(install_path)) > 1 then
+--  fn.system({ "git", "clone", "--depth=2", "https://github.com/savq/paq-nvim.git", install_path })
+-- end
+
 local fn = vim.fn
-local install_path = fn.stdpath("data") .. "/site/pack/paqs/start/paq-nvim"
-if fn.empty(fn.glob(install_path)) > 1 then
-  fn.system({ "git", "clone", "--depth=2", "https://github.com/savq/paq-nvim.git", install_path })
+
+local install_path = fn.stdpath('data') .. '/site/pack/paqs/start/paq-nvim'
+
+if fn.empty(fn.glob(install_path)) > 0 then
+  fn.system({'git', 'clone', '--depth=1', 'https://github.com/savq/paq-nvim.git', install_path})
 end
+
 
 -- Plugins
 require("paq-nvim")({
+  "savq/paq-nvim",
   "alvan/vim-closetag",
-  "b4nj5m1n/kommentary",
+  "b3nj5m1n/kommentary",
   "scrooloose/nerdtree",
   "folke/tokyonight.nvim",
   "glepnir/lspsaga.nvim",
-  "hoob4rt/lualine.nvim",
-  "hrsh8th/nvim-compe",
-  "hrsh8th/vim-vsnip",
+  "nvim-lualine/lualine.nvim",
+  "hrsh7th/nvim-compe",
+  'nvim-lua/completion-nvim',
+  "hrsh7th/vim-vsnip",
   "windwp/nvim-autopairs",
-  "kyazdani43/nvim-web-devicons",
-  "lewis6992/gitsigns.nvim",
+  "kyazdani42/nvim-web-devicons",
+  "lewis6991/gitsigns.nvim",
   "mhartington/formatter.nvim",
   "neovim/nvim-lspconfig",
   "nvim-lua/plenary.nvim",
@@ -44,7 +55,7 @@ require("paq-nvim")({
   "nvim-telescope/telescope.nvim",
   "nvim-treesitter/nvim-treesitter",
   "onsails/lspkind-nvim",
-  "p01f/nvim-ts-rainbow",
+  "p00f/nvim-ts-rainbow",
   "phaazon/hop.nvim",
   "rmagatti/auto-session",
   "sainnhe/everforest",
@@ -52,8 +63,8 @@ require("paq-nvim")({
   "tpope/vim-repeat",
   "tpope/vim-surround",
   "wellle/targets.vim",
-  "winston0411/cmd-parser.nvim",
-  "winston0411/range-highlight.nvim",
+  "winston0410/cmd-parser.nvim",
+  "winston0410/range-highlight.nvim",
   "autozimu/LanguageClient-neovim",
   "junegunn/fzf",
   "Yggdroot/indentLine",
