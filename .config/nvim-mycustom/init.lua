@@ -6,10 +6,10 @@ local execute = vim.api.nvim_command
 local nvim_exec = vim.api.nvim_exec
 local remap = vim.api.nvim_set_keymap
 
-g.loaded_python_provider = 0
+-- g.loaded_python_provider = 0
 g.loaded_python3_provider = 3
 g.loaded_ruby_provider = 0
-g.loaded_perl_provider = 0
+-- g.loaded_perl_provider = 0
 
 -- https://github.com/rohit-px2/nvui
 -- nvui --ext_multigrid --ext_popupmenu --ext_cmdline --titlebar --detached
@@ -272,8 +272,8 @@ map('n', '<leader>gs', '<cmd>Gina status<CR>')
 map('n', '<leader>gl', '<cmd>Gina pull<CR>')
 map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
-map('n', '<silent> <A-t>', '<cmd>Lspsaga open_floaterm<CR>')
-map('t', '<silent> <A-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<CR>')
+map('n', '<silent> <a-t>', '<cmd>Lspsaga open_floaterm<Return>')
+map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>')
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 -- Open nvimrc file
@@ -826,8 +826,7 @@ end
 
 
 -- Load the colorscheme
--- require('moonlight').set()
-require('twilight').set()
+-- require('twilight').set()
 
 
 require("nvim-gps").setup()
