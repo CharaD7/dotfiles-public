@@ -29,7 +29,8 @@ cmd [[packadd packer.nvim]]
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
   -- Reach support
-  use {'ericglau/vim-reach', run = './install.sh'}
+  use 'ericglau/vim-reach'
+  use {'autozimu/LanguageClient-neovim', run = 'bash install.sh'}
   use 'junegunn/fzf'
   use 'nvim-lua/plenary.nvim'
   use 'nathom/filetype.nvim'
