@@ -6,10 +6,10 @@ local execute = vim.api.nvim_command
 local nvim_exec = vim.api.nvim_exec
 local remap = vim.api.nvim_set_keymap
 
--- g.loaded_python_provider = 0
+g.loaded_python_provider = 0
 g.loaded_python3_provider = 3
 g.loaded_ruby_provider = 0
--- g.loaded_perl_provider = 0
+g.loaded_perl_provider = 0
 
 -- https://github.com/rohit-px2/nvui
 -- nvui --ext_multigrid --ext_popupmenu --ext_cmdline --titlebar --detached
@@ -28,6 +28,9 @@ end
 cmd [[packadd packer.nvim]]
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
+  -- Reach support
+  use {'ericglau/vim-reach', run = './install.sh'}
+  use 'junegunn/fzf'
   use 'nvim-lua/plenary.nvim'
   use 'nathom/filetype.nvim'
   -- 状态栏
@@ -178,9 +181,9 @@ opt('o', 'termguicolors', true)                       -- True color support
 opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 25 )
 opt('o', 'scrolloff', 2 )
-opt('o', 'tabstop', 2)
-opt('o', 'shiftwidth', 2)
-opt('o', 'softtabstop', 2)
+opt('o', 'tabstop', 4)
+opt('o', 'shiftwidth', 4)
+opt('o', 'softtabstop', 4)
 opt('o', 'swapfile', false )
 opt('o', 'showmode', false )
 opt('o', 'background', 'dark' )
@@ -272,8 +275,10 @@ map('n', '<leader>gs', '<cmd>Gina status<CR>')
 map('n', '<leader>gl', '<cmd>Gina pull<CR>')
 map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
-map('n', '<silent> <a-t>', '<cmd>Lspsaga open_floaterm<Return>')
-map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>')
+map('n', '<silent> <F4>', ':call LanguageClient#textDocument_hover()<CR>')
+map('n', '<silent> <F3>', ':call LanguageClient#textDocument_codeAction()<CR>')
+--[[ map('n', '<silent> <a-t>', '<cmd>Lspsaga open_floaterm<Return>')
+map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>') ]]
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 -- Open nvimrc file
@@ -291,6 +296,8 @@ map("v", "<a-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 map("v", "<a-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
+cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
+cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
 cmd [[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1000})]]
 cmd [[highlight IndentBlanklineIndent1 guifg=#E06C75 gui=nocombine]]
@@ -304,6 +311,14 @@ local numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 for _, num in pairs(numbers) do
   map('n', '<leader>'..num, '<cmd>BufferGoto '..num..'<CR>')
 end
+
+-- Configuring for Reach Intellisense
+nvim_exec([[
+let g:LanguageClient_serverCommands = {'reach': ['node', '~/.local/share/nvim/site/reach-ide/server/out/server.js', '--stdio']}
+let g:LanguageClient_loggingLevel = 'DEBUG'
+let g:LanguageClient_loggingFile =  expand('~/.local/share/nvim/site/reach-ide/reach-language-client.log')
+let g:LanguageClient_serverStderr = expand('~/.local/share/nvim/site/reach-ide/reach-language-server.log')
+]], false)
 
 nvim_exec([[
 let g:VM_maps = {}
@@ -550,8 +565,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
   -- float terminal also you can pass cli command in open_float_terminal function
-  --[[ buf_set_keymap('n', '<silent> <A-t>', '<cmd>:Lspsaga open_float_terminal()<CR>', opts) -- or open_float_terminal('lazygit')<CR>
-  buf_set_keymap('n', '<silent> <A-t> <C-\\><C-n>', '<cmd>:Lspsaga close_float_terminal()<CR>', opts) -- or close_float_terminal('lazygit')<CR> ]]
+  --[[ buf_set_keymap('n', '<silent> <A-t>', '<cmd>:Lspsaga open_floaterm()<CR>', opts) -- or open_float_terminal('lazygit')<CR>
+  buf_set_keymap('t', '<silent> <A-t> <C-\\><C-n>', '<cmd>:Lspsaga close_floaterm()<CR>', opts) -- or close_float_terminal('lazygit')<CR> ]]
 
 
   if client.resolved_capabilities.document_formatting then
@@ -823,10 +838,6 @@ local vi_mode_hl = function()
     style = 'bold',
   }
 end
-
-
--- Load the colorscheme
--- require('twilight').set()
 
 
 require("nvim-gps").setup()
