@@ -286,8 +286,6 @@ map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 map("n", "<leader>v", "<cmd>e $MYVIMRC<CR>")
 -- Source nvimrc file
 map("n", "<leader>sv", "<cmd>:luafile %<CR>")
--- Quick new file
-map("n", "<leader>n", "<cmd>enew<CR>")
 -- Easy select all of file
 map("n", "<C-a>", "ggVG<c-$>")
 -- Line bubbling
