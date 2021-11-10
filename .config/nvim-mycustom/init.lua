@@ -34,19 +34,18 @@ require('packer').startup(function()
   use 'junegunn/fzf'
   use 'nvim-lua/plenary.nvim'
   use 'nathom/filetype.nvim'
-  -- 状态栏
   use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
   use 'kyazdani42/nvim-tree.lua'
   use 'dsznajder/vscode-es7-javascript-react-snippets'
   use 'glepnir/dashboard-nvim'
   use 'SmiteshP/nvim-gps'
-  -- git相关
+  -- git related
   use 'lewis6991/gitsigns.nvim'
   use 'tpope/vim-fugitive'
   use 'lambdalisue/gina.vim'
-  use 'f-person/git-blame.nvim' -- 显示git message
-  -- 语法高亮
+  use 'f-person/git-blame.nvim' -- show git message
+  -- SYntax highlighting
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
   use 'nvim-treesitter/nvim-treesitter-textobjects'
   use 'nvim-treesitter/nvim-treesitter-refactor'
@@ -64,13 +63,13 @@ require('packer').startup(function()
     }
     end
   }
-  use 'norcalli/nvim-colorizer.lua' -- 色值高亮
+  use 'norcalli/nvim-colorizer.lua' -- Color value highlighting
   use 'bluz71/vim-nightfly-guicolors'
   use { 'lukas-reineke/indent-blankline.nvim',
     config = function()
     end
   }
-  -- 导航finder操作
+  -- navigation finder operator
   use 'mg979/vim-visual-multi'
   use 'kevinhwang91/nvim-hlslens'
   use 'phaazon/hop.nvim'
@@ -83,7 +82,7 @@ require('packer').startup(function()
       require('telescope').load_extension('projects')
     end
   }
-  -- 语法建议load_extension
+  -- Grammar suggestions load_extension
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
   use 'hrsh7th/nvim-cmp'
@@ -96,7 +95,7 @@ require('packer').startup(function()
     {'hrsh7th/cmp-emoji'},
     {'tzachar/cmp-tabnine', run='./install.sh'}
   }}
-  -- 语法提示
+  -- Grammar tips
   use 'folke/lsp-trouble.nvim'
   use 'glepnir/lspsaga.nvim'
   use 'onsails/lspkind-nvim'
@@ -114,15 +113,15 @@ require('packer').startup(function()
         require("lspconfig")["null-ls"].setup {}
       end
   } ]]
-  -- snippet相关
+  -- snippet related
   use 'hrsh7th/vim-vsnip'
   use 'hrsh7th/vim-vsnip-integ'
   use 'rafamadriz/friendly-snippets'
-  -- 方便操作
+  -- Easy to operate
   use 'tpope/vim-eunuch'
-  use 'gennaro-tedesco/nvim-peekup' -- 查看历史的复制和删除的寄存器,快捷键 ""
-  use 'voldikss/vim-translator' -- npm install fanyi -g 安装翻译
-  -- 注释
+  use 'gennaro-tedesco/nvim-peekup' -- View historical copy and delete registers, shortcut keys ""
+  use 'voldikss/vim-translator' -- npm install fanyi -g (install translation)
+  -- Annotation
   use { 'b3nj5m1n/kommentary',
       config = function ()
         require('kommentary.config').use_extended_mappings()
@@ -132,7 +131,7 @@ require('packer').startup(function()
         })
       end
   }
-  use "windwp/nvim-autopairs" -- 自动符号匹配
+  use "windwp/nvim-autopairs" -- Automatic symbol matching
   use 'windwp/nvim-ts-autotag'
   use {
     "blackCauldron7/surround.nvim",
@@ -140,9 +139,9 @@ require('packer').startup(function()
       require "surround".setup {}
     end
   }
-  use 'folke/which-key.nvim' -- 提示leader按键
-  use 'sindrets/diffview.nvim' -- diff对比
-  use 'p00f/nvim-ts-rainbow' -- 彩虹匹配
+  use 'folke/which-key.nvim' -- hint leader button
+  use 'sindrets/diffview.nvim' -- diff compare
+  use 'p00f/nvim-ts-rainbow' -- Rainbow matching
   use 'folke/todo-comments.nvim'
   use 'ThePrimeagen/vim-be-good'
   use 'mhartington/formatter.nvim'
