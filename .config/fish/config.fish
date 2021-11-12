@@ -19,9 +19,9 @@ set -g theme_display_git_default_branch yes
 
 
 # aliases
-alias ll "exa --long --header --git --classify --modified --created --git --icons"
-alias lla "exa --long --header --git --classify--accessed --modified --created --git --icons"
-alias llt "exa --long --header --git --classify --accessed --modified --created --tree --level=2 --git --icons"
+alias ll "exa --long --header --all --git --classify --modified --created --git --icons"
+alias lla "exa --long --header --all --git --classify--accessed --modified --created --git --icons"
+alias llt "exa --long --header --all --git --classify --accessed --modified --created --tree --level=2 --git --icons"
 # alias ls "ls -p -G"
 # alias la "ls -A"
 # alias ll "ls -l"
