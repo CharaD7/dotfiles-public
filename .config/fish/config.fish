@@ -4,16 +4,28 @@ set -gx TERM xterm-256color
 
 # theme
 set -g theme_color_scheme terminal-dark
-set -g fish_prompt_pwd_dir_length 1
+set -g fish_prompt_pwd_dir_length 0
 set -g theme_display_user yes
 set -g theme_hide_hostname no
 set -g theme_hostname always
+set -g fish_key_bindings fish_vi_key_bindings
+set -g theme_display_git yes
+set -g theme_display_git_dirty no
+set -g theme_display_git_untracked no
+set -g theme_display_git_ahead_verbose yes
+set -g theme_display_git_dirty_verbose yes
+set -g theme_display_git_stashed_verbose yes
+set -g theme_display_git_default_branch yes
+
 
 # aliases
-alias ls "ls -p -G"
-alias la "ls -A"
-alias ll "ls -l"
-alias lla "ll -A"
+alias ll "exa --long --header --git --classify --modified --created --git --icons"
+alias lla "exa --long --header --git --classify--accessed --modified --created --git --icons"
+alias llt "exa --long --header --git --classify --accessed --modified --created --tree --level=2 --git --icons"
+# alias ls "ls -p -G"
+# alias la "ls -A"
+# alias ll "ls -l"
+# alias lla "ll -A"
 alias g git
 command -qv nvim && alias vim nvim
 
