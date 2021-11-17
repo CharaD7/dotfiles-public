@@ -17,7 +17,8 @@ if g.nvui then
   cmd [[NvuiCmdCenterYPos 0.3]]
 end
 
-nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
+-- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
+nvim_exec([[set guifont=CaskaydiaCove\ NF:h20]], false)
 --Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
