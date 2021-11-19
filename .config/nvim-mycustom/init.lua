@@ -34,6 +34,7 @@ require('packer').startup(function()
   use {'autozimu/LanguageClient-neovim', run = 'bash install.sh'}
   use 'junegunn/fzf'
   use 'nvim-lua/plenary.nvim'
+  use "Pocco81/AutoSave.nvim"
   use 'nathom/filetype.nvim'
   use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
@@ -181,6 +182,7 @@ opt('o', 'splitright', true)                          -- Put new windows right o
 opt('o', 'termguicolors', true)                       -- True color support
 opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 25 )
+opt('o', 'shell', '/usr/bin/fish')
 opt('o', 'scrolloff', 2 )
 opt('o', 'tabstop', 4)
 opt('o', 'shiftwidth', 4)
@@ -278,8 +280,9 @@ map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
 map('n', '<silent> <F4>', ':call LanguageClient#textDocument_hover()<CR>')
 map('n', '<silent> <F3>', ':call LanguageClient#textDocument_codeAction()<CR>')
---[[ map('n', '<silent> <a-t>', '<cmd>Lspsaga open_floaterm<Return>')
-map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>') ]]
+-- map('n', '<[t>', '<cmd>lua vim.lspsaga.open_floaterm()<CR>', opts) -- or open_float_terminal('lazygit')<CR>
+map('n', '<leader>t', '<cmd>Lspsaga open_floaterm<CR>')
+-- map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>')
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 -- Open nvimrc file
@@ -564,8 +567,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
   -- float terminal also you can pass cli command in open_float_terminal function
-  --[[ buf_set_keymap('n', '<silent> <A-t>', '<cmd>:Lspsaga open_floaterm()<CR>', opts) -- or open_float_terminal('lazygit')<CR>
-  buf_set_keymap('t', '<silent> <A-t> <C-\\><C-n>', '<cmd>:Lspsaga close_floaterm()<CR>', opts) -- or close_float_terminal('lazygit')<CR> ]]
+  -- buf_set_keymap('t', '<silent> <A-t> <C-\\><C-n>', '<cmd>:Lspsaga close_floaterm()<CR>', opts) -- or close_float_terminal('lazygit')<CR>
 
 
   if client.resolved_capabilities.document_formatting then
