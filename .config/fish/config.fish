@@ -3,15 +3,18 @@ set fish_greeting ""
 set -gx TERM xterm-256color
 
 # theme
-set -g theme_color_scheme nord
+set -g theme_color_scheme dracula
 set -g fish_prompt_pwd_dir_length 0
 set -g theme_display_user yes
 set -g theme_hide_hostname no
+set -g theme_display_user ssh
+set -g theme_display_hg yes
+set -g theme_display_virtualenv yes
 set -g theme_hostname always
 set -g fish_key_bindings fish_vi_key_bindings
 set -g theme_display_git yes
-set -g theme_display_git_dirty no
-set -g theme_display_git_untracked no
+set -g theme_display_git_dirty yes
+set -g theme_display_git_untracked yes
 set -g theme_display_git_ahead_verbose yes
 set -g theme_display_git_dirty_verbose yes
 set -g theme_display_git_stashed_verbose yes
