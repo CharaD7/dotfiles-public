@@ -99,8 +99,8 @@ require('packer').startup(function()
   }}
   -- Grammar tips
   use 'folke/lsp-trouble.nvim'
-  use 'glepnir/lspsaga.nvim'
   use 'onsails/lspkind-nvim'
+  use { 'tami5/lspsaga.nvim', branch = 'nvim51' }
   use 'liuchengxu/vista.vim'
   use 'ray-x/lsp_signature.nvim'
   use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'},
@@ -257,6 +257,9 @@ map('n', '<leader>fc', '<cmd>Telescope commands<CR>')
 map('n', '<leader>fp', '<cmd>Telescope project<CR>')
 map('n', '<leader>fm', '<cmd>Telescope marks<CR>')
 map('n', '<leader>fe', '<cmd>Telescope file_browser<CR>')                      --nvimtree
+map('n', '[fo', '<cmd>foldopen<CR>')
+map('n', '[fc', '<cmd>foldclose<CR>')
+map('n', '[fl', '<cmd>fold<CR>')
 map('n', '<leader>z', '<cmd>TZAtaraxis<CR>')                           --ataraxis
 map('n', '<leader>x', '<cmd>TZAtaraxis l45 r45 t2 b2<CR>')
 map('n', '<leader>n', '<cmd>NvimTreeToggle<CR>')                      --nvimtree
@@ -555,7 +558,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>fm', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-
   buf_set_keymap('n', '[f', '<cmd>Lspsaga lsp_finder<CR>', opts)
   buf_set_keymap('n', '[a', '<cmd>Lspsaga code_action<CR>', opts)
   buf_set_keymap('x', '[a', '<cmd>Lspsaga range_code_action<CR>', opts)
