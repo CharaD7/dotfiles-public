@@ -33,6 +33,7 @@ require('packer').startup(function()
   use 'ericglau/vim-reach'
   use {'autozimu/LanguageClient-neovim', run = 'bash install.sh'}
   use 'junegunn/fzf'
+  use 'sharkdp/fd'
   use 'nvim-lua/plenary.nvim'
   use "Pocco81/AutoSave.nvim"
   use 'nathom/filetype.nvim'
