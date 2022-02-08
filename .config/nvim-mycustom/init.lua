@@ -18,7 +18,7 @@ if g.nvui then
 end
 
 -- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
-nvim_exec([[set guifont=CaskaydiaCove\ NF:h20]], false)
+nvim_exec([[set guifont=CaskaydiaCove\ Nerd\ Font:h11]], false)
 --Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -37,6 +37,7 @@ require('packer').startup(function()
   use 'nvim-lua/plenary.nvim'
   use "Pocco81/AutoSave.nvim"
   use 'nathom/filetype.nvim'
+  use 'mhinz/vim-signify'
   use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
   use 'kyazdani42/nvim-tree.lua'
@@ -66,6 +67,7 @@ require('packer').startup(function()
     }
     end
   }
+  use 'Xuyuanp/scrollbar.nvim' -- Scrollbar
   use 'norcalli/nvim-colorizer.lua' -- Color value highlighting
   use 'bluz71/vim-nightfly-guicolors'
   use { 'lukas-reineke/indent-blankline.nvim',
@@ -215,7 +217,7 @@ opt('o', 'autoindent', true)
 opt('o', 'syntax', 'on')
 opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 10)
-opt('o', 'updatetime', 300)
+opt('o', 'updatetime', 100)
 opt('o', 'scrolljump', 6)
 opt('o', 'undofile', true)
 
@@ -343,6 +345,16 @@ let bufferline.auto_hide = v:true
 let bufferline.icons = 'both'
 ]], false)
 
+-- scrollbar
+nvim_exec([[
+augroup ScrollbarInit
+  autocmd!
+  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+  autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
+augroup end
+]], false)
+
 g.vista_default_executive = 'nvim_lsp'
 
 require("indent_blankline").setup {
@@ -363,7 +375,7 @@ cmd 'colorscheme nightfly'
 local notify = require("notify")
 
 require'lightspeed'.setup {
-  jump_to_first_match = true,
+  -- jump_to_first_match = true,
   jump_on_partial_input_safety_timeout = 400,
   -- This can get _really_ slow if the window has a lot of content,
   -- turn it on only if your machine can always cope with it.
@@ -371,7 +383,7 @@ require'lightspeed'.setup {
   grey_out_search_area = true,
   match_only_the_start_of_same_char_seqs = true,
   limit_ft_matches = 5,
-  full_inclusive_prefix_key = '<c-x>',
+  -- full_inclusive_prefix_key = '<c-x>',
   -- By default, the values of these will be decided at runtime,
   -- based on `jump_to_first_match`.
   labels = nil,
@@ -507,14 +519,14 @@ cmp.setup({
 })
 
 -- Lspsaga
-local saga = require("lspsaga")
+local saga = require "lspsaga"
 saga.init_lsp_saga({
-  code_action_icon = " ",
-  definition_preview_icon = "  ",
-  dianostic_header_icon = "   ",
-  error_sign = " ",
-  finder_definition_icon = "  ",
-  finder_reference_icon = "  ",
+  code_action_icon = "",
+  definition_preview_icon = "",
+  dianostic_header_icon = "",
+  error_sign = "",
+  finder_definition_icon = "",
+  finder_reference_icon = "",
   hint_sign = "⚡",
   infor_sign = "",
   warn_sign = "",
@@ -776,7 +788,7 @@ nvim_exec([[
 
 g.dashboard_custom_section = {
     a = {description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
-    b = {description = {"  Recents                   SPC f r"}, command = "Telescope oldfiles"},
+    b = {description = {"  Recents                   SPC f r"}, command = "Telescope oldfiles"},
     c = {description = {"  Find Word                 SPC f w"}, command = "Telescope live_grep"},
     d = {description = {"洛 New File                  SPC f n"}, command = "DashboardNewFile"},
     e = {description = {"  Bookmarks                 SPC f m"}, command = "Telescope marks"},
