@@ -45,7 +45,10 @@ require('packer').startup(function()
   use 'glepnir/dashboard-nvim'
   use 'SmiteshP/nvim-gps'
   -- git related
+  use 'sainnhe/everforest'
+  use 'rmagatti/auto-session'
   use 'lewis6991/gitsigns.nvim'
+  use 'tpope/vim-repeat'
   use 'tpope/vim-fugitive'
   use 'lambdalisue/gina.vim'
   use 'f-person/git-blame.nvim' -- show git message
@@ -787,12 +790,12 @@ nvim_exec([[
 ]], false)
 
 g.dashboard_custom_section = {
-    a = {description = {"  Find File                 SPC f f"}, command = "Telescope find_files"},
-    b = {description = {"  Recents                   SPC f r"}, command = "Telescope oldfiles"},
-    c = {description = {"  Find Word                 SPC f w"}, command = "Telescope live_grep"},
-    d = {description = {"洛 New File                  SPC f n"}, command = "DashboardNewFile"},
-    e = {description = {"  Bookmarks                 SPC f m"}, command = "Telescope marks"},
-    f = {description = {"  Load Last Session         SPC s l"}, command = "SessionLoad"},
+    a = {description = {"🔎  Find File                 SPC f f"}, command = "Telescope find_files"},
+    b = {description = {"   Recents                   SPC f r"}, command = "Telescope oldfiles"},
+    c = {description = {"   Find Word                 SPC f w"}, command = "Telescope live_grep"},
+    d = {description = {"洛  New File                  SPC f n"}, command = "DashboardNewFile"},
+    e = {description = {"   Bookmarks                 SPC f m"}, command = "Telescope marks"},
+    f = {description = {"   Load Last Session         SPC s l"}, command = "SessionLoad"},
 }
 
 local prettier = function ()
@@ -802,16 +805,40 @@ local prettier = function ()
     stdin = true
   }
 end
-require('formatter').setup({
+
+require("formatter").setup({
+  logging = false,
   filetype = {
-    javascript = {
-      prettier
+    javascript = { prettier },
+    json = { prettier },
+    typescript = { prettier },
+    html = { prettier },
+    css = { prettier },
+    scss = { prettier },
+    markdown = { prettier },
+    lua = {
+      -- Stylua
+      function()
+        return {
+          exe = "stylua",
+          args = { "--indent-width", 5, "--indent-type", "Spaces" },
+          stdin = false,
+        }
+      end,
     },
-    typescript = {
-      prettier
-    },
-  }
+  },
 })
+
+-- Runs Formatter on save
+vim.api.nvim_exec(
+  [[
+augroup FormatAutogroup
+  autocmd!
+  autocmd BufWritePost *.js,*.json,*.ts,*.css,*.scss,*.md,*.html,*.lua : FormatWrite
+augroup END
+]],
+  true
+)
 
 -- feline config
 local get_diag = function(str)
