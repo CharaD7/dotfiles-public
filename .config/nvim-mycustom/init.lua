@@ -1,4 +1,4 @@
---make life easier
+-- make life easier
 local cmd = vim.cmd
 local g = vim.g
 local fn = vim.fn
@@ -18,7 +18,7 @@ if g.nvui then
 end
 
 -- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
-nvim_exec([[set guifont=CaskaydiaCove\ Nerd\ Font:h11]], false)
+-- nvim_exec([[set guifont=CaskaydiaCove\ Nerd\ Font:h11]], false)
 --Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -35,7 +35,6 @@ require('packer').startup(function()
   use 'junegunn/fzf'
   use 'sharkdp/fd'
   use 'nvim-lua/plenary.nvim'
-  use "Pocco81/AutoSave.nvim"
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
   use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
@@ -46,22 +45,47 @@ require('packer').startup(function()
   use 'SmiteshP/nvim-gps'
   -- git related
   use 'sainnhe/everforest'
-  use 'rmagatti/auto-session'
+  use {
+      'rmagatti/auto-session',
+      config = function()
+          require('auto-session').setup {
+              log_level = 'info',
+              auto_session_enable_last_session = true,
+              auto_session_enabled = true,
+              auto_save_enabled = true,
+              auto_restore_enabled = nil,
+              auto_session_suppress_dirs = nil,
+          }
+      end
+  }
+  use {
+      'rmagatti/session-lens',
+      config = function()
+          require('session-lens').setup {
+              path_display = {'shorten'},
+              -- previewer = true,
+              prompt_title = 'AWESOME SESSIONS',
+          }
+      end
+  }
   use 'lewis6991/gitsigns.nvim'
   use 'tpope/vim-repeat'
   use 'tpope/vim-fugitive'
   use 'lambdalisue/gina.vim'
   use 'f-person/git-blame.nvim' -- show git message
-  -- SYntax highlighting
+  -- Syntax highlighting
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+  -- use 'tree-sitter/tree-sitter'
   use 'nvim-treesitter/nvim-treesitter-textobjects'
   use 'nvim-treesitter/nvim-treesitter-refactor'
-  --[[ use {
+  use {
     'romgrk/nvim-treesitter-context',
     config = function()
       require("treesitter-context").setup {}
     end
-  } ]]
+  } -- Shows the current function/class as float window at the top of the window
+  use 'theHamsta/nvim-treesitter-commonlisp' -- highlight functions
+  use 'andymass/vim-matchup' -- Provides language-specific % style pair and tuple matching, highlighting, and text-objects
   use 'nvim-treesitter/playground'
   use {
     "folke/twilight.nvim",
@@ -80,7 +104,13 @@ require('packer').startup(function()
   -- navigation finder operator
   use 'mg979/vim-visual-multi'
   use 'kevinhwang91/nvim-hlslens'
-  use 'phaazon/hop.nvim'
+  use {
+      'phaazon/hop.nvim',
+      branch = 'v1', -- optional but strongly recommended
+      config = function()
+          require'hop'.setup()
+      end
+  }
   use 'ggandor/lightspeed.nvim'
   use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}}
   use {
@@ -106,7 +136,7 @@ require('packer').startup(function()
   -- Grammar tips
   use 'folke/lsp-trouble.nvim'
   use 'onsails/lspkind-nvim'
-  use { 'tami5/lspsaga.nvim', branch = 'nvim51' }
+  use { 'tami5/lspsaga.nvim' }
   use 'liuchengxu/vista.vim'
   use 'ray-x/lsp_signature.nvim'
   use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'},
@@ -114,6 +144,8 @@ require('packer').startup(function()
       require'navigator'.setup()
     end
   }
+  use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' }
+  -- use 'glepnir/lspsaga.nvim'
   use 'kosayoda/nvim-lightbulb'
   --[[ use { 'jose-elias-alvarez/nvim-lsp-ts-utils', requires = { 'jose-elias-alvarez/null-ls.nvim' },
       config = function ()
@@ -186,6 +218,7 @@ opt('o', 'smartcase', true)                           -- Don't ignore case with 
 opt('o', 'splitbelow', true)                          -- Put new windows below current
 opt('o', 'splitright', true)                          -- Put new windows right of current
 opt('o', 'termguicolors', true)                       -- True color support
+opt('o', 'autowrite', true)                           -- Autowrite buffers or file
 opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 25 )
 opt('o', 'shell', '/usr/bin/fish')
@@ -202,6 +235,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 1)
+opt('o', 'guifont', 'CaskaydiaCove Nerd Font:h11')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -215,8 +249,8 @@ opt('o', 'formatoptions', 'l')
 opt('o', 'laststatus', 2)
 opt('o', 'cursorline', true)
 opt('o', 'cursorcolumn', true)
-opt('o', 'autowrite', true)
 opt('o', 'autoindent', true)
+opt('o', 'list', true)
 opt('o', 'syntax', 'on')
 opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 10)
@@ -224,8 +258,13 @@ opt('o', 'updatetime', 100)
 opt('o', 'scrolljump', 6)
 opt('o', 'undofile', true)
 
+-- More options for listchars.
+vim.opt.listchars:append("space:⋅")
+vim.opt.listchars:append("eol:↴")
+
 --set shortmess
 vim.o.shortmess = vim.o.shortmess .. "c"
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 
 nvim_exec([[
 filetype on
@@ -250,6 +289,7 @@ map('n', ';', ':')                                                     --semicol
 map('n', 'j', 'gj')                                                    --move by visual line not actual line
 map('n', 'k', 'gk')
 map('n', 'q', '<cmd>q<CR>')
+map('n', 'Q', '<cmd>qa<CR>')
 map('n', '<leader>w', '<cmd>HopWord<CR>')                              --easymotion/hop
 map('n', '<leader>l', '<cmd>HopLine<CR>')
 map('n', '<leader>/', '<cmd>HopPattern<CR>')
@@ -269,13 +309,17 @@ map('n', '[fl', '<cmd>fold<CR>')
 map('n', '<leader>z', '<cmd>TZAtaraxis<CR>')                           --ataraxis
 map('n', '<leader>x', '<cmd>TZAtaraxis l45 r45 t2 b2<CR>')
 map('n', '<leader>n', '<cmd>NvimTreeToggle<CR>')                      --nvimtree
-map('n', '<leader>sl', '<cmd>SessionLoad<CR>')
+map('n', '<leader>ss', '<cmd>SaveSession ~/.sessions<CR>')
+map('n', '<leader>sh', '<cmd>Telescope session-lens search_session<CR>')
+map('n', '<leader>sr', '<cmd>RestoreSession ~/.sessions<CR>')
+map('n', '<leader>sd', '<cmd>DeleteSession ~/.sessions<CR>')
+map('n', '<leader>sl', '<cmd>SessionLoad ~/.sessions<CR>')
 map('t', '<leader>o', '<cmd>Vista<CR>')                   --fuzzN
 map('n', '<c-k>', '<cmd>wincmd k<CR>')                                 --ctrlhjkl to navigate splits
 map('n', '<c-j>', '<cmd>wincmd j<CR>')
 map('n', '<c-h>', '<cmd>wincmd h<CR>')
 map('n', '<c-l>', '<cmd>wincmd l<CR>')
-map('n', '<c-s>', '<cmd>w<CR>')
+map('n', '<c-s>', '<cmd>w!<CR>')
 map('n', '<c-x>', '<cmd>BufferClose<CR>')
 map('n', '<leader>b', '<cmd>BufferPick<CR>')
 map('n', '<leader>bj', '<cmd>bprevious<CR>')
@@ -305,6 +349,8 @@ map("n", "<a-j>", "<cmd>m .+1<CR>==", { silent = true })
 map("n", "<a-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<a-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 map("v", "<a-k>", ":m '<-2<CR>==gv=gv", { silent = true })
+cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
+cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after some time
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
 cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
@@ -343,7 +389,7 @@ let g:indent_blankline_filetype_exclude = ['help', 'dashboard', 'NvimTree', 'tel
 --barbar
 nvim_exec([[
 let bufferline = get(g:, 'bufferline', {})
-let bufferline.animation = v:false
+let bufferline.animation = v:true
 let bufferline.auto_hide = v:true
 let bufferline.icons = 'both'
 ]], false)
@@ -362,7 +408,9 @@ g.vista_default_executive = 'nvim_lsp'
 
 require("indent_blankline").setup {
     buftype_exclude = {"terminal", "telescope", "nvim-tree"},
-    space_char_blankline = " ",
+    show_current_context = true,
+    show_end_of_line = true,
+    show_current_context_start = true,
     char_highlight_list = {
         "IndentBlanklineIndent1",
         "IndentBlanklineIndent2",
@@ -379,11 +427,11 @@ local notify = require("notify")
 
 require'lightspeed'.setup {
   -- jump_to_first_match = true,
-  jump_on_partial_input_safety_timeout = 400,
+  jump_to_unique_chars = { safety_timeouts = 400 },
   -- This can get _really_ slow if the window has a lot of content,
   -- turn it on only if your machine can always cope with it.
-  highlight_unique_chars = false,
-  grey_out_search_area = true,
+  -- highlight_unique_chars = false,
+  -- grey_out_search_area = true,
   match_only_the_start_of_same_char_seqs = true,
   limit_ft_matches = 5,
   -- full_inclusive_prefix_key = '<c-x>',
@@ -429,11 +477,11 @@ require('nvim-treesitter.configs').setup {
         ["if"] = "@function.inner",
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner",
-        ["iF"] = {
+        --[[ ["iF"] = {
           javascript = "(function_definition) @function",
           typescript = "(function_definition) @function",
           rust = "(function_definition) @function",
-        },
+        }, ]]
       },
     },
     lsp_interop = {
@@ -526,7 +574,7 @@ local saga = require "lspsaga"
 saga.init_lsp_saga({
   code_action_icon = "",
   definition_preview_icon = "",
-  dianostic_header_icon = "",
+  diagnostic_header_icon = "",
   error_sign = "",
   finder_definition_icon = "",
   finder_reference_icon = "",
@@ -627,7 +675,7 @@ end
 
 setup_servers()
 
-vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level("debug")
 require("trouble").setup {}
 require("lspkind").init()
 require'diffview'.setup{}
@@ -776,7 +824,8 @@ fn.sign_define(
 )
 
 g.dashboard_disable_statusline = 1
-g.dashboard_session_directory = '~/.sessions'
+g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions"
+-- g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions/"
 g.dashboard_default_executive = 'telescope'
 
 if vim.fn.has 'win32' == 1 then
@@ -821,8 +870,8 @@ require("formatter").setup({
       function()
         return {
           exe = "stylua",
-          args = { "--indent-width", 5, "--indent-type", "Spaces" },
           stdin = false,
+          args = { "--indent-width", 5, "--indent-type", "Spaces" },
         }
       end,
     },
@@ -830,7 +879,7 @@ require("formatter").setup({
 })
 
 -- Runs Formatter on save
-vim.api.nvim_exec(
+nvim_exec(
   [[
 augroup FormatAutogroup
   autocmd!
