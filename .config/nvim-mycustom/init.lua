@@ -259,8 +259,8 @@ opt('o', 'scrolljump', 6)
 opt('o', 'undofile', true)
 
 -- More options for listchars.
-vim.opt.listchars:append("space:⋅")
-vim.opt.listchars:append("eol:↴")
+-- vim.opt.listchars:append("space:⋅")
+-- vim.opt.listchars:append("eol:↴")
 
 --set shortmess
 vim.o.shortmess = vim.o.shortmess .. "c"
@@ -290,8 +290,8 @@ map('n', 'j', 'gj')                                                    --move by
 map('n', 'k', 'gk')
 map('n', 'q', '<cmd>q<CR>')
 map('n', 'Q', '<cmd>qa<CR>')
-map('n', '<leader>w', '<cmd>HopWord<CR>')                              --easymotion/hop
-map('n', '<leader>l', '<cmd>HopLine<CR>')
+map('n', '<leader>hw', '<cmd>HopWord<CR>')                              --easymotion/hop
+map('n', '<leader>hl', '<cmd>HopLine<CR>')
 map('n', '<leader>/', '<cmd>HopPattern<CR>')
 map('n', '<leader>fp', '<cmd>Telescope<CR>')                   --fuzzy
 map('n', '<leader>fr', '<cmd>Telescope oldfiles<CR>')                   --fuzzy
@@ -349,8 +349,8 @@ map("n", "<a-j>", "<cmd>m .+1<CR>==", { silent = true })
 map("n", "<a-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<a-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 map("v", "<a-k>", ":m '<-2<CR>==gv=gv", { silent = true })
-cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
-cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after some time
+-- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
+cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
 cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
