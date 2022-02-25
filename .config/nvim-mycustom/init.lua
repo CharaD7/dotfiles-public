@@ -40,7 +40,7 @@ require('packer').startup(function()
   use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
   use 'kyazdani42/nvim-tree.lua'
-  use 'dsznajder/vscode-es7-javascript-react-snippets'
+  use {'dsznajder/vscode-es7-javascript-react-snippets', run = 'yarn install --frozen-lockfile && yarn compile'}
   use 'glepnir/dashboard-nvim'
   use 'SmiteshP/nvim-gps'
   -- git related
