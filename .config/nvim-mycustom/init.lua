@@ -18,8 +18,8 @@ if g.nvui then
 end
 
 -- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
--- nvim_exec([[set guifont=CaskaydiaCove\ Nerd\ Font:h11]], false)
---Install packer
+-- nvim_exec([[set guifont=CaskaydiaCove\ NF:h11]], false)
+-- Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
   execute('!git clone https://github.com/wbthomason/packer.nvim '.. install_path)
@@ -205,7 +205,7 @@ end
 
 local indent = 2
 cmd 'hi NORMAL guibg=#2f334d'
-opt('b', 'expandtab', true)                           -- Use spaces instead of tabs
+opt('b', 'expandtab', false)                           -- Use tabs instead of spaces
 opt('b', 'shiftwidth', indent)                        -- Size of an indent
 opt('b', 'smartindent', true)                         -- Insert indents automatically
 opt('b', 'tabstop', indent)                           -- Number of spaces tabs count for
@@ -223,9 +223,9 @@ opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 25 )
 opt('o', 'shell', '/usr/bin/fish')
 opt('o', 'scrolloff', 2 )
-opt('o', 'tabstop', 4)
-opt('o', 'shiftwidth', 4)
-opt('o', 'softtabstop', 4)
+opt('o', 'tabstop', indent)
+opt('o', 'shiftwidth', indent)
+opt('o', 'softtabstop', indent)
 opt('o', 'swapfile', false )
 opt('o', 'showmode', false )
 opt('o', 'background', 'dark' )
@@ -235,7 +235,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 1)
-opt('o', 'guifont', 'CaskaydiaCove Nerd Font:h11')
+opt('o', 'guifont', 'CaskaydiaCove NF:h11')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -333,9 +333,7 @@ map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
 map('n', '<silent> <F4>', ':call LanguageClient#textDocument_hover()<CR>')
 map('n', '<silent> <F3>', ':call LanguageClient#textDocument_codeAction()<CR>')
--- map('n', '<[t>', '<cmd>lua vim.lspsaga.open_floaterm()<CR>', opts) -- or open_float_terminal('lazygit')<CR>
 map('n', '<leader>t', '<cmd>Lspsaga open_floaterm<CR>')
--- map('t', '<silent> <a-t> <C-\\><C-n>', '<cmd>Lspsaga close_floaterm<Return>')
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 -- Open nvimrc file
@@ -632,8 +630,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[l', '<cmd>Lspsaga show_line_diagnostics<CR>', opts)
   buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
-  -- float terminal also you can pass cli command in open_float_terminal function
-  -- buf_set_keymap('t', '<silent> <A-t> <C-\\><C-n>', '<cmd>:Lspsaga close_floaterm()<CR>', opts) -- or close_float_terminal('lazygit')<CR>
 
 
   if client.resolved_capabilities.document_formatting then
@@ -653,24 +649,42 @@ end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- require("lspconfig").pylsp.setup{} -- necessary to enforce pylsp globally
 
 local function setup_servers()
-  -- local servers = { "cssls", "html", "rust_analyzer", "tsserver",  "graphql", "volar", "jsonls", "dockerls" }
-  -- local nvim_lsp = require'lspconfig'
+  local servers = { "cssls", "html", "rust_analyzer", "tsserver",  "graphql", "volar", "jsonls", "dockerls" }
+  local nvim_lsp = require'lspconfig'
   local lsp_installer = require("nvim-lsp-installer")
   local opts = {
     on_attach = on_attach,
-    capabilities = capabilities
-  }
+    capabilities = capabilities,
+	init_options = {
+		onlyAnalyzeProjectsWithOpenFiles = true,
+		sugggestFromUnimportedLibraries = false,
+		closingLabels = true,
+	}
+ }
+ nvim_lsp.emmet_ls.setup({
+	 --on_attach = on_attach,
+	 capabilities = capabilities,
+	 filetypes = { "html", "css", "typescriptreact", "javascriptreact" }
+ })
   lsp_installer.on_server_ready(function(server)
       server:setup(opts)
   end)
-  -- for _, server in pairs(servers) do
-  --   nvim_lsp[server].setup{
-  --     on_attach = on_attach,
-  --     capabilities = capabilities
-  --   }
-  -- end
+  for _, server in pairs(servers) do
+    nvim_lsp[server].setup{
+      on_attach = on_attach,
+      capabilities = capabilities,
+	  init_options = {
+		  onlyAnalyzeProjectsWithOpenFiles = true,
+		  sugggestFromUnimportedLibraries = false,
+		  closingLabels = true,
+	  }
+    }
+  end
 end
 
 setup_servers()
@@ -690,10 +704,16 @@ require'colorizer'.setup{
 --nvim-tree
 g.nvim_tree_side = "left"
 g.nvim_tree_width = 25
+g.nvim_tree_highlight_opened_files = 1
+g.nvim_tree_respect_buf_cwd = 1
 g.nvim_tree_quit_on_open = 0
 g.nvim_tree_indent_markers = 1
 g.nvim_tree_git_hl = 1
+g.nvim_tree_gitignore = 0
+g.nvim_tree_hide_dotfiles = 0
+g.nvim_tree_follow = 1
 g.nvim_tree_root_folder_modifier = ":~"
+g.nvim_tree_ignore = {}
 g.nvim_tree_allow_resize = 1
 
 g.nvim_tree_show_icons = {
@@ -730,33 +750,43 @@ g.nvim_tree_icons = {
       }
 }
 
--- for projects
-g.nvim_tree_respect_buf_cwd = 1
-
 require'nvim-tree'.setup {
   disable_netrw       = true,
   hijack_netrw        = true,
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
+  auto_reload_on_write = true,
   open_on_tab         = false,
   hijack_cursor       = false,
-  update_cwd          = false,
+  update_cwd          = true,
   diagnostics     = {
     enable = true
   },
   update_focused_file = {
-    enable      = false,
-    update_cwd  = false,
+    enable      = true,
+    update_cwd  = true,
     ignore_list = {}
   },
   system_open = {
     cmd  = nil,
     args = {}
   },
-
+  git = {
+      enable = true,
+      ignore = true,
+      timeout = 500,
+  },
+  filters = {
+      dotfiles = false,
+      custom = {}
+  },
   view = {
     width = 30,
     side = 'left',
+    hide_root_folder = false,
+    number = false,
+    relativenumber = true,
+    signcolumn = "yes",
     auto_resize = false,
     mappings = {
       custom_only = false,
