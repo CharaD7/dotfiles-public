@@ -11,6 +11,15 @@ g.loaded_python3_provider = 3
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
+-- Neovide configurations
+g.neovide_fullscreen = true
+g.neovide_remember_window_size = true
+g.neovide_cursor_animation_length = 0.13
+g.neovide_cursor_trail_length = 0.8
+g.neovide_cursor_vfx_mode = "railgun"						-- Railgun particles behind cursor
+g.neovide_cursor_unfocused_outline_width = 0.125
+
+
 -- https://github.com/rohit-px2/nvui
 -- nvui --ext_multigrid --ext_popupmenu --ext_cmdline --titlebar --detached
 if g.nvui then
@@ -18,7 +27,7 @@ if g.nvui then
 end
 
 -- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
--- nvim_exec([[set guifont=CaskaydiaCove\ NF:h11]], false)
+-- nvim_exec([[set guifont=CaskaydiaCove\ NF:h12]], false)
 -- Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -34,12 +43,21 @@ require('packer').startup(function()
   use {'autozimu/LanguageClient-neovim', run = 'bash install.sh'}
   use 'junegunn/fzf'
   use 'sharkdp/fd'
+	use 'omnisharp/omnisharp-vim'
+	use 'sheerun/vim-polyglot' -- This is to help with razor files
   use 'nvim-lua/plenary.nvim'
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
-  use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
+  -- use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
+  use {'feline-nvim/feline.nvim', branch = 'develop', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
-  use 'kyazdani42/nvim-tree.lua'
+	use {
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+    },
+    config = function() require'nvim-tree'.setup {} end
+}
   use {'dsznajder/vscode-es7-javascript-react-snippets', run = 'yarn install --frozen-lockfile && yarn compile'}
   use 'glepnir/dashboard-nvim'
   use 'SmiteshP/nvim-gps'
@@ -221,7 +239,7 @@ opt('o', 'termguicolors', true)                       -- True color support
 opt('o', 'autowrite', true)                           -- Autowrite buffers or file
 opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 25 )
-opt('o', 'shell', '/usr/bin/fish')
+opt('o', 'shell', '/usr/bin/tmux')
 opt('o', 'scrolloff', 2 )
 opt('o', 'tabstop', indent)
 opt('o', 'shiftwidth', indent)
@@ -235,7 +253,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 1)
-opt('o', 'guifont', 'CaskaydiaCove NF:h11')
+opt('o', 'guifont', 'CaskaydiaCove NF Regular:h11')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -248,14 +266,14 @@ opt('o', 'lbr', true)
 opt('o', 'formatoptions', 'l')
 opt('o', 'laststatus', 2)
 opt('o', 'cursorline', true)
-opt('o', 'cursorcolumn', true)
+opt('o', 'cursorcolumn', false)
 opt('o', 'autoindent', true)
 opt('o', 'list', true)
 opt('o', 'syntax', 'on')
 opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 10)
 opt('o', 'updatetime', 100)
-opt('o', 'scrolljump', 6)
+opt('o', 'scrolljump', 15)
 opt('o', 'undofile', true)
 
 -- More options for listchars.
@@ -309,11 +327,11 @@ map('n', '[fl', '<cmd>fold<CR>')
 map('n', '<leader>z', '<cmd>TZAtaraxis<CR>')                           --ataraxis
 map('n', '<leader>x', '<cmd>TZAtaraxis l45 r45 t2 b2<CR>')
 map('n', '<leader>n', '<cmd>NvimTreeToggle<CR>')                      --nvimtree
-map('n', '<leader>ss', '<cmd>SaveSession ~/.sessions<CR>')
+map('n', '<leader>ss', '<cmd>SaveSession .sessions<CR>')
 map('n', '<leader>sh', '<cmd>Telescope session-lens search_session<CR>')
-map('n', '<leader>sr', '<cmd>RestoreSession ~/.sessions<CR>')
-map('n', '<leader>sd', '<cmd>DeleteSession ~/.sessions<CR>')
-map('n', '<leader>sl', '<cmd>SessionLoad ~/.sessions<CR>')
+map('n', '<leader>sr', '<cmd>RestoreSession .sessions<CR>')
+map('n', '<leader>sd', '<cmd>DeleteSession .sessions<CR>')
+map('n', '<leader>sl', '<cmd>SessionLoad .sessions<CR>')
 map('t', '<leader>o', '<cmd>Vista<CR>')                   --fuzzN
 map('n', '<c-k>', '<cmd>wincmd k<CR>')                                 --ctrlhjkl to navigate splits
 map('n', '<c-j>', '<cmd>wincmd j<CR>')
@@ -346,6 +364,9 @@ map("n", "<C-a>", "ggVG<c-$>")
 map("n", "<a-j>", "<cmd>m .+1<CR>==", { silent = true })
 map("n", "<a-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<a-j>", ":m '>+1<CR>==gv=gv", { silent = true })
+-- Split screen
+map("n", "ss", ":split<CR>", { silent = true }) -- Split horizontally
+map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
 map("v", "<a-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
@@ -384,6 +405,14 @@ let g:indent_blankline_char_highlight_list = ['|', '¦', '┆', '┊']
 let g:indent_blankline_filetype_exclude = ['help', 'dashboard', 'NvimTree', 'telescope', 'packer']
 ]], false)
 
+-- Omnisharp configuration
+nvim_exec([[
+let g:Omnisharp_server_studio = 1
+let g:OmniSharp_selector_ui = 'fzf'
+let g:OmniSharp_selector_findusages = 'fzf'
+let g:OmniSharp_highlighting = 3
+]], false)
+
 --barbar
 nvim_exec([[
 let bufferline = get(g:, 'bufferline', {})
@@ -410,12 +439,12 @@ require("indent_blankline").setup {
     show_end_of_line = true,
     show_current_context_start = true,
     char_highlight_list = {
-        "IndentBlanklineIndent1",
-        "IndentBlanklineIndent2",
-        "IndentBlanklineIndent3",
-        "IndentBlanklineIndent4",
-        "IndentBlanklineIndent5",
-        "IndentBlanklineIndent6",
+			"IndentBlanklineIndent1",
+			"IndentBlanklineIndent2",
+			"IndentBlanklineIndent3",
+			"IndentBlanklineIndent4",
+			"IndentBlanklineIndent5",
+			"IndentBlanklineIndent6",
     },
 }
 
@@ -666,11 +695,6 @@ local function setup_servers()
 		closingLabels = true,
 	}
  }
- nvim_lsp.emmet_ls.setup({
-	 --on_attach = on_attach,
-	 capabilities = capabilities,
-	 filetypes = { "html", "css", "typescriptreact", "javascriptreact" }
- })
   lsp_installer.on_server_ready(function(server)
       server:setup(opts)
   end)
@@ -751,8 +775,8 @@ g.nvim_tree_icons = {
 }
 
 require'nvim-tree'.setup {
-  disable_netrw       = true,
-  hijack_netrw        = true,
+  disable_netrw       = false,
+  hijack_netrw        = false,
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
   auto_reload_on_write = true,
@@ -940,7 +964,7 @@ local vi_mode_provider = function()
       Rv = 'REPLACE',
       s = 'SELECT',
       S = 'SELECT',
-      [''] = 'SELECT',
+      -- [''] = 'SELECT',
       t = 'TERMINAL',
     }
     return ' ' .. mode_alias[vim.fn.mode()] .. ' '
@@ -964,7 +988,9 @@ end
 
 require("nvim-gps").setup()
 
-require'feline'.setup {
+require("feline").setup{}
+
+--[[ require'feline'.setup {
   colors = {
     black = '#434C5E',
     skyblue = '#81A1C1',
@@ -1000,13 +1026,11 @@ require'feline'.setup {
     active = {
       {
         { provider = vi_mode_provider, hl = vi_mode_hl, right_sep = ' ' },
-        { provider = 'git_branch' , icon = ' ', right_sep = '  ',
-          enabled = function() return vim.b.gitsigns_status_dict ~= nil end },
+        { provider = 'git_branch' , icon = ' ', right_sep = '  ', enabled = function() return vim.b.gitsigns_status_dict ~= nil end },
         { provider = 'file_info' },
         { provider = function() return require('nvim-gps').get_location() end, enabled = function() return require('nvim-gps') .is_available() end },
         { provider = '' , hl = { fg = 'bg', bg = 'black' }},
       },
-      {},
       {
         { provider = function() return get_diag("Error") end,
           hl = { fg = 'bg', bg = 'red', style = 'bold' },
@@ -1035,8 +1059,6 @@ require'feline'.setup {
         { provider = 'file_info' },
         { provider = '' , hl = { fg = 'bg', bg = 'black' }},
       },
-      {},
-      {}
     },
   },
   force_inactive = {
@@ -1048,7 +1070,8 @@ require'feline'.setup {
     buftypes = {'terminal'},
     bufnames = {},
   }
-}
+} ]]
+
 
 require("which-key").setup {}
 
