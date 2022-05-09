@@ -364,10 +364,10 @@ map("n", "<C-a>", "ggVG<c-$>")
 map("n", "<s-j>", "<cmd>m .+1<CR>==", { silent = true })
 map("n", "<s-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<s-j>", ":m '>+1<CR>==gv=gv", { silent = true })
+map("v", "<s-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 -- Split screen
 map("n", "ss", ":split<CR>", { silent = true }) -- Split horizontally
 map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
-map("v", "<a-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
