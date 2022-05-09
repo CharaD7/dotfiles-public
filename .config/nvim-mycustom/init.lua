@@ -361,10 +361,10 @@ map("n", "<leader>sv", "<cmd>:luafile %<CR>")
 -- Easy select all of file
 map("n", "<C-a>", "ggVG<c-$>")
 -- Line bubbling
-map("n", "<s-j>", "<cmd>m .+1<CR>==", { silent = true })
-map("n", "<s-k>", "<cmd>m .-2<CR>==", { silent = true })
-map("v", "<s-j>", ":m '>+1<CR>==gv=gv", { silent = true })
-map("v", "<s-k>", ":m '<-2<CR>==gv=gv", { silent = true })
+map("n", "<A-S-j>", "<cmd>m .+1<CR>==", { silent = true })
+map("n", "<A-S-k>", "<cmd>m .-2<CR>==", { silent = true })
+map("v", "<A-S-j>", ":m '>+1<CR>==gv=gv", { silent = true })
+map("v", "<A-S-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 -- Split screen
 map("n", "ss", ":split<CR>", { silent = true }) -- Split horizontally
 map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
