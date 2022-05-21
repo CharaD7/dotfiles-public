@@ -253,7 +253,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 1)
-opt('o', 'guifont', 'CaskaydiaCove NF Regular:h11')
+-- opt('o', 'guifont', 'CaskaydiaCove NF Regular:h11')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -730,20 +730,15 @@ g.nvim_tree_side = "left"
 g.nvim_tree_width = 25
 g.nvim_tree_highlight_opened_files = 1
 g.nvim_tree_respect_buf_cwd = 1
-g.nvim_tree_quit_on_open = 0
-g.nvim_tree_indent_markers = 1
 g.nvim_tree_git_hl = 1
-g.nvim_tree_gitignore = 0
-g.nvim_tree_hide_dotfiles = 0
-g.nvim_tree_follow = 1
 g.nvim_tree_root_folder_modifier = ":~"
-g.nvim_tree_ignore = {}
 g.nvim_tree_allow_resize = 1
 
 g.nvim_tree_show_icons = {
     git = 1,
     folders = 1,
-    files = 1
+    files = 1,
+    folder_arrows = 1
 }
 
 g.nvim_tree_icons = {
@@ -811,7 +806,6 @@ require'nvim-tree'.setup {
     number = false,
     relativenumber = true,
     signcolumn = "yes",
-    auto_resize = false,
     mappings = {
       custom_only = false,
       list = {}
