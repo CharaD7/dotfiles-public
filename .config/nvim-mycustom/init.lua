@@ -49,7 +49,7 @@ require('packer').startup(function()
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
   -- use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
-  use {'feline-nvim/feline.nvim', branch = 'develop', requires = {'kyazdani42/nvim-web-devicons'}}
+  use {'feline-nvim/feline.nvim', branch = 'master', requires = {'kyazdani42/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
 	use {
     'kyazdani42/nvim-tree.lua',
@@ -68,10 +68,10 @@ require('packer').startup(function()
       config = function()
           require('auto-session').setup {
               log_level = 'info',
-              auto_session_enable_last_session = true,
-              auto_session_enabled = true,
+              auto_session_enable_last_session = false,
+              auto_session_enabled = false,
               auto_save_enabled = true,
-              auto_restore_enabled = nil,
+              auto_restore_enabled = false,
               auto_session_suppress_dirs = nil,
           }
       end
@@ -81,7 +81,7 @@ require('packer').startup(function()
       config = function()
           require('session-lens').setup {
               path_display = {'shorten'},
-              -- previewer = true,
+              previewer = true,
               prompt_title = 'AWESOME SESSIONS',
           }
       end
@@ -120,8 +120,9 @@ require('packer').startup(function()
     end
   }
   -- navigation finder operator
-  use 'mg979/vim-visual-multi'
   use 'kevinhwang91/nvim-hlslens'
+  use 'haya14busa/vim-asterisk'
+  use 'mg979/vim-visual-multi'
   use {
       'phaazon/hop.nvim',
       branch = 'v1', -- optional but strongly recommended
@@ -192,9 +193,22 @@ require('packer').startup(function()
   use "windwp/nvim-autopairs" -- Automatic symbol matching
   use 'windwp/nvim-ts-autotag'
   use {
-    "blackCauldron7/surround.nvim",
+    "ur4ltz/surround.nvim",
     config = function()
-      require "surround".setup {}
+      require"surround".setup {
+        context_offset = 100,
+        load_autogroups = false,
+        mappings_style = "sandwich",
+        map_insert_mode = true,
+        quotes = {"'", '"'},
+        brackets = {"(", '{', '['},
+        space_on_closing_char = false,
+        pairs = {
+          nestable = { b = { "(", ")" }, s = { "[", "]" }, B = { "{", "}" }, a = { "<", ">" } },
+          linear = { q = { "'", "'" }, t = { "`", "`" }, d = { '"', '"' } },
+        },
+        prefix = "s"
+      }
     end
   }
   use 'folke/which-key.nvim' -- hint leader button
@@ -253,7 +267,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 1)
--- opt('o', 'guifont', 'CaskaydiaCove NF Regular:h11')
+opt('o', 'guifont', 'CaskaydiaCove NF Regular:h10')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -467,6 +481,41 @@ require'lightspeed'.setup {
   labels = nil,
   cycle_group_fwd_key = nil,
   cycle_group_bwd_key = nil,
+}
+
+require('hlslens').setup {
+  auto_enable = true,
+	enable_incsearch = true,
+  calm_down = true,
+  nearest_only = true,
+  nearest_float_when = 'always',
+  override_lens = function(render, posList, nearest, idx, relIdx)
+    local sfw = vim.v.searchforward == 1
+    local indicator, text, chunks
+    local absRelIdx = math.abs(relIdx)
+    if absRelIdx > 1 then
+      indicator = ('%d%s'):format(absRelIdx, sfw ~= (relIdx > 1) and '▲' or '▼')
+    elseif absRelIdx == 1 then
+      indicator = sfw ~= (relIdx == 1) and '▲' or '▼'
+    else
+      indicator = ''
+    end
+
+    local lnum, col = unpack(posList[idx])
+    if nearest then
+      local cnt = #posList
+      if indicator ~= '' then
+        text = ('[%s %d/%d]'):format(indicator, idx, cnt)
+      else
+        text = ('[%d/%d]'):format(idx, cnt)
+      end
+      chunks = {{' ', 'Ignore'}, {text, 'HlSearchLensNear'}}
+    else
+      text = ('[%s %d]'):format(indicator, idx)
+      chunks = {{' ', 'Ignore'}, {text, 'HlSearchLens'}}
+    end
+    render.setVirt(0, lnum - 1, col - 1, chunks, nearest)
+  end
 }
 
 --nvim treesitter
@@ -871,7 +920,7 @@ fn.sign_define(
     {texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation"}
 )
 
-g.dashboard_disable_statusline = 1
+g.dashboard_disable_statusline = 0
 g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions"
 -- g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions/"
 g.dashboard_default_executive = 'telescope'
