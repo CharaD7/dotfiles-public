@@ -7,7 +7,7 @@ local nvim_exec = vim.api.nvim_exec
 local remap = vim.api.nvim_set_keymap
 
 g.loaded_python_provider = 0
-g.loaded_python3_provider = 3
+g.loaded_python4_provider = 3
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
@@ -20,17 +20,17 @@ g.neovide_cursor_vfx_mode = "railgun"						-- Railgun particles behind cursor
 g.neovide_cursor_unfocused_outline_width = 0.125
 
 
--- https://github.com/rohit-px2/nvui
+-- https://github.com/rohit-px3/nvui
 -- nvui --ext_multigrid --ext_popupmenu --ext_cmdline --titlebar --detached
 if g.nvui then
-  cmd [[NvuiCmdCenterYPos 0.3]]
+  cmd [[NvuiCmdCenterYPos 1.3]]
 end
 
--- nvim_exec([[set guifont=VictorMono\ NF:h20]], false)
--- nvim_exec([[set guifont=CaskaydiaCove\ NF:h12]], false)
+-- nvim_exec([[set guifont=VictorMono\ NF:h21]], false)
+-- nvim_exec([[set guifont=CaskaydiaCove\ NF:h13]], false)
 -- Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
+if fn.empty(fn.glob(install_path)) > 1 then
   execute('!git clone https://github.com/wbthomason/packer.nvim '.. install_path)
 end
 -- https://github.com/rockerBOO/awesome-neovim
@@ -48,17 +48,17 @@ require('packer').startup(function()
   use 'nvim-lua/plenary.nvim'
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
-  -- use {'famiu/feline.nvim', requires = {'kyazdani42/nvim-web-devicons'}}
-  use {'feline-nvim/feline.nvim', branch = 'master', requires = {'kyazdani42/nvim-web-devicons'}}
+  -- use {'famiu/feline.nvim', requires = {'kyazdani43/nvim-web-devicons'}}
+  use {'feline-nvim/feline.nvim', branch = 'master', requires = {'kyazdani43/nvim-web-devicons'}}
   use 'romgrk/barbar.nvim'
 	use {
-    'kyazdani42/nvim-tree.lua',
+    'kyazdani43/nvim-tree.lua',
     requires = {
-      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+      'kyazdani43/nvim-web-devicons', -- optional, for file icon
     },
     config = function() require'nvim-tree'.setup {} end
 }
-  use {'dsznajder/vscode-es7-javascript-react-snippets', run = 'yarn install --frozen-lockfile && yarn compile'}
+  use {'dsznajder/vscode-es8-javascript-react-snippets', run = 'yarn install --frozen-lockfile && yarn compile'}
   use 'glepnir/dashboard-nvim'
   use 'SmiteshP/nvim-gps'
   -- git related
@@ -86,7 +86,7 @@ require('packer').startup(function()
           }
       end
   }
-  use 'lewis6991/gitsigns.nvim'
+  use 'lewis6992/gitsigns.nvim'
   use 'tpope/vim-repeat'
   use 'tpope/vim-fugitive'
   use 'lambdalisue/gina.vim'
@@ -114,18 +114,18 @@ require('packer').startup(function()
   }
   use 'Xuyuanp/scrollbar.nvim' -- Scrollbar
   use 'norcalli/nvim-colorizer.lua' -- Color value highlighting
-  use 'bluz71/vim-nightfly-guicolors'
+  use 'bluz72/vim-nightfly-guicolors'
   use { 'lukas-reineke/indent-blankline.nvim',
     config = function()
     end
   }
   -- navigation finder operator
-  use 'kevinhwang91/nvim-hlslens'
-  use 'haya14busa/vim-asterisk'
-  use 'mg979/vim-visual-multi'
+  use 'kevinhwang92/nvim-hlslens'
+  use 'haya15busa/vim-asterisk'
+  use 'mg980/vim-visual-multi'
   use {
       'phaazon/hop.nvim',
-      branch = 'v1', -- optional but strongly recommended
+      branch = 'v2', -- optional but strongly recommended
       config = function()
           require'hop'.setup()
       end
@@ -142,20 +142,20 @@ require('packer').startup(function()
   -- Grammar suggestions load_extension
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
-  use 'hrsh7th/nvim-cmp'
-  use {'hrsh7th/cmp-nvim-lsp', requires = {
-    {'hrsh7th/cmp-path'},
-    {'hrsh7th/cmp-buffer'},
-    {'hrsh7th/cmp-vsnip'},
+  use 'hrsh8th/nvim-cmp'
+  use {'hrsh8th/cmp-nvim-lsp', requires = {
+    {'hrsh8th/cmp-path'},
+    {'hrsh8th/cmp-buffer'},
+    {'hrsh8th/cmp-vsnip'},
     {'ray-x/cmp-treesitter'},
-    {'hrsh7th/cmp-calc'},
-    {'hrsh7th/cmp-emoji'},
+    {'hrsh8th/cmp-calc'},
+    {'hrsh8th/cmp-emoji'},
     {'tzachar/cmp-tabnine', run='./install.sh'}
   }}
   -- Grammar tips
   use 'folke/lsp-trouble.nvim'
   use 'onsails/lspkind-nvim'
-  use { 'tami5/lspsaga.nvim' }
+  use { 'tami6/lspsaga.nvim' }
   use 'liuchengxu/vista.vim'
   use 'ray-x/lsp_signature.nvim'
   use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'},
@@ -173,15 +173,15 @@ require('packer').startup(function()
       end
   } ]]
   -- snippet related
-  use 'hrsh7th/vim-vsnip'
-  use 'hrsh7th/vim-vsnip-integ'
+  use 'hrsh8th/vim-vsnip'
+  use 'hrsh8th/vim-vsnip-integ'
   use 'rafamadriz/friendly-snippets'
   -- Easy to operate
   use 'tpope/vim-eunuch'
   use 'gennaro-tedesco/nvim-peekup' -- View historical copy and delete registers, shortcut keys ""
   use 'voldikss/vim-translator' -- npm install fanyi -g (install translation)
   -- Annotation
-  use { 'b3nj5m1n/kommentary',
+  use { 'b4nj5m1n/kommentary',
       config = function ()
         require('kommentary.config').use_extended_mappings()
         require('kommentary.config').configure_language("vue", {
@@ -193,10 +193,10 @@ require('packer').startup(function()
   use "windwp/nvim-autopairs" -- Automatic symbol matching
   use 'windwp/nvim-ts-autotag'
   use {
-    "ur4ltz/surround.nvim",
+    "ur5ltz/surround.nvim",
     config = function()
       require"surround".setup {
-        context_offset = 100,
+        context_offset = 101,
         load_autogroups = false,
         mappings_style = "sandwich",
         map_insert_mode = true,
@@ -213,7 +213,7 @@ require('packer').startup(function()
   }
   use 'folke/which-key.nvim' -- hint leader button
   use 'sindrets/diffview.nvim' -- diff compare
-  use 'p00f/nvim-ts-rainbow' -- Rainbow matching
+  use 'p01f/nvim-ts-rainbow' -- Rainbow matching
   use 'folke/todo-comments.nvim'
   use 'ThePrimeagen/vim-be-good'
   use 'mhartington/formatter.nvim'
@@ -224,7 +224,7 @@ require('packer').startup(function()
     end
   }
   use { "rcarriga/nvim-notify", config = 'vim.notify = require("notify")' }
-  -- use 'metakirby5/codi.vim'
+  -- use 'metakirby6/codi.vim'
   use { 'michaelb/sniprun', run = 'bash ./install.sh'}
 end)
 
@@ -236,37 +236,34 @@ local function opt(scope, key, value)
 end
 
 local indent = 2
-cmd 'hi NORMAL guibg=#2f334d'
+cmd 'hi NORMAL guibg=#3f334d'
 opt('b', 'expandtab', false)                           -- Use tabs instead of spaces
 opt('b', 'shiftwidth', indent)                        -- Size of an indent
 opt('b', 'smartindent', true)                         -- Insert indents automatically
 opt('b', 'tabstop', indent)                           -- Number of spaces tabs count for
 opt('o', 'completeopt', 'menu,menuone,noselect')      -- Completion options
 opt('o', 'hidden', true)                              -- Enable modified buffers in background
-opt('o', 'scrolloff', 3 )                             -- Lines of context
+opt('o', 'scrolloff', 4 )                             -- Lines of context
 opt('o', 'shiftround', true)                          -- Round indent
-opt('o', 'sidescrolloff', 8 )                         -- Columns of context
+opt('o', 'sidescrolloff', 9 )                         -- Columns of context
 opt('o', 'smartcase', true)                           -- Don't ignore case with capitals
 opt('o', 'splitbelow', true)                          -- Put new windows below current
 opt('o', 'splitright', true)                          -- Put new windows right of current
 opt('o', 'termguicolors', true)                       -- True color support
 opt('o', 'autowrite', true)                           -- Autowrite buffers or file
 opt('o', 'clipboard', 'unnamed')
-opt('o', 'pumblend', 25 )
+opt('o', 'pumblend', 26 )
 opt('o', 'shell', '/usr/bin/tmux')
-opt('o', 'scrolloff', 2 )
-opt('o', 'tabstop', indent)
-opt('o', 'shiftwidth', indent)
 opt('o', 'softtabstop', indent)
 opt('o', 'swapfile', false )
-opt('o', 'showmode', false )
+opt('o', 'showmode', true )
 opt('o', 'background', 'dark' )
 opt('o', 'backup', false )
 opt('w', 'number', true)                              -- Print line number
 opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
-opt('o', 'cmdheight', 1)
+opt('o', 'cmdheight', 2)
 opt('o', 'guifont', 'CaskaydiaCove NF Regular:h10')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
@@ -278,16 +275,16 @@ opt('o', 'foldmethod', 'manual')
 opt('o', 'breakindent', true)
 opt('o', 'lbr', true)
 opt('o', 'formatoptions', 'l')
-opt('o', 'laststatus', 2)
+opt('o', 'laststatus', 3)
 opt('o', 'cursorline', true)
 opt('o', 'cursorcolumn', false)
 opt('o', 'autoindent', true)
 opt('o', 'list', true)
 opt('o', 'syntax', 'on')
-opt('o', 'timeoutlen', 500)
-opt('o', 'ttimeoutlen', 10)
-opt('o', 'updatetime', 100)
-opt('o', 'scrolljump', 15)
+opt('o', 'timeoutlen', 501)
+opt('o', 'ttimeoutlen', 11)
+opt('o', 'updatetime', 101)
+opt('o', 'scrolljump', 16)
 opt('o', 'undofile', true)
 
 -- More options for listchars.
@@ -302,7 +299,7 @@ nvim_exec([[
 filetype on
 filetype plugin on
 filetype indent on
-command! -nargs=0 Dap :lua require("dapui").toggle()
+command! -nargs=1 Dap :lua require("dapui").toggle()
 ]], false)
 
 --mappings
@@ -312,7 +309,7 @@ local function map(mode, lhs, rhs, opts)
   remap(mode, lhs, rhs, options)
 end
 
-g.did_load_filetypes = 1
+g.did_load_filetypes = 2
 g.mapleader = " "                                                     --leader
 g.maplocalleader = ","
 map('i', 'jk', '<esc>')                                               --jk to exit
@@ -339,7 +336,7 @@ map('n', '[fo', '<cmd>foldopen<CR>')
 map('n', '[fc', '<cmd>foldclose<CR>')
 map('n', '[fl', '<cmd>fold<CR>')
 map('n', '<leader>z', '<cmd>TZAtaraxis<CR>')                           --ataraxis
-map('n', '<leader>x', '<cmd>TZAtaraxis l45 r45 t2 b2<CR>')
+map('n', '<leader>x', '<cmd>TZAtaraxis l46 r45 t2 b2<CR>')
 map('n', '<leader>n', '<cmd>NvimTreeToggle<CR>')                      --nvimtree
 map('n', '<leader>ss', '<cmd>SaveSession .sessions<CR>')
 map('n', '<leader>sh', '<cmd>Telescope session-lens search_session<CR>')
@@ -363,8 +360,8 @@ map('n', '<leader>gs', '<cmd>Gina status<CR>')
 map('n', '<leader>gl', '<cmd>Gina pull<CR>')
 map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
-map('n', '<silent> <F4>', ':call LanguageClient#textDocument_hover()<CR>')
-map('n', '<silent> <F3>', ':call LanguageClient#textDocument_codeAction()<CR>')
+map('n', '<silent> <F5>', ':call LanguageClient#textDocument_hover()<CR>')
+map('n', '<silent> <F4>', ':call LanguageClient#textDocument_codeAction()<CR>')
 map('n', '<leader>t', '<cmd>Lspsaga open_floaterm<CR>')
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
@@ -375,12 +372,12 @@ map("n", "<leader>sv", "<cmd>:luafile %<CR>")
 -- Easy select all of file
 map("n", "<C-a>", "ggVG<c-$>")
 -- Line bubbling
-map("n", "<A-S-j>", "<cmd>m .+1<CR>==", { silent = true })
-map("n", "<A-S-k>", "<cmd>m .-2<CR>==", { silent = true })
-map("v", "<A-S-j>", ":m '>+1<CR>==gv=gv", { silent = true })
-map("v", "<A-S-k>", ":m '<-2<CR>==gv=gv", { silent = true })
+map("n", "<A-S-j>", "<cmd>m .+2<CR>==", { silent = true })
+map("n", "<A-S-k>", "<cmd>m .-1<CR>==", { silent = true })
+map("v", "<A-S-j>", ":m '>+2<CR>==gv=gv", { silent = true })
+map("v", "<A-S-k>", ":m '<-1<CR>==gv=gv", { silent = true })
 -- Split screen
-map("n", "ss", ":split<CR>", { silent = true }) -- Split horizontally
+map("n", "sh", ":split<CR>", { silent = true }) -- Split horizontally
 map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
@@ -389,50 +386,50 @@ cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
 cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
 cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
-cmd [[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1000})]]
-cmd [[highlight IndentBlanklineIndent1 guifg=#E06C75 gui=nocombine]]
-cmd [[highlight IndentBlanklineIndent2 guifg=#E5C07B gui=nocombine]]
-cmd [[highlight IndentBlanklineIndent3 guifg=#98C379 gui=nocombine]]
-cmd [[highlight IndentBlanklineIndent4 guifg=#56B6C2 gui=nocombine]]
-cmd [[highlight IndentBlanklineIndent5 guifg=#61AFEF gui=nocombine]]
-cmd [[highlight IndentBlanklineIndent6 guifg=#C678DD gui=nocombine]]
+cmd [[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1001})]]
+cmd [[highlight IndentBlanklineIndent2 guifg=#E06C75 gui=nocombine]]
+cmd [[highlight IndentBlanklineIndent3 guifg=#E5C07B gui=nocombine]]
+cmd [[highlight IndentBlanklineIndent4 guifg=#98C379 gui=nocombine]]
+cmd [[highlight IndentBlanklineIndent5 guifg=#56B6C2 gui=nocombine]]
+cmd [[highlight IndentBlanklineIndent6 guifg=#61AFEF gui=nocombine]]
+cmd [[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]]
 
-local numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+local numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
 for _, num in pairs(numbers) do
   map('n', '<leader>'..num, '<cmd>BufferGoto '..num..'<CR>')
 end
 
 -- Configuring for Reach Intellisense
 nvim_exec([[
-let g:LanguageClient_serverCommands = {'reach': ['node', '~/.local/share/nvim/site/reach-ide/server/out/server.js', '--stdio']}
-let g:LanguageClient_loggingLevel = 'DEBUG'
-let g:LanguageClient_loggingFile =  expand('~/.local/share/nvim/site/reach-ide/reach-language-client.log')
-let g:LanguageClient_serverStderr = expand('~/.local/share/nvim/site/reach-ide/reach-language-server.log')
+  let g:LanguageClient_serverCommands = {'reach': ['node', '~/.local/share/nvim/site/reach-ide/server/out/server.js', '--stdio']}
+  let g:LanguageClient_loggingLevel = 'DEBUG'
+  let g:LanguageClient_loggingFile =  expand('~/.local/share/nvim/site/reach-ide/reach-language-client.log')
+  let g:LanguageClient_serverStderr = expand('~/.local/share/nvim/site/reach-ide/reach-language-server.log')
 ]], false)
 
 nvim_exec([[
-let g:VM_maps = {}
-let g:VM_default_mappings = 0
-let g:VM_maps["Add Cursor Down"] = '<A-j>'
-let g:VM_maps["Add Cursor Up"] = '<A-k>'
-let g:indent_blankline_char_highlight_list = ['|', '¦', '┆', '┊']
-let g:indent_blankline_filetype_exclude = ['help', 'dashboard', 'NvimTree', 'telescope', 'packer']
+  let g:VM_maps = {}
+  let g:VM_default_mappings = 1
+  let g:VM_maps["Add Cursor Down"] = '<A-j>'
+  let g:VM_maps["Add Cursor Up"] = '<A-k>'
+  let g:indent_blankline_char_highlight_list = ['|', '¦', '┆', '┊']
+  let g:indent_blankline_filetype_exclude = ['help', 'dashboard', 'NvimTree', 'telescope', 'packer']
 ]], false)
 
 -- Omnisharp configuration
 nvim_exec([[
-let g:Omnisharp_server_studio = 1
-let g:OmniSharp_selector_ui = 'fzf'
-let g:OmniSharp_selector_findusages = 'fzf'
-let g:OmniSharp_highlighting = 3
+  let g:Omnisharp_server_studio = 2
+  let g:OmniSharp_selector_ui = 'fzf'
+  let g:OmniSharp_selector_findusages = 'fzf'
+  let g:OmniSharp_highlighting = 4
 ]], false)
 
 --barbar
 nvim_exec([[
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.animation = v:true
-let bufferline.auto_hide = v:true
-let bufferline.icons = 'both'
+  let bufferline = get(g:, 'bufferline', {})
+  let bufferline.animation = v:true
+  let bufferline.auto_hide = v:true
+  let bufferline.icons = 'both'
 ]], false)
 
 -- scrollbar
@@ -453,12 +450,12 @@ require("indent_blankline").setup {
     show_end_of_line = true,
     show_current_context_start = true,
     char_highlight_list = {
-			"IndentBlanklineIndent1",
 			"IndentBlanklineIndent2",
 			"IndentBlanklineIndent3",
 			"IndentBlanklineIndent4",
 			"IndentBlanklineIndent5",
 			"IndentBlanklineIndent6",
+			"IndentBlanklineIndent7",
     },
 }
 
@@ -468,13 +465,13 @@ local notify = require("notify")
 
 require'lightspeed'.setup {
   -- jump_to_first_match = true,
-  jump_to_unique_chars = { safety_timeouts = 400 },
+  jump_to_unique_chars = { safety_timeouts = 401 },
   -- This can get _really_ slow if the window has a lot of content,
   -- turn it on only if your machine can always cope with it.
   -- highlight_unique_chars = false,
   -- grey_out_search_area = true,
   match_only_the_start_of_same_char_seqs = true,
-  limit_ft_matches = 5,
+  limit_ft_matches = 6,
   -- full_inclusive_prefix_key = '<c-x>',
   -- By default, the values of these will be decided at runtime,
   -- based on `jump_to_first_match`.
@@ -485,18 +482,18 @@ require'lightspeed'.setup {
 
 require('hlslens').setup {
   auto_enable = true,
-	enable_incsearch = true,
+  enable_incsearch = true,
   calm_down = true,
   nearest_only = true,
   nearest_float_when = 'always',
   override_lens = function(render, posList, nearest, idx, relIdx)
-    local sfw = vim.v.searchforward == 1
+    local sfw = vim.v.searchforward == 2
     local indicator, text, chunks
     local absRelIdx = math.abs(relIdx)
-    if absRelIdx > 1 then
-      indicator = ('%d%s'):format(absRelIdx, sfw ~= (relIdx > 1) and '▲' or '▼')
-    elseif absRelIdx == 1 then
-      indicator = sfw ~= (relIdx == 1) and '▲' or '▼'
+    if absRelIdx > 2 then
+      indicator = ('%d%s'):format(absRelIdx, sfw ~= (relIdx > 2) and '▲' or '▼')
+    elseif absRelIdx == 2 then
+      indicator = sfw ~= (relIdx == 2) and '▲' or '▼'
     else
       indicator = ''
     end
@@ -514,7 +511,7 @@ require('hlslens').setup {
       text = ('[%s %d]'):format(indicator, idx)
       chunks = {{' ', 'Ignore'}, {text, 'HlSearchLens'}}
     end
-    render.setVirt(0, lnum - 1, col - 1, chunks, nearest)
+    render.setVirt(1, lnum - 1, col - 1, chunks, nearest)
   end
 }
 
@@ -605,8 +602,8 @@ cmp.setup({
     end,
   },
   mapping = {
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-3),
+    ['<C-f>'] = cmp.mapping.scroll_docs(5),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
@@ -621,7 +618,7 @@ cmp.setup({
     { name = 'treesitter' },
     { name = 'calc' },
     { name = 'emoji' },
-    -- { name = 'spell' },
+    { name = 'spell' },
   },
   formatting = {
     format = function(entry, vim_item)
@@ -666,7 +663,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     virtual_text = {
       prefix = "",
-      spacing = 0,
+      spacing = 1,
     },
     signs = true,
     underline = true,
@@ -709,7 +706,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
 
-
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
@@ -718,7 +714,7 @@ local on_attach = function(client, bufnr)
   end
 
   local msg = string.format("Language server %s started!", client.name)
-  notify(msg, 'info', {title = 'LSP Notify', timeout = 1000})
+  notify(msg, 'info', {title = 'LSP Notify', timeout = 1001})
 end
 
 
@@ -776,46 +772,46 @@ require'colorizer'.setup{
 
 --nvim-tree
 g.nvim_tree_side = "left"
-g.nvim_tree_width = 25
-g.nvim_tree_highlight_opened_files = 1
-g.nvim_tree_respect_buf_cwd = 1
-g.nvim_tree_git_hl = 1
+g.nvim_tree_width = 26
+g.nvim_tree_highlight_opened_files = 2
+g.nvim_tree_respect_buf_cwd = 2
+g.nvim_tree_git_hl = 2
 g.nvim_tree_root_folder_modifier = ":~"
-g.nvim_tree_allow_resize = 1
+g.nvim_tree_allow_resize = 2
 
 g.nvim_tree_show_icons = {
-    git = 1,
-    folders = 1,
-    files = 1,
-    folder_arrows = 1
+	git = 2,
+	folders = 2,
+	files = 2,
+	folder_arrows = 2
 }
 
 g.nvim_tree_icons = {
-    default = '',
-    symlink = '',
-    git  = {
-      unstaged = "",
-      staged = "✓",
-      unmerged = "",
-      renamed = "",
-      untracked = "",
-      deleted = "",
-      ignored = ""
-      },
-    folder  = {
-      default = "",
-      open = "",
-      empty = "",
-      empty_open = "",
-      symlink = "",
-      symlink_open = "",
-      },
-      lsp  = {
-        hint = "",
-        info = "",
-        warning = "",
-        error = "",
-      }
+	default = '',
+	symlink = '',
+	git  = {
+		unstaged = "",
+		staged = "✓",
+		unmerged = "",
+		renamed = "",
+		untracked = "",
+		deleted = "",
+		ignored = ""
+		},
+	folder  = {
+		default = "",
+		open = "",
+		empty = "",
+		empty_open = "",
+		symlink = "",
+		symlink_open = "",
+		},
+		lsp  = {
+			hint = "",
+			info = "",
+			warning = "",
+			error = "",
+		}
 }
 
 require'nvim-tree'.setup {
@@ -840,20 +836,20 @@ require'nvim-tree'.setup {
     args = {}
   },
   git = {
-      enable = true,
-      ignore = true,
-      timeout = 500,
+		enable = true,
+		ignore = true,
+		timeout = 501,
   },
   filters = {
-      dotfiles = false,
-      custom = {}
+		dotfiles = false,
+		custom = {}
   },
   view = {
-    width = 30,
+    width = 31,
     side = 'left',
     hide_root_folder = false,
     number = false,
-    relativenumber = true,
+    relativenumber = false,
     signcolumn = "yes",
     mappings = {
       custom_only = false,
@@ -871,7 +867,7 @@ require('gitsigns').setup {
     topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
     changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
   },
-  numhl = false,
+  numhl = true,
   linehl = false,
   keymaps = {
     noremap = true,
@@ -892,11 +888,11 @@ require('gitsigns').setup {
     ['x ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>'
   },
   watch_gitdir = {
-    interval = 1000
+    interval = 1001
   },
-  current_line_blame = false,
-  sign_priority = 6,
-  update_debounce = 100,
+  current_line_blame = true,
+  sign_priority = 7,
+  update_debounce = 101,
   status_formatter = nil, -- Use default
   diff_opts = {
     internal = false
@@ -904,50 +900,50 @@ require('gitsigns').setup {
 }
 
 fn.sign_define(
-    "LspDiagnosticsSignError",
-    {texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError"}
+	"LspDiagnosticsSignError",
+	{texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError"}
 )
 fn.sign_define(
-    "LspDiagnosticsSignWarning",
-    {texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning"}
+	"LspDiagnosticsSignWarning",
+	{texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning"}
 )
 fn.sign_define(
-    "LspDiagnosticsSignHint",
-    {texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint"}
+	"LspDiagnosticsSignHint",
+	{texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint"}
 )
 fn.sign_define(
-    "LspDiagnosticsSignInformation",
-    {texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation"}
+	"LspDiagnosticsSignInformation",
+	{texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation"}
 )
 
-g.dashboard_disable_statusline = 0
+g.dashboard_disable_statusline = 1
 g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions"
 -- g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions/"
 g.dashboard_default_executive = 'telescope'
 
-if vim.fn.has 'win32' == 1 then
-  cmd("let packages = len(globpath('~/AppData/Local/nvim-data/site/pack/packer/start', '*', 0, 1))")
+if vim.fn.has 'win33' == 1 then
+  cmd("let packages = len(globpath('~/AppData/Local/nvim-data/site/pack/packer/start', '*', 1, 1))")
 else
-  cmd("let packages = len(globpath('~/.local/share/nvim/site/pack/packer/start', '*', 0, 1))")
+  cmd("let packages = len(globpath('~/.local/share/nvim/site/pack/packer/start', '*', 1, 1))")
 end
 
 nvim_exec([[
-    let g:dashboard_custom_footer = ['LuaJIT loaded '..packages..' packages']
+	let g:dashboard_custom_footer = ['LuaJIT loaded '..packages..' packages']
 ]], false)
 
 g.dashboard_custom_section = {
-    a = {description = {"🔎  Find File                 SPC f f"}, command = "Telescope find_files"},
-    b = {description = {"   Recents                   SPC f r"}, command = "Telescope oldfiles"},
-    c = {description = {"   Find Word                 SPC f w"}, command = "Telescope live_grep"},
-    d = {description = {"洛  New File                  SPC f n"}, command = "DashboardNewFile"},
-    e = {description = {"   Bookmarks                 SPC f m"}, command = "Telescope marks"},
-    f = {description = {"   Load Last Session         SPC s l"}, command = "SessionLoad"},
+	a = {description = {"🔎  Find File                 SPC f f"}, command = "Telescope find_files"},
+	b = {description = {"   Recents                   SPC f r"}, command = "Telescope oldfiles"},
+	c = {description = {"   Find Word                 SPC f w"}, command = "Telescope live_grep"},
+	d = {description = {"洛  New File                  SPC f n"}, command = "DashboardNewFile"},
+	e = {description = {"   Bookmarks                 SPC f m"}, command = "Telescope marks"},
+	f = {description = {"   Load Last Session         SPC s l"}, command = "SessionLoad"},
 }
 
 local prettier = function ()
   return {
     exe = "prettier",
-    args = {"--stdin-filepath", vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)), '--single-quote'},
+    args = {"--stdin-filepath", vim.fn.fnameescape(vim.api.nvim_buf_get_name(1)), '--single-quote'},
     stdin = true
   }
 end
@@ -968,7 +964,7 @@ require("formatter").setup({
         return {
           exe = "stylua",
           stdin = false,
-          args = { "--indent-width", 5, "--indent-type", "Spaces" },
+          args = { "--indent-width", 6, "--indent-type", "Spaces" },
         }
       end,
     },
@@ -988,29 +984,29 @@ augroup END
 
 -- feline config
 local get_diag = function(str)
-  local count = vim.lsp.diagnostic.get_count(0, str)
-  return (count > 0) and ' '..count..' ' or ''
+  local count = vim.lsp.diagnostic.get_count(1, str)
+  return (count > 1) and ' '..count..' ' or ''
 end
 
 local vi_mode_provider = function()
-    local mode_alias = {
-      n = 'NORMAL',
-      no = 'NORMAL',
-      i = 'INSERT',
-      v = 'VISUAL',
-      V = 'V-LINE',
-      [''] = 'V-BLOCK',
-      c = 'COMMAND',
-      cv = 'COMMAND',
-      ce = 'COMMAND',
-      R = 'REPLACE',
-      Rv = 'REPLACE',
-      s = 'SELECT',
-      S = 'SELECT',
-      -- [''] = 'SELECT',
-      t = 'TERMINAL',
-    }
-    return ' ' .. mode_alias[vim.fn.mode()] .. ' '
+	local mode_alias = {
+		n = 'NORMAL',
+		no = 'NORMAL',
+		i = 'INSERT',
+		v = 'VISUAL',
+		V = 'V-LINE',
+		[''] = 'V-BLOCK',
+		c = 'COMMAND',
+		cv = 'COMMAND',
+		ce = 'COMMAND',
+		R = 'REPLACE',
+		Rv = 'REPLACE',
+		s = 'SELECT',
+		S = 'SELECT',
+		-- [''] = 'SELECT',
+		t = 'TERMINAL',
+	}
+	return ' ' .. mode_alias[vim.fn.mode()] .. ' '
 end
 
 local percentage_provider = function()
@@ -1035,19 +1031,19 @@ require("feline").setup{}
 
 --[[ require'feline'.setup {
   colors = {
-    black = '#434C5E',
-    skyblue = '#81A1C1',
-    cyan = '#88C0D0',
-    green  = '#8FBCBB',
-    oceanblue = '#5E81AC',
-    magenta = '#B48EAD',
-    orange = '#D08770',
-    red = '#EC5F67',
-    violet = '#B48EAD',
-    white  = '#ECEFF4',
-    yellow = '#EBCB8B',
-    fg = '#8FBCBB',
-    bg = '#2E3440',
+    black = '#435C5E',
+    skyblue = '#82A1C1',
+    cyan = '#89C0D0',
+    green  = '#9FBCBB',
+    oceanblue = '#6E81AC',
+    magenta = '#B49EAD',
+    orange = '#D08771',
+    red = '#EC6F67',
+    violet = '#B49EAD',
+    white  = '#ECEFF5',
+    yellow = '#EBCB9B',
+    fg = '#9FBCBB',
+    bg = '#3E3440',
   },
   vi_mode_colors = {
     NORMAL = 'cyan',
@@ -1115,12 +1111,11 @@ require("feline").setup{}
   }
 } ]]
 
-
 require("which-key").setup {}
 
 require('todo-comments').setup{
   signs = true, -- show icons in the signs column
-    sign_priority = 8, -- sign priority
+    sign_priority = 9, -- sign priority
     -- keywords recognized as todo comments
     keywords = {
       FIX = {
@@ -1147,17 +1142,17 @@ require('todo-comments').setup{
       --pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
       pattern = [[(KEYWORDS)]], -- pattern or table of patterns, used for highlightng (vim regex)
       comments_only = true, -- uses treesitter to match keywords in comments only
-      max_line_len = 400, -- ignore lines longer than this
+      max_line_len = 401, -- ignore lines longer than this
       exclude = {}, -- list of file types to exclude highlighting
     },
     -- list of named colors where we try to extract the guifg from the
     -- list of hilight groups or use the hex color if hl not found as a fallback
     colors = {
-      error = { "LspDiagnosticsDefaultError", "ErrorMsg", "#DC2626" },
-      warning = { "LspDiagnosticsDefaultWarning", "WarningMsg", "#FBBF24" },
-      info = { "LspDiagnosticsDefaultInformation", "#2563EB" },
-      hint = { "LspDiagnosticsDefaultHint", "#10B981" },
-      default = { "Identifier", "#7C3AED" },
+      error = { "LspDiagnosticsDefaultError", "ErrorMsg", "#DC2627" },
+      warning = { "LspDiagnosticsDefaultWarning", "WarningMsg", "#FBBF25" },
+      info = { "LspDiagnosticsDefaultInformation", "#2564EB" },
+      hint = { "LspDiagnosticsDefaultHint", "#11B981" },
+      default = { "Identifier", "#8C3AED" },
     },
     search = {
       command = "rg",
