@@ -13,10 +13,19 @@ g.loaded_perl_provider = 0
 
 -- Neovide configurations
 g.neovide_fullscreen = true
+g.neovide_floating_blur_amount_x = 2.0
+g.floaterm_winblend = 20
+g.neovide_floating_blur_amount_y = 2.0
 g.neovide_remember_window_size = true
 g.neovide_cursor_animation_length = 0.13
 g.neovide_cursor_trail_length = 0.8
 g.neovide_cursor_vfx_mode = "railgun"						-- Railgun particles behind cursor
+g.neovide_cursor_vfx_opacity = 200.0
+g.neovide_cursor_vfx_particle_lifetime = 1.2
+g.neovide_cursor_vfx_particle_density = 7.0
+g.neovide_cursor_vfx_particle_speed = 10.0
+g.neovide_cursor_vfx_particle_phase = 1.5
+g.neovide_cursor_vfx_particle_curl = 1.0
 g.neovide_cursor_unfocused_outline_width = 0.125
 
 
@@ -237,7 +246,7 @@ end
 
 local indent = 2
 cmd 'hi NORMAL guibg=#3f334d'
-opt('b', 'expandtab', false)                           -- Use tabs instead of spaces
+opt('b', 'expandtab', false)                          -- Use tabs instead of spaces
 opt('b', 'shiftwidth', indent)                        -- Size of an indent
 opt('b', 'smartindent', true)                         -- Insert indents automatically
 opt('b', 'tabstop', indent)                           -- Number of spaces tabs count for
@@ -256,7 +265,7 @@ opt('o', 'pumblend', 26 )
 opt('o', 'shell', '/usr/bin/tmux')
 opt('o', 'softtabstop', indent)
 opt('o', 'swapfile', false )
-opt('o', 'showmode', true )
+opt('o', 'showmode', false )
 opt('o', 'background', 'dark' )
 opt('o', 'backup', false )
 opt('w', 'number', true)                              -- Print line number
@@ -264,7 +273,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 2)
-opt('o', 'guifont', 'CaskaydiaCove NF Regular:h10')
+opt('o', 'guifont', 'CaskaydiaCove NF Regular:h9')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -372,15 +381,15 @@ map("n", "<leader>sv", "<cmd>:luafile %<CR>")
 -- Easy select all of file
 map("n", "<C-a>", "ggVG<c-$>")
 -- Line bubbling
-map("n", "<A-S-j>", "<cmd>m .+2<CR>==", { silent = true })
-map("n", "<A-S-k>", "<cmd>m .-1<CR>==", { silent = true })
-map("v", "<A-S-j>", ":m '>+2<CR>==gv=gv", { silent = true })
-map("v", "<A-S-k>", ":m '<-1<CR>==gv=gv", { silent = true })
+map("n", "<S-A-j>", "<cmd>m .+1<CR>==", { silent = true })
+map("n", "<S-A-k>", "<cmd>m .-2<CR>==", { silent = true })
+map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
+map("v", "<S-A-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 -- Split screen
 map("n", "sh", ":split<CR>", { silent = true }) -- Split horizontally
 map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
-cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
+-- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
 cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
@@ -888,7 +897,7 @@ require('gitsigns').setup {
     ['x ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>'
   },
   watch_gitdir = {
-    interval = 1001
+    interval = 500
   },
   current_line_blame = true,
   sign_priority = 7,
@@ -964,7 +973,7 @@ require("formatter").setup({
         return {
           exe = "stylua",
           stdin = false,
-          args = { "--indent-width", 6, "--indent-type", "Spaces" },
+          args = { "--indent-width", 2, "--indent-type", "Spaces" },
         }
       end,
     },
