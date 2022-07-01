@@ -311,6 +311,9 @@ opt('o', 'ttimeoutlen', 11)
 opt('o', 'updatetime', 101)
 opt('o', 'scrolljump', 16)
 opt('o', 'undofile', true)
+opt('o', 't_ZH', 'e[3m') -- Italic support
+opt('o', 't_ZR', 'e[23m') -- Italic support
+
 
 -- More options for listchars.
 -- vim.opt.listchars:append("space:⋅")
