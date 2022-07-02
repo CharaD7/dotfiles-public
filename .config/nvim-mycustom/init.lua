@@ -64,8 +64,10 @@ require('packer').startup(function()
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
 	use { "SmiteshP/nvim-navic", requires = "neovim/nvim-lspconfig" }
-  use { 'romgrk/barbar.nvim', requires = {'kyazdani42/nvim-web-devicons'} }
   use 'ryanoasis/vim-devicons' -- optional, for file icon
+	use 'github/copilot.vim' -- for vim copilot
+  -- using packer.nvim
+  use {'akinsho/bufferline.nvim', tag = "v2.*", requires = 'kyazdani42/nvim-web-devicons'}
 	use {
     'kyazdani42/nvim-tree.lua',
     requires = {
@@ -382,8 +384,8 @@ map('n', '<c-j>', '<cmd>wincmd j<CR>')
 map('n', '<c-h>', '<cmd>wincmd h<CR>')
 map('n', '<c-l>', '<cmd>wincmd l<CR>')
 map('n', '<c-s>', '<cmd>w!<CR>')
-map('n', '<c-x>', '<cmd>BufferClose<CR>')
-map('n', '<leader>b', '<cmd>BufferPick<CR>')
+map('n', '<c-x>', '<cmd>bdelete<CR>')
+map('n', '<leader>b', '<cmd>BufferLinePick<CR>')
 map('n', '<leader>bj', '<cmd>bprevious<CR>')
 map('n', '<leader>bn', '<cmd>bnext<CR>')
 map('n', '<leader>be', '<cmd>tabedit<CR>')
@@ -429,7 +431,7 @@ cmd [[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]]
 
 local numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
 for _, num in pairs(numbers) do
-  map('n', '<leader>'..num, '<cmd>BufferGoto '..num..'<CR>')
+  map('n', '<leader>'..num, '<cmd>BufferLineGoToBuffer '..num..'<CR>')
 end
 
 -- Configuring for Reach Intellisense
@@ -457,62 +459,114 @@ nvim_exec([[
   let g:OmniSharp_highlighting = 4
 ]], false)
 
---barbar
-require("bufferline").setup {
-  -- Enable/disable animations
-  animation = true,
 
-  -- Enable/disable auto-hiding the tab bar when there is a single buffer
-  auto_hide = false,
+require('bufferline').setup {
+  options = {
+    mode = "buffers", -- set to "tabs" to only show tabpages instead
+		numbers = function(opts)
+				return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
+			end,
+    close_command = "bdelete! %d",       -- can be a string | function, see "Mouse actions"
+    right_mouse_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
+    left_mouse_command = "buffer %d",    -- can be a string | function, see "Mouse actions"
+    middle_mouse_command = nil,          -- can be a string | function, see "Mouse actions"
+    -- NOTE: this plugin is designed with this icon in mind,
+    -- and so changing this is NOT recommended, this is intended
+    -- as an escape hatch for people who cannot bear it for whatever reason
+    indicator_icon = '▎',
+    buffer_close_icon = '',
+    modified_icon = '●',
+    close_icon = '',
+    left_trunc_marker = '',
+    right_trunc_marker = '',
+    --- name_formatter can be used to change the buffer's label in the bufferline.
+    --- Please note some names can/will break the
+    --- bufferline so use this at your discretion knowing that it has
+    --- some limitations that will *NOT* be fixed.
+    name_formatter = function(buf)  -- buf contains a "name", "path" and "bufnr"
+      -- remove extension from markdown files for example
+      if buf.name:match('%.md') then
+        return vim.fn.fnamemodify(buf.name, ':t:r')
+      end
+    end,
+    max_name_length = 18,
+    max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
+    tab_size = 18,
+    diagnostics = "nvim_lsp",
+    diagnostics_update_in_insert = false,
+		diagnostics_indicator = function(count, level, diagnostics_dict, context)
+			local s = " "
+			for e, n in pairs(diagnostics_dict) do
+				local sym = e == "error" and "  "
+					or (e == "warning" and "  " or "  " )
+				s = s .. n .. sym
+			end
+			return s
+		end,
+    -- NOTE: this will be called a lot so don't do any heavy processing here
+    custom_filter = function(buf_number, buf_numbers)
+      -- filter out filetypes you don't want to see
+      if vim.bo[buf_number].filetype ~= "<i-dont-want-to-see-this>" then
+        return true
+      end
+      -- filter out by buffer name
+      if vim.fn.bufname(buf_number) ~= "<buffer-name-I-dont-want>" then
+        return true
+      end
+      -- filter out based on arbitrary rules
+      -- e.g. filter out vim wiki buffer from tabline in your work repo
+      if vim.fn.getcwd() == "<work-repo>" and vim.bo[buf_number].filetype ~= "wiki" then
+        return true
+      end
+      -- filter out by it's index number in list (don't show first buffer)
+      if buf_numbers[1] ~= buf_number then
+        return true
+      end
+    end,
+    offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "left" }},
+    color_icons = true, -- whether or not to add the filetype icon highlights
+    show_buffer_icons = true, -- disable filetype icons for buffers
+    show_buffer_close_icons = true,
+    show_buffer_default_icon = true, -- whether or not an unrecognised filetype should show a default icon
+    show_close_icon = true,
+    show_tab_indicators = true,
+    persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
+    -- can also be a table containing 2 custom separators
+    -- [focused and unfocused]. eg: { '|', '|' }
+    separator_style = "thin",
+    enforce_regular_tabs = false,
+    always_show_bufferline = true,
+    sort_by = 'insert_after_current',
+    custom_areas = {
+      right = function()
+        local result = {}
+        local seve = vim.diagnostic.severity
+        local error = #vim.diagnostic.get(0, {severity = seve.ERROR})
+        local warning = #vim.diagnostic.get(0, {severity = seve.WARN})
+        local info = #vim.diagnostic.get(0, {severity = seve.INFO})
+        local hint = #vim.diagnostic.get(0, {severity = seve.HINT})
 
-  -- Enable/disable current/total tabpages indicator (top right corner)
-  tabpages = true,
+        if error ~= 0 then
+          table.insert(result, {text = "  " .. error, guifg = "#EC5241"})
+        end
 
-  -- Enable/disable close button
-  closable = true,
+        if warning ~= 0 then
+          table.insert(result, {text = "  " .. warning, guifg = "#EFB839"})
+        end
 
-  -- Enables/disable clickable tabs
-  --  - left-click: go to buffer
-  --  - middle-click: delete buffer
-  clickable = true,
+        if hint ~= 0 then
+          table.insert(result, {text = "  " .. hint, guifg = "#A3BA5E"})
+        end
 
-  -- Excludes buffers from the tabline
-  -- exclude_ft = {'javascript'},
-  -- exclude_name = {'package.json'},
-
-  -- Enable/disable icons
-  -- if set to 'numbers', will show buffer index in the tabline
-  -- if set to 'both', will show buffer index and icons in the tabline
-  icons = true,
-
-  -- If set, the icon color will follow its corresponding buffer
-  -- highlight group. By default, the Buffer*Icon group is linked to the
-  -- Buffer* group (see Highlighting below). Otherwise, it will take its
-  -- default value as defined by devicons.
-  icon_custom_colors = false,
-
-  -- Configure icons on the bufferline.
-  icon_separator_active = '▎',
-  icon_separator_inactive = '▎',
-  icon_close_tab = '',
-  icon_close_tab_modified = '●',
-  icon_pinned = '車',
-
-  -- If true, new buffers will be inserted at the start/end of the list.
-  -- Default is to insert after current buffer.
-  insert_at_end = false,
-  insert_at_start = false,
-
-  -- Sets the maximum padding width with which to surround each tab
-  maximum_padding = 1,
-
-  -- Sets the maximum buffer name length.
-  maximum_length = 30,
-
-  -- Sets the name of unnamed buffers. By default format is "[Buffer X]"
-  -- where X is the buffer number. But only a static string is accepted here.
-  no_name_title = nil,
+        if info ~= 0 then
+          table.insert(result, {text = "  " .. info, guifg = "#7EA9A7"})
+        end
+        return result
+      end,
+    }
+  }
 }
+
 
 -- focus screen-autoresizer
 require("focus").setup({hybridnumber = true})
