@@ -383,6 +383,7 @@ map('n', '<c-l>', '<cmd>wincmd l<CR>')
 map('n', '<c-s>', '<cmd>w!<CR>')
 map('n', '<c-x>', '<cmd>bdelete<CR>')
 map('n', '<leader>b', '<cmd>BufferLinePick<CR>')
+map('n', '<leader>bp', '<cmd>BufferLineTogglePin<CR>')
 map('n', '<leader>bj', '<cmd>bprevious<CR>')
 map('n', '<leader>bn', '<cmd>bnext<CR>')
 map('n', '<leader>be', '<cmd>tabedit<CR>')
@@ -539,7 +540,7 @@ require('bufferline').setup {
     persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
     -- can also be a table containing 2 custom separators
     -- [focused and unfocused]. eg: { '|', '|' }
-    separator_style = "thin",
+    separator_style = "thin", -- 'slant' | 'thin' | 'thick'
     enforce_regular_tabs = false,
     always_show_bufferline = true,
     sort_by = 'insert_at_end', -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
