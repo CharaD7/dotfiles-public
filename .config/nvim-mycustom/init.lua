@@ -81,17 +81,17 @@ require('packer').startup(function()
   -- git related
   use 'sainnhe/everforest'
   use {
-      'rmagatti/auto-session',
-      config = function()
-          require('auto-session').setup {
-              log_level = 'info',
-              auto_session_enable_last_session = false,
-              auto_session_enabled = false,
-              auto_save_enabled = true,
-              auto_restore_enabled = false,
-              auto_session_suppress_dirs = nil,
-          }
-      end
+		'rmagatti/auto-session',
+		config = function()
+			require('auto-session').setup {
+				log_level = 'info',
+				auto_session_enable_last_session = false,
+				auto_session_enabled = false,
+				auto_save_enabled = true,
+				auto_restore_enabled = false,
+				auto_session_suppress_dirs = nil,
+			}
+		end
   }
   use {
       'rmagatti/session-lens',
@@ -178,7 +178,12 @@ require('packer').startup(function()
   use 'onsails/lspkind-nvim'
   use 'liuchengxu/vista.vim'
   use 'ray-x/lsp_signature.nvim'
-  use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'},
+  use {
+    'ray-x/navigator.lua',
+    requires = {
+      {'ray-x/guihua.lua', run = 'cd lua/fzy && make'},
+      {'neovim/nvim-lspconfig'},
+    },
     config = function()
       require'navigator'.setup()
     end
@@ -201,15 +206,7 @@ require('packer').startup(function()
   use 'gennaro-tedesco/nvim-peekup' -- View historical copy and delete registers, shortcut keys ""
   use 'voldikss/vim-translator' -- npm install fanyi -g (install translation)
   -- Annotation
-  use { 'b3nj5m1n/kommentary',
-      config = function ()
-        require('kommentary.config').use_extended_mappings()
-        require('kommentary.config').configure_language("vue", "javascript", {
-            single_line_comment_string = "//",
-            multi_line_comment_strings = {"/*", "*/"},
-        })
-      end
-  }
+  use 'b3nj5m1n/kommentary'
   use "windwp/nvim-autopairs" -- Automatic symbol matching
   use 'windwp/nvim-ts-autotag'
   use {
@@ -308,9 +305,9 @@ opt('o', 'cursorcolumn', false)
 opt('o', 'autoindent', true)
 opt('o', 'list', true)
 opt('o', 'syntax', 'on')
-opt('o', 'timeoutlen', 501)
+opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 11)
-opt('o', 'updatetime', 101)
+opt('o', 'updatetime', 100)
 opt('o', 'scrolljump', 16)
 opt('o', 'undofile', true)
 opt('o', 't_ZH', 'e[3m') -- Italic support
@@ -459,12 +456,20 @@ nvim_exec([[
   let g:OmniSharp_highlighting = 4
 ]], false)
 
+-- Lspsaga smart buffer scrolling
+nvim_exec([[
+  nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
+  nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
+]], false)
+
+require('kommentary.config').use_extended_mappings()
 
 require('bufferline').setup {
   options = {
     mode = "buffers", -- set to "tabs" to only show tabpages instead
 		numbers = function(opts)
-				return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
+				return string.format('%s', opts.ordinal)
+				-- return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
 			end,
     close_command = "bdelete! %d",       -- can be a string | function, see "Mouse actions"
     right_mouse_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
@@ -519,7 +524,8 @@ require('bufferline').setup {
         return true
       end
       -- filter out by it's index number in list (don't show first buffer)
-      if buf_numbers[1] ~= buf_number then
+      -- if buf_numbers[1] ~= buf_number then
+      if buf_numbers[0] ~= buf_number then
         return true
       end
     end,
@@ -536,7 +542,7 @@ require('bufferline').setup {
     separator_style = "thin",
     enforce_regular_tabs = false,
     always_show_bufferline = true,
-    sort_by = 'insert_after_current',
+    sort_by = 'insert_at_end', -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
     custom_areas = {
       right = function()
         local result = {}
@@ -567,6 +573,11 @@ require('bufferline').setup {
   }
 }
 
+require('guihua.maps').setup({
+maps = {
+  close_view = 'q',
+}
+})
 
 -- focus screen-autoresizer
 require("focus").setup({hybridnumber = true})
@@ -838,14 +849,14 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.opeb_float()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>fm', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
   buf_set_keymap('n', '[f', '<cmd>Lspsaga lsp_finder<CR>', opts)
   buf_set_keymap('n', '[a', '<cmd>Lspsaga code_action<CR>', opts)
-  buf_set_keymap('x', '[a', '<cmd>Lspsaga range_code_action<CR>', opts)
+  buf_set_keymap('v', '[a', '<cmd>Lspsaga range_code_action<CR>', opts)
   buf_set_keymap('n', '[o', '<cmd>Lspsaga hover_doc<CR>', opts)
   buf_set_keymap('n', '[s', '<cmd>Lspsaga signature_help<CR>', opts)
   buf_set_keymap('n', '[n', '<cmd>Lspsaga rename<CR>', opts)
@@ -853,6 +864,9 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[l', '<cmd>Lspsaga show_line_diagnostics<CR>', opts)
   buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+  -- scroll down hover doc or scroll in definition preview
+  -- buf_set_keymap('n', '<c-f>', '<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>', opts)
+  -- buf_set_keymap('n', '<c-b>', '<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>', opts)
 
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
@@ -1257,6 +1271,8 @@ require('gitsigns').setup {
   },
   numhl = true,
   linehl = false,
+	signcolumn = true,
+	word_diff = false,
   keymaps = {
     noremap = true,
     buffer = true,
@@ -1270,17 +1286,38 @@ require('gitsigns').setup {
     ['n <leader>hR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
     ['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
     ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
+    ['n <leader>hd'] = '<cmd>lua require"gitsigns".diffthis()<CR>',
 
     -- Text objects
     ['o ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>',
     ['x ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>'
   },
   watch_gitdir = {
-    interval = 500
+    interval = 500,
+		follow_files = true
   },
+	attach_to_untracked = true,
   current_line_blame = true,
-  sign_priority = 7,
-  update_debounce = 101,
+	current_line_blame_opts = {
+		virt_text = true,
+		virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right-align'
+		delay = 500,
+		ignore_whitespace = false
+	},
+	current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+  sign_priority = 6,
+  update_debounce = 100,
+	preview_config = {
+		-- Options passed to nvim_open_win
+		border = 'single',
+		style = 'minimal',
+		relative = 'cursor',
+		row = 0,
+		col = 1
+	},
+	yadm = {
+		enable = false
+	},
   status_formatter = nil, -- Use default
   diff_opts = {
     internal = false
