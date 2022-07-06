@@ -468,7 +468,7 @@ require('bufferline').setup {
   options = {
     mode = "buffers", -- set to "tabs" to only show tabpages instead
 		numbers = function(opts)
-				return string.format('%s', opts.ordinal)
+				return string.format('%s', opts.raise(opts.ordinal))
 				-- return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
 			end,
     close_command = "bdelete! %d",       -- can be a string | function, see "Mouse actions"
