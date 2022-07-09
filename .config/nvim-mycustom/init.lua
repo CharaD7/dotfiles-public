@@ -40,8 +40,6 @@ if g.nvui then
   cmd [[NvuiCmdCenterYPos 1.3]]
 end
 
--- nvim_exec([[set guifont=VictorMono\ NF:h21]], false)
--- nvim_exec([[set guifont=CaskaydiaCove\ NF:h13]], false)
 -- Install packer
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 1 then
@@ -103,7 +101,7 @@ require('packer').startup(function()
           }
       end
   }
-  use 'lewis6991/gitsigns.nvim'
+  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
   use 'tpope/vim-repeat'
   use 'tpope/vim-fugitive'
   use 'lambdalisue/gina.vim'
@@ -315,8 +313,8 @@ opt('o', 't_ZR', 'e[23m') -- Italic support
 
 
 -- More options for listchars.
--- vim.opt.listchars:append("space:⋅")
--- vim.opt.listchars:append("eol:↴")
+vim.opt.listchars:append("space:⋅")
+vim.opt.listchars:append("eol:↴")
 
 --set shortmess
 vim.o.shortmess = vim.o.shortmess .. "c"
@@ -346,6 +344,7 @@ map('n', 'j', 'gj')                                                    --move by
 map('n', 'k', 'gk')
 map('n', 'q', '<cmd>q<CR>')
 map('n', 'Q', '<cmd>qa<CR>')
+map('n', '<leader>js', '<cmd>set filetype=javascript<CR>')                              --easymotion/hop
 map('n', '<leader>hw', '<cmd>HopWord<CR>')                              --easymotion/hop
 map('n', '<leader>hl', '<cmd>HopLine<CR>')
 map('n', '<leader>/', '<cmd>HopPattern<CR>')
@@ -530,7 +529,7 @@ require('bufferline').setup {
         return true
       end
     end,
-    offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "left" }},
+    offsets = {{filetype = "NvimTree", text = "File Explorer", text_align = "left" }}, -- this allows for splits not to have bufferlines in them
     color_icons = true, -- whether or not to add the filetype icon highlights
     show_buffer_icons = true, -- disable filetype icons for buffers
     show_buffer_close_icons = true,
@@ -1274,25 +1273,6 @@ require('gitsigns').setup {
   linehl = false,
 	signcolumn = true,
 	word_diff = false,
-  keymaps = {
-    noremap = true,
-    buffer = true,
-
-    ['n ]c'] = { expr = true, "&diff ? ']c' : '<cmd>lua require\"gitsigns\".next_hunk()<CR>'"},
-    ['n [c'] = { expr = true, "&diff ? '[c' : '<cmd>lua require\"gitsigns\".prev_hunk()<CR>'"},
-
-    ['n <leader>hs'] = '<cmd>lua require"gitsigns".stage_hunk()<CR>',
-    ['n <leader>hu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
-    ['n <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
-    ['n <leader>hR'] = '<cmd>lua require"gitsigns".reset_buffer()<CR>',
-    ['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
-    ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
-    ['n <leader>hd'] = '<cmd>lua require"gitsigns".diffthis()<CR>',
-
-    -- Text objects
-    ['o ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>',
-    ['x ih'] = ':<C-U>lua require"gitsigns".select_hunk()<CR>'
-  },
   watch_gitdir = {
     interval = 500,
 		follow_files = true
@@ -1320,9 +1300,48 @@ require('gitsigns').setup {
 		enable = false
 	},
   status_formatter = nil, -- Use default
+  max_file_length = 40000,
   diff_opts = {
     internal = false
-  }
+  },
+  on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    -- Actions
+    map({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
+    map({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
+    map('n', '<leader>hS', gs.stage_buffer)
+    map('n', '<leader>hu', gs.undo_stage_hunk)
+    map('n', '<leader>hR', gs.reset_buffer)
+    map('n', '<leader>hp', gs.preview_hunk)
+    map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+    map('n', '<leader>tb', gs.toggle_current_line_blame)
+    map('n', '<leader>hd', gs.diffthis)
+    map('n', '<leader>hD', function() gs.diffthis('~') end)
+    map('n', '<leader>td', gs.toggle_deleted)
+
+    -- Text object
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
 }
 
 fn.sign_define(
@@ -1374,6 +1393,9 @@ local prettier = function ()
   }
 end
 
+-- Utilities for creating configurations
+local util = require "formatter.util"
+
 require("formatter").setup({
   logging = false,
   filetype = {
@@ -1389,8 +1411,14 @@ require("formatter").setup({
       function()
         return {
           exe = "stylua",
-          stdin = false,
-          args = { "--indent-width", 2, "--indent-type", "Spaces" },
+          stdin = true,
+          args = {
+						"--search-parent-directories",
+						"--stdin-filepath",
+						util.escape_path(util.get_current_buffer_file_path()),
+						"--",
+						"-",
+					},
         }
       end,
     },
@@ -1402,7 +1430,7 @@ nvim_exec(
   [[
 augroup FormatAutogroup
   autocmd!
-  autocmd BufWritePost *.js,*.json,*.ts,*.css,*.scss,*.md,*.html,*.lua : FormatWrite
+  autocmd BufWritePost *.js,*.json,*.ts,*.rsh,*.mjs,*.tsx,*.jsx,*.css,*.scss,*.md,*.html,*.lua : FormatWrite
 augroup END
 ]],
   true
