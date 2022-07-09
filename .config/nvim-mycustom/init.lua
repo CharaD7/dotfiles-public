@@ -652,7 +652,7 @@ require('hlslens').setup {
       indicator = ''
     end
 
-    local lnum, col = unpack(posList[idx])
+    local lnum, col = table.unpack(posList[idx])
     if nearest then
       local cnt = #posList
       if indicator ~= '' then
