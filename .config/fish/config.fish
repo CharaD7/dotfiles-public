@@ -33,8 +33,8 @@ alias llt "exa --long --header --all --git --classify --accessed --modified --cr
 alias g git
 command -qv nvim &&
 # alias vim nvim
-alias fishprofile='nvim ~/.config/fish/config.fish'
-alias nvimprofile='nvim ~/.config/nvim/init.lua'
+alias fishprofile='neovide ~/.config/fish/config.fish'
+alias nvimprofile='neovide ~/.config/nvim/init.lua'
 alias restart='source ~/.config/fish/config.fish'
 alias lvim-gui='~/.local/bin/lvim-gui'
 alias reach='~/reach/reach'
