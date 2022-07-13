@@ -161,7 +161,9 @@ require('packer').startup(function()
   use 'williamboman/nvim-lsp-installer'
   use 'nvim-telescope/telescope-media-files.nvim'
   use {"ellisonleao/glow.nvim", branch = 'main'}
+  use 'xiyaowong/nvim-transparent'
   use 'hrsh7th/nvim-cmp'
+  use { 'ycm-core/YouCompleteMe', run = 'python3 install.py --all' }
   use {'hrsh7th/cmp-nvim-lsp', requires = {
     {'hrsh7th/cmp-path'},
     {'hrsh7th/cmp-buffer'},
@@ -464,6 +466,23 @@ nvim_exec([[
 
 require('kommentary.config').use_extended_mappings()
 
+-- Allowing transparent neovim
+require("transparent").setup({
+  enable = true, -- boolean: enable transparent
+  extra_groups = { -- table/string: additional groups that should be cleared
+    -- In particular, when you set it to 'all', that means all available groups
+
+    -- example of akinsho/nvim-bufferline.lua
+    "BufferLineTabClose",
+    "BufferlineBufferSelected",
+    "BufferLineFill",
+    "BufferLineBackground",
+    "BufferLineSeparator",
+    "BufferLineIndicatorSelected",
+  },
+  exclude = {}, -- table: groups you don't want to clear
+})
+
 require('bufferline').setup {
   options = {
     mode = "buffers", -- set to "tabs" to only show tabpages instead
@@ -652,7 +671,7 @@ require('hlslens').setup {
       indicator = ''
     end
 
-    local lnum, col = table.unpack(posList[idx])
+    local lnum, col = unpack(posList[idx])
     if nearest then
       local cnt = #posList
       if indicator ~= '' then
