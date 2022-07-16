@@ -17,6 +17,7 @@ g.neovide_floating_blur_amount_x = 2.0
 g.floaterm_winblend = 20
 g.neovide_floating_blur_amount_y = 2.0
 g.neovide_remember_window_size = true
+-- g.neovide_transparency = 0.8
 g.neovide_cursor_animation_length = 0.13
 g.neovide_cursor_trail_length = 0.8
 g.neovide_cursor_vfx_mode = "railgun"						-- Railgun particles behind cursor
@@ -219,7 +220,7 @@ require('packer').startup(function()
         map_insert_mode = true,
         quotes = {"'", '"'},
         brackets = {"(", '{', '['},
-        space_on_closing_char = false,
+        space_on_closing_char = true,
         pairs = {
           nestable = { b = { "(", ")" }, s = { "[", "]" }, B = { "{", "}" }, a = { "<", ">" } },
           linear = { q = { "'", "'" }, t = { "`", "`" }, d = { '"', '"' } },
@@ -411,8 +412,8 @@ map("n", "<S-A-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<S-A-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 -- Split screen
-map("n", "sh", ":split<CR>", { silent = true }) -- Split horizontally
-map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
+-- map("n", "sh", ":split<CR>", { silent = true }) -- Split horizontally
+-- map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 -- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]]                             --remove trailing whitespaces
@@ -468,7 +469,7 @@ require('kommentary.config').use_extended_mappings()
 
 -- Allowing transparent neovim
 require("transparent").setup({
-  enable = true, -- boolean: enable transparent
+  enable = false, -- boolean: enable transparent
   extra_groups = { -- table/string: additional groups that should be cleared
     -- In particular, when you set it to 'all', that means all available groups
 
@@ -571,7 +572,8 @@ require('bufferline').setup {
         local info = #vim.diagnostic.get(0, {severity = seve.INFO})
         local hint = #vim.diagnostic.get(0, {severity = seve.HINT})
 
-        if error ~= 0 then
+        -- Was commented to have a clear bufferline background when transparent mode is active.
+        --[[ if error ~= 0 then
           table.insert(result, {text = "  " .. error, guifg = "#EC5241"})
         end
 
@@ -586,7 +588,7 @@ require('bufferline').setup {
         if info ~= 0 then
           table.insert(result, {text = "  " .. info, guifg = "#7EA9A7"})
         end
-        return result
+        return result ]]
       end,
     }
   }
@@ -632,7 +634,9 @@ require("indent_blankline").setup {
 cmd 'colorscheme nightfly'
 
 local notify = require("notify")
-
+notify.setup({
+  background_colour = "#000000",
+})
 
 
 -- lightspeed config
