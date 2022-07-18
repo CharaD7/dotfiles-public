@@ -62,6 +62,7 @@ require('packer').startup(function()
   use 'folke/tokyonight.nvim'
   use 'nathom/filetype.nvim'
   use 'mhinz/vim-signify'
+  use 'MunifTanjim/prettier.nvim'
 	use { "SmiteshP/nvim-navic", requires = "neovim/nvim-lspconfig" }
   use 'ryanoasis/vim-devicons' -- optional, for file icon
 	use 'github/copilot.vim' -- for vim copilot
@@ -164,7 +165,6 @@ require('packer').startup(function()
   use {"ellisonleao/glow.nvim", branch = 'main'}
   use 'xiyaowong/nvim-transparent'
   use 'hrsh7th/nvim-cmp'
-  use { 'ycm-core/YouCompleteMe', run = 'python3 install.py --all' }
   use {'hrsh7th/cmp-nvim-lsp', requires = {
     {'hrsh7th/cmp-path'},
     {'hrsh7th/cmp-buffer'},
@@ -241,7 +241,6 @@ require('packer').startup(function()
   use 'p00f/nvim-ts-rainbow' -- Rainbow matching
   use 'folke/todo-comments.nvim'
   use 'ThePrimeagen/vim-be-good'
-  use 'mhartington/formatter.nvim'
   use {
     'NTBBloodbath/rest.nvim',
     config = function()
@@ -289,7 +288,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 2)
-opt('o', 'guifont', 'CaskaydiaCove NF:h10.5')
+opt('o', 'guifont', 'CaskaydiaCove NF:h10.8')
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -769,7 +768,6 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
-local lspkind = require('lspkind')
 local cmp = require('cmp')
 
 cmp.setup({
@@ -919,11 +917,11 @@ local function setup_servers()
   local opts = {
     on_attach = on_attach,
     capabilities = capabilities,
-	init_options = {
-		onlyAnalyzeProjectsWithOpenFiles = true,
-		sugggestFromUnimportedLibraries = false,
-		closingLabels = true,
-	}
+    init_options = {
+      onlyAnalyzeProjectsWithOpenFiles = true,
+      sugggestFromUnimportedLibraries = false,
+      closingLabels = true,
+    }
  }
   lsp_installer.on_server_ready(function(server)
       server:setup(opts)
@@ -954,7 +952,7 @@ require('lspkind').init({
     -- defines how annotations are shown
     -- default: symbol
     -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
-    mode = 'symbol_text',
+    mode = 'symbol',
 
     -- default symbol map
     -- can be either 'default' (requires nerd-fonts font) or
@@ -996,7 +994,6 @@ require('lspkind').init({
 })
 require'diffview'.setup{}
 require('nvim-autopairs').setup({})
-
 
 -- Eviline config for lualine
 -- Author: shadmansaleh
@@ -1187,7 +1184,7 @@ ins_right {
 ins_right {
   'fileformat',
   fmt = string.upper,
-  icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
+  icons_enabled = true, -- I think icons are cool but Eviline doesn't have them. sigh
   color = { fg = colors.green, gui = 'bold' },
 }
 
@@ -1274,7 +1271,7 @@ require'nvim-tree'.setup {
     side = 'left',
     hide_root_folder = false,
     number = false,
-    relativenumber = false,
+    relativenumber = true,
     signcolumn = "yes",
     mappings = {
       custom_only = false,
@@ -1386,7 +1383,6 @@ fn.sign_define(
 
 g.dashboard_disable_statusline = 1
 g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions"
--- g.dashboard_session_directory = vim.fn.stdpath('data').."/sessions/"
 g.dashboard_default_executive = 'telescope'
 
 if vim.fn.has 'win33' == 1 then
@@ -1408,52 +1404,52 @@ g.dashboard_custom_section = {
 	f = {description = {"   Load Last Session         SPC s l"}, command = "SessionLoad"},
 }
 
-local prettier = function ()
-  return {
-    exe = "prettier",
-    args = {"--stdin-filepath", vim.fn.fnameescape(vim.api.nvim_buf_get_name(1)), '--single-quote'},
-    stdin = true
-  }
-end
-
--- Utilities for creating configurations
-local util = require "formatter.util"
-
-require("formatter").setup({
-  logging = false,
-  filetype = {
-    javascript = { prettier },
-    json = { prettier },
-    typescript = { prettier },
-    html = { prettier },
-    css = { prettier },
-    scss = { prettier },
-    markdown = { prettier },
-    lua = {
-      -- Stylua
-      function()
-        return {
-          exe = "stylua",
-          stdin = true,
-          args = {
-						"--search-parent-directories",
-						"--stdin-filepath",
-						util.escape_path(util.get_current_buffer_file_path()),
-						"--",
-						"-",
-					},
-        }
-      end,
-    },
+local prettier = require('prettier')
+prettier.setup({
+  bin = 'prettier', -- or `prettierd`
+  filetypes = {
+    "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "less",
+    "markdown",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+    "lua",
+    "rust",
   },
+
+  -- prettier format options (you can use config files too. ex: `.prettierrc`)
+  arrow_parens = "always",
+  bracket_spacing = true,
+  embedded_language_formatting = "auto",
+  end_of_line = "lf",
+  html_whitespace_sensitivity = "css",
+  jsx_bracket_same_line = false,
+  jsx_single_quote = true,
+  print_width = 80,
+  prose_wrap = "preserve",
+  quote_props = "as-needed",
+  semi = true,
+  single_quote = true,
+  tab_width = 2,
+  trailing_comma = "es5",
+  use_tabs = false,
+  vue_indent_script_and_style = false,
 })
 
--- Runs Formatter on save
+-- Runs Prettier on save
+  -- autocmd BufWritePost *.js,*.json,*.ts,*.rsh,*.mjs,*.tsx,*.jsx,*.css,*.scss,*.md,*.html,*.lua : FormatWrite
 nvim_exec(
   [[
-augroup FormatAutogroup
+augroup PrettierAutogroup
   autocmd!
-  autocmd BufWritePost *.js,*.json,*.ts,*.rsh,*.mjs,*.tsx,*.jsx,*.css,*.scss,*.md,*.html,*.lua : FormatWrite
+  autocmd BufWritePost * Prettier
 augroup END
 ]],
   true
