@@ -12,7 +12,7 @@ g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
 -- Neovide configurations
-g.neovide_fullscreen = true
+g.neovide_fullscreen = false
 g.neovide_floating_blur_amount_x = 2.0
 g.floaterm_winblend = 20
 g.neovide_floating_blur_amount_y = 2.0
@@ -175,6 +175,7 @@ require('packer').startup(function()
 		{ 'hrsh7th/cmp-emoji' },
 		{ 'tzachar/cmp-tabnine', run = './install.sh' }
 	} }
+	use 'xiyaowong/telescope-emoji.nvim' -- allow looking up and using emojies inside out files
 	-- Grammar tips
 	use 'folke/lsp-trouble.nvim'
 	use 'onsails/lspkind-nvim'
@@ -355,6 +356,7 @@ map('n', '<leader>fa', '<cmd>Telescope git_commits<CR>') -- git commits
 map('n', '<leader>fg', '<cmd>Telescope git_bcommits<CR>') -- lists buffer's git commits with diff preview and checks them out on <cr>
 map('n', '<leader>ft', '<cmd>Telescope git_status<CR>') -- lists current changes per file with diff preview and add action.
 map('n', '<leader>fl', '<cmd>Telescope git_branches<CR>') -- lists all branches with log preview, checkout action <cr>, track action <C-t> and rebase action <C-r>
+map('n', '<leader>fh', '<cmd>Telescope git_stash<CR>') -- lists stash items in current repository with ability to apply them on <cr>
 map('n', '<leader>fr', '<cmd>Telescope oldfiles<CR>') --fuzzy
 map('n', '<leader>ff', '<cmd>Telescope find_files<CR>')
 map('n', '<leader>fb', '<cmd>Telescope buffers<CR>')
@@ -362,6 +364,7 @@ map('n', '<leader>fw', '<cmd>Telescope live_grep<CR>')
 map('n', '<leader>fs', '<cmd>Telescope treesitter<CR>')
 map('n', '<leader>fc', '<cmd>Telescope commands<CR>')
 map('n', '<leader>fm', '<cmd>Telescope marks<CR>')
+map('n', '<leader>fe', '<cmd>Telescope emoji<CR>')
 map('n', '[fo', '<cmd>foldopen<CR>')
 map('n', '[fc', '<cmd>foldclose<CR>')
 map('n', '[fl', '<cmd>fold<CR>')
@@ -419,7 +422,8 @@ map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 -- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]] --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
-cmd [[autocmd BufReadPost *.rsh set filetype=reach]]
+cmd [[autocmd BufRead *.rsh set filetype=reach]]
+cmd [[autocmd BufRead * ColorizerAttachToBuffer]] -- Attach colorizer to all buffers
 cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
 cmd [[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1001})]]
@@ -467,6 +471,8 @@ nvim_exec([[
 ]], false)
 
 require('kommentary.config').use_extended_mappings()
+
+require("telescope").load_extension("emoji")
 
 -- Allowing transparent neovim
 require("transparent").setup({
