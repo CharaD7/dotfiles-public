@@ -191,16 +191,13 @@ require('packer').startup(function()
 			require 'navigator'.setup()
 		end
 	}
+	use 'mtth/scratch.vim' -- For taking notes (Uses 'gs' to invoke command)
 	use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' }
 	use 'tami5/lspsaga.nvim'
 	use 'kosayoda/nvim-lightbulb'
 	--[[ use { 'jose-elias-alvarez/nvim-lsp-ts-utils', requires = { 'jose-elias-alvarez/null-ls.nvim' },
       config = function ()
-        require("null-ls").config {}
-        require("lspconfig")["null-ls"].setup {}
-      end
-  } ]]
-	-- snippet related
+        require("null-ls").config {} require("lspconfig")["null-ls"].setup {} end } ]] -- snippet related use 'hrsh7th/vim-vsnip'
 	use 'hrsh7th/vim-vsnip'
 	use 'hrsh7th/vim-vsnip-integ'
 	use 'rafamadriz/friendly-snippets'
@@ -243,6 +240,11 @@ require('packer').startup(function()
 	use 'p00f/nvim-ts-rainbow' -- Rainbow matching
 	use 'folke/todo-comments.nvim'
 	use 'ThePrimeagen/vim-be-good'
+	-- Give me some glepnir beauty in there
+	use({
+		'glepnir/zephyr-nvim',
+		requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
+	})
 	use {
 		'NTBBloodbath/rest.nvim',
 		config = function()
@@ -262,7 +264,6 @@ local function opt(scope, key, value)
 end
 
 local indent = 2
-cmd 'hi NORMAL guibg=#3f334d'
 opt('b', 'expandtab', false) -- Use tabs instead of spaces
 opt('b', 'shiftwidth', indent) -- Size of an indent
 opt('b', 'smartindent', true) -- Insert indents automatically
@@ -275,14 +276,12 @@ opt('o', 'sidescrolloff', 9) -- Columns of context
 opt('o', 'smartcase', true) -- Don't ignore case with capitals
 opt('o', 'splitbelow', true) -- Put new windows below current
 opt('o', 'splitright', true) -- Put new windows right of current
-opt('o', 'termguicolors', true) -- True color support
 opt('o', 'autowrite', true) -- Autowrite buffers or file
 opt('o', 'clipboard', 'unnamed')
 opt('o', 'pumblend', 26)
 opt('o', 'shell', '/usr/bin/tmux')
 opt('o', 'softtabstop', indent)
 opt('o', 'swapfile', false)
-opt('o', 'showmode', false)
 opt('o', 'background', 'dark')
 opt('o', 'backup', false)
 opt('w', 'number', true) -- Print line number
@@ -290,7 +289,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 2)
-opt('o', 'guifont', 'CaskaydiaCove NF:h10.8')
+opt('o', 'guifont', 'Fira Code iScript:h10.8') -- Download this font package and install from https://github.com/kencrocken/FiraCodeiScript
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -306,14 +305,13 @@ opt('o', 'cursorline', true)
 opt('o', 'cursorcolumn', false)
 opt('o', 'autoindent', true)
 opt('o', 'list', true)
-opt('o', 'syntax', 'on')
 opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 11)
 opt('o', 'updatetime', 100)
 opt('o', 'scrolljump', 16)
 opt('o', 'undofile', true)
-opt('o', 't_ZH', 'e[3m') -- Italic support
-opt('o', 't_ZR', 'e[23m') -- Italic support
+--[[ opt('o', 't_ZH', 'e[3m') -- Italic support
+opt('o', 't_ZR', 'e[23m') -- Italic support ]]
 
 
 -- More options for listchars.
@@ -422,9 +420,12 @@ map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 -- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 cmd [[autocmd BufWritePre * %s/\s\+$//e]] --remove trailing whitespaces
 cmd [[autocmd BufWritePre * %s/\n\+\%$//e]]
-cmd [[autocmd BufRead *.rsh set filetype=reach]]
 cmd [[autocmd BufRead * ColorizerAttachToBuffer]] -- Attach colorizer to all buffers
-cmd [[autocmd Filetype reach set syntax=javascript]]
+cmd [[autocmd BufRead *.rsh set filetype=reach]]
+-- Open in last edit place
+cmd [[ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif ]]
+-- cmd [[autocmd Filetype reach set syntax=javascript]]
+cmd [[autocmd BufRead *.rsh set syntax=javascript]]
 cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
 cmd [[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1001})]]
 cmd [[highlight IndentBlanklineIndent2 guifg=#E06C75 gui=nocombine]]
@@ -433,6 +434,21 @@ cmd [[highlight IndentBlanklineIndent4 guifg=#98C379 gui=nocombine]]
 cmd [[highlight IndentBlanklineIndent5 guifg=#56B6C2 gui=nocombine]]
 cmd [[highlight IndentBlanklineIndent6 guifg=#61AFEF gui=nocombine]]
 cmd [[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]]
+
+-- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
+cmd [[autocmd ColorScheme zephyr highlight Keyword gui=italic cterm=italic]] -- set for all Keywords
+cmd [[autocmd ColorScheme zephyr highlight Comment gui=italic cterm=italic]] -- set for all Comments
+-- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+-- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
+cmd [[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]] -- set for all Exception
+cmd [[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]] -- set for all Type
+cmd [[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]] -- set for all Label
+cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
+cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
+cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
+cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
+cmd [[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]] -- set for all Special things n a comment
+cmd [[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]] -- set for all generic PreProcessors
 
 local numbers = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "13", "14", "15", "16", "17", "18", "19", "20" }
 for _, num in pairs(numbers) do
@@ -475,7 +491,7 @@ require('kommentary.config').use_extended_mappings()
 require("telescope").load_extension("emoji")
 
 -- Allowing transparent neovim
-require("transparent").setup({
+--[[ require("transparent").setup({
 	enable = false, -- boolean: enable transparent
 	extra_groups = { -- table/string: additional groups that should be cleared
 		-- In particular, when you set it to 'all', that means all available groups
@@ -489,7 +505,7 @@ require("transparent").setup({
 		"BufferLineIndicatorSelected",
 	},
 	exclude = {}, -- table: groups you don't want to clear
-})
+}) ]]
 
 require('bufferline').setup {
 	options = {
@@ -638,7 +654,11 @@ require("indent_blankline").setup {
 }
 
 --theme
-cmd 'colorscheme nightfly'
+cmd 'colorscheme zephyr'
+-- Get zephyr color
+require('zephyr')
+-- local zephyr =  require('zephyr').zephyr.yellow/teal/fg/bg
+-- cmd 'colorscheme nightfly'
 
 local notify = require("notify")
 notify.setup({
@@ -843,6 +863,16 @@ saga.init_lsp_saga({
 	infor_sign = "",
 	warn_sign = "",
 })
+
+-- Lspsaga timed hover
+local show_timed_hover = function()
+	vim.fn.timer_start(500, '<cmd>Lspsaga hover_doc<CR>')
+end
+
+nvim_exec([[
+	autocmd CursorHoldI * :call <SID>show_timed_hover()
+	autocmd CursorHold * :call <SID>show_timed_hover()
+]], false)
 
 -- Signature help
 require('lsp_signature').on_attach()
