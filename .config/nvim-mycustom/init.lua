@@ -29,11 +29,20 @@ g.neovide_cursor_vfx_particle_phase = 1.5
 g.neovide_cursor_vfx_particle_curl = 1.0
 g.neovide_cursor_unfocused_outline_width = 0.125
 
+-- bracey configurations
+g.bracey_server_allow_remote_connections = 0
+g.bracey_auto_start_server = 1
+g.bracey_eval_on_save = 1
+g.bracey_refresh_on_save = 1
+g.bracey_auto_start_browser = 1
+
 -- glow configuration
 g.glow_border = "rounded"
 g.glow_width = 120
 g.glow_use_pager = true
 g.glow_style = "dark"
+
+-- in millisecond, used for both CursorHold and CursorHoldI,
 
 -- https://github.com/rohit-px3/nvui
 -- nvui --ext_multigrid --ext_popupmenu --ext_cmdline --titlebar --detached
@@ -59,7 +68,8 @@ require('packer').startup(function()
 	use 'omnisharp/omnisharp-vim'
 	use 'sheerun/vim-polyglot' -- This is to help with razor files
 	use 'nvim-lua/plenary.nvim'
-	use 'folke/tokyonight.nvim'
+	use 'turbio/bracey.vim' --	For live serving HTML and JavaScript documents
+	-- use 'folke/tokyonight.nvim'
 	use 'nathom/filetype.nvim'
 	use 'mhinz/vim-signify'
 	use 'MunifTanjim/prettier.nvim'
@@ -77,7 +87,8 @@ require('packer').startup(function()
 		tag = 'nightly',
 		config = function() require 'nvim-tree'.setup {} end
 	}
-	use { 'dsznajder/vscode-es7-javascript-react-snippets', run = 'yarn install --frozen-lockfile && yarn compile' }
+	use { 'dsznajder/vscode-es7-javascript-react-snippets', run = 'yarn install && yarn compile' }
+	use 'vscode-langservers/vscode-css-languageserver-bin'
 	use 'glepnir/dashboard-nvim'
 	-- git related
 	use 'sainnhe/everforest'
@@ -181,6 +192,7 @@ require('packer').startup(function()
 	use 'onsails/lspkind-nvim'
 	use 'liuchengxu/vista.vim'
 	use 'ray-x/lsp_signature.nvim'
+	use 'pantharshit00/vim-prisma' -- prisma support
 	use {
 		'ray-x/navigator.lua',
 		requires = {
@@ -191,9 +203,14 @@ require('packer').startup(function()
 			require 'navigator'.setup()
 		end
 	}
+	use 'antoinemadec/FixCursorHold.nvim' -- Fix neovim's CursorHold issues
 	use 'mtth/scratch.vim' -- For taking notes (Uses 'gs' to invoke command)
-	use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' }
-	use 'tami5/lspsaga.nvim'
+	use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu', config=function ()
+		require 'nvim-code-action'.setup()
+	end }
+	use { 'glepnir/lspsaga.nvim', branch = 'main' }
+	-- use 'frabjouv/knap' -- For live serving Markdown, Latex, PDF and HTML files
+	-- use 'tami5/lspsaga.nvim'
 	use 'kosayoda/nvim-lightbulb'
 	--[[ use { 'jose-elias-alvarez/nvim-lsp-ts-utils', requires = { 'jose-elias-alvarez/null-ls.nvim' },
       config = function ()
@@ -289,7 +306,7 @@ opt('o', 'lazyredraw', true)
 opt('o', 'signcolumn', 'yes')
 opt('o', 'mouse', 'a')
 opt('o', 'cmdheight', 2)
-opt('o', 'guifont', 'Fira Code iScript:h10.8') -- Download this font package and install from https://github.com/kencrocken/FiraCodeiScript
+opt('o', 'guifont', 'Fira Code iScript:h10.6') -- Download this font package and install from https://github.com/kencrocken/FiraCodeiScript
 opt('o', 'wrap', false)
 opt('o', 'relativenumber', true)
 opt('o', 'hlsearch', true)
@@ -307,11 +324,14 @@ opt('o', 'autoindent', true)
 opt('o', 'list', true)
 opt('o', 'timeoutlen', 500)
 opt('o', 'ttimeoutlen', 11)
-opt('o', 'updatetime', 100)
+opt('o', 'updatetime', 300)
 opt('o', 'scrolljump', 16)
 opt('o', 'undofile', true)
 --[[ opt('o', 't_ZH', 'e[3m') -- Italic support
 opt('o', 't_ZR', 'e[23m') -- Italic support ]]
+
+-- Fix CursorHold issue with the below updatetime
+g.cursorhold_updatetime = 300
 
 
 -- More options for listchars.
@@ -323,9 +343,6 @@ vim.o.shortmess = vim.o.shortmess .. "c"
 vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 
 nvim_exec([[
-filetype on
-filetype plugin on
-filetype indent on
 command! -nargs=1 Dap :lua require("dapui").toggle()
 ]], false)
 
@@ -366,13 +383,11 @@ map('n', '<leader>fe', '<cmd>Telescope emoji<CR>')
 map('n', '[fo', '<cmd>foldopen<CR>')
 map('n', '[fc', '<cmd>foldclose<CR>')
 map('n', '[fl', '<cmd>fold<CR>')
-map('n', '<leader>g', ':Glow<CR>')
+map('n', '<c-g>', ':Glow<CR>')
 map('n', '<leader>h', ':FocusSplitLeft<CR>', { silent = true })
 map('n', '<leader>j', ':FocusSplitDown<CR>', { silent = true })
 map('n', '<leader>k', ':FocusSplitUp<CR>', { silent = true })
 map('n', '<leader>l', ':FocusSplitRight<CR>', { silent = true })
-map('n', '<leader>z', '<cmd>TZAtaraxis<CR>') --ataraxis
-map('n', '<leader>x', '<cmd>TZAtaraxis l46 r45 t2 b2<CR>')
 map('n', '<leader>n', '<cmd>NvimTreeToggle<CR>') --nvimtree
 map('n', '<leader>ss', '<cmd>SaveSession .sessions<CR>')
 map('n', '<leader>sh', '<cmd>Telescope session-lens search_session<CR>')
@@ -399,7 +414,9 @@ map('n', '<leader>gu', '<cmd>Gina push<CR>')
 map('n', '<leader>tq', '<cmd>TroubleToggle<CR>')
 map('n', '<silent> <F5>', ':call LanguageClient#textDocument_hover()<CR>')
 map('n', '<silent> <F4>', ':call LanguageClient#textDocument_codeAction()<CR>')
-map('n', '<leader>t', '<cmd>Lspsaga open_floaterm<CR>')
+map('n', '<silent> <F6>', ':Bracey<CR>', { silent = true })
+map('n', '<silent> <F7>', ':BraceyStop<CR>', { silent = true })
+map('n', '<silent> <F8>', ':BraceyRelaod<CR>', { silent = true })
 --After searching, pressing escape stops the highlight
 map("n", "<esc>", ":noh<cr><esc>", { silent = true })
 -- Open nvimrc file
@@ -424,6 +441,10 @@ cmd [[autocmd BufRead * ColorizerAttachToBuffer]] -- Attach colorizer to all buf
 cmd [[autocmd BufRead *.rsh set filetype=reach]]
 -- Open in last edit place
 cmd [[ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif ]]
+
+-- Live compile sass files
+cmd [[autocmd bufwritepost [^_]*.sass,[^_]*.scss  silent exec "!sass %:p %:r.css"]]
+
 -- cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd [[autocmd BufRead *.rsh set syntax=javascript]]
 cmd [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
@@ -438,8 +459,8 @@ cmd [[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]]
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
 cmd [[autocmd ColorScheme zephyr highlight Keyword gui=italic cterm=italic]] -- set for all Keywords
 cmd [[autocmd ColorScheme zephyr highlight Comment gui=italic cterm=italic]] -- set for all Comments
--- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
--- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
+cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd [[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]] -- set for all Exception
 cmd [[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]] -- set for all Type
 cmd [[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]] -- set for all Label
@@ -478,12 +499,6 @@ nvim_exec([[
   let g:OmniSharp_selector_ui = 'fzf'
   let g:OmniSharp_selector_findusages = 'fzf'
   let g:OmniSharp_highlighting = 4
-]], false)
-
--- Lspsaga smart buffer scrolling
-nvim_exec([[
-  nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
-  nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
 ]], false)
 
 require('kommentary.config').use_extended_mappings()
@@ -661,9 +676,9 @@ require('zephyr')
 -- cmd 'colorscheme nightfly'
 
 local notify = require("notify")
-notify.setup({
+--[[ notify.setup({
 	background_colour = "#000000",
-})
+}) ]]
 
 
 -- lightspeed config
@@ -810,7 +825,7 @@ cmp.setup({
 	},
 	mapping = {
 		['<C-d>'] = cmp.mapping.scroll_docs(-3),
-		['<C-f>'] = cmp.mapping.scroll_docs(5),
+		['<C-t>'] = cmp.mapping.scroll_docs(5),
 		['<C-Space>'] = cmp.mapping.complete(),
 		['<C-e>'] = cmp.mapping.close(),
 		['<CR>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
@@ -839,7 +854,7 @@ cmp.setup({
 				calc = "   [Calc]",
 				spell = "   [Spell]",
 				emoji = " ﲃ  [Emoji]",
-				cmp_tabnine = "⦿ [Tn]",
+				cmp_tabnine = "⦿   [Tn]",
 			})[entry.source.name]
 			return vim_item
 		end
@@ -852,27 +867,89 @@ cmp.setup({
 -- Lspsaga
 local saga = require("lspsaga")
 saga.init_lsp_saga({
-	use_saga_diagnostic_sign = true,
-	code_action_icon = "",
-	definition_preview_icon = "",
-	diagnostic_header_icon = "",
-	finder_definition_icon = "",
-	finder_reference_icon = "",
-	error_sign = "",
-	hint_sign = "⚡",
-	infor_sign = "",
-	warn_sign = "",
+	-- "single" | "double" | "rounded" | "bold" | "plus"
+	border_style = "single",
+	--the range of 0 for fully opaque window (disabled) to 100 for fully
+	--transparent background. Values between 0-30 are typically most useful.
+	saga_winblend = 0,
+	-- when cursor in saga window you config these to move
+	move_in_saga = { prev = '<C-p>', next = '<C-n>' },
+	-- Error, Warn, Info, Hint
+	-- use emoji like
+	-- { "🙀", "😿", "😾", "😺" }
+	-- or
+	-- { "😡", "😥", "😤", "😐" }
+	-- and diagnostic_header can be a function type
+	-- must return a string and when diagnostic_header
+	-- is function type it will have a param `entry`
+	-- entry is a table type has these filed
+	-- { bufnr, code, col, end_col, end_lnum, lnum, message, severity, source }
+	diagnostic_header = { " ", " ", " ", "ﴞ " },
+	-- show diagnostic source
+	show_diagnostic_source = true,
+	-- add bracket or something with diagnostic source, just have 2 elements
+	diagnostic_source_bracket = {},
+	-- preview lines of lsp_finder and definition preview
+	max_preview_lines = 10,
+	-- use emoji lightbulb in default
+	code_action_icon = "💡",
+	-- if true can press number to execute the codeaction in codeaction window
+	code_action_num_shortcut = true,
+	-- same as nvim-lightbulb but async
+	code_action_lightbulb = {
+		enable = true,
+		sign = true,
+		enable_in_insert = true,
+		sign_priority = 20,
+		virtual_text = true,
+	},
+	code_action_keys = {
+		quit = "q",
+		exec = "<CR>",
+	},
+	rename_action_quit = "<C-c>",
+	rename_in_select = true,
+	definition_preview_icon = "  ",
+	-- show symbols in winbar must nightly
+	symbol_in_winbar = {
+		in_custom = false,
+		enable = false,
+		separator = ' ',
+		show_file = true,
+		click_support = false,
+	},
+	-- show outline
+	show_outline = {
+		win_position = 'right',
+		--set special filetype win that outline window split.like NvimTree neotree
+		-- defx, db_ui
+		win_with = '',
+		win_width = 30,
+		auto_enter = true,
+		auto_preview = true,
+		virt_text = '┃',
+		jump_key = 'o',
+		-- auto refresh when change buffer
+		auto_refresh = true,
+	},
+	-- if you don't use nvim-lspconfig you must pass your server name and
+	-- the related filetypes into this table
+	-- like server_filetype_map = { metals = { "sbt", "scala" } }
+	server_filetype_map = {},
 })
 
 -- Lspsaga timed hover
-local show_timed_hover = function()
-	vim.fn.timer_start(500, '<cmd>Lspsaga hover_doc<CR>')
-end
+--[[ local show_timed_hover = function()
+	vim.fn.timer_start(100, '<cmd>Lspsaga hover_doc<CR>')
+end ]]
 
-nvim_exec([[
-	autocmd CursorHoldI * :call <SID>show_timed_hover()
-	autocmd CursorHold * :call <SID>show_timed_hover()
-]], false)
+-- Tried yet another approach
+-- vim.lsp.buf.CursorHold('<cmd>Lspsaga hover_doc<CR>', 500)
+
+-- cmd[[autocmd CursorHold * lua require('lspsaga.hover').render_hover_doc()]]
+-- cmd[[autocmd CursorHoldI * lua require('lspsaga.hover').render_hover_doc()]]
+-- cmd[[ autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false }) ]] -- This didn't work either
+
 
 -- Signature help
 require('lsp_signature').on_attach()
@@ -885,62 +962,120 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 	},
 	signs = true,
 	underline = true,
+	update_in_insert = true,
 }
 )
 
-local on_attach = function(client, bufnr)
-	local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-	local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+local on_attach = function(client)
 
 	-- Mappings.
 	local opts = { noremap = true, silent = true }
 
 	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-	buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-	buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-	buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-	buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-	buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-	buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-	buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-	buf_set_keymap('n', 'gy', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-	buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-	buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-	buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-	buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-	buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-	buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-	buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-	buf_set_keymap('n', '<space>fm', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-	buf_set_keymap('n', '[f', '<cmd>Lspsaga lsp_finder<CR>', opts)
-	buf_set_keymap('n', '[a', '<cmd>Lspsaga code_action<CR>', opts)
-	buf_set_keymap('v', '[a', '<cmd>Lspsaga range_code_action<CR>', opts)
-	buf_set_keymap('n', '[o', '<cmd>Lspsaga hover_doc<CR>', opts)
-	buf_set_keymap('n', '[s', '<cmd>Lspsaga signature_help<CR>', opts)
-	buf_set_keymap('n', '[n', '<cmd>Lspsaga rename<CR>', opts)
-	buf_set_keymap('n', '[p', '<cmd>Lspsaga preview_definition<CR>', opts)
-	buf_set_keymap('n', '[l', '<cmd>Lspsaga show_line_diagnostics<CR>', opts)
-	buf_set_keymap('n', '[g', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
-	buf_set_keymap('n', ']g', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+	vim.keymap.set('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+	vim.keymap.set('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+	vim.keymap.set('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+
+	require "lspsaga"
+
+	vim.keymap.set('n', '[f', "<cmd>Lspsaga lsp_finder<CR>", opts)
+
+	-- code action
+	vim.keymap.set('n', '[a', "<cmd>Lspsaga code_action<CR>", opts)
+	-- range code action
+	vim.keymap.set('v', '[a', "<cmd><C-U>Lspsaga range_code_action<CR>", opts)
+
+	-- show hover doc and press twice will jump to hover window
+	vim.keymap.set('n', '[o', "<cmd>Lspsaga hover_doc<CR>", opts)
 	-- scroll down hover doc or scroll in definition preview
-	-- buf_set_keymap('n', '<c-f>', '<cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>', opts)
-	-- buf_set_keymap('n', '<c-b>', '<cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>', opts)
+	local action = require('lspsaga.action')
+	-- scroll down hover doc or scroll down in definition preview
+	vim.keymap.set('n', '<C-f>', function()
+		action.smart_scroll_with_saga(1)
+	end, opts)
+	-- scroll up hover doc or scroll up in definition preview
+	vim.keymap.set('n', '<C-b>', function()
+		action.smart_scroll_with_saga(-1)
+	end, opts)
+
+	-- show signature help
+	vim.keymap.set('n', '[s', "<cmd>Lspsaga signature_help<CR>", opts)
+
+	-- toggle code outline
+	vim.keymap.set('n', '[t', "<cmd>LSoutlineToggle<CR>", opts)
+
+	-- rename
+	vim.keymap.set('n', '[n', "<cmd>Lspsaga rename<CR>", opts)
+
+	-- preview definition
+	vim.keymap.set('n', 'gd', "<cmd>Lspsaga preview_definition<CR>", opts)
+	-- show line and cursor diagnostics
+	vim.keymap.set('n', '<leader>cd', "<cmd>Lspsaga show_line_diagnostics<CR>", opts)
+	vim.keymap.set('n', '<leader>cd', "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts)
+
+	-- jump to next diagnostic
+	vim.keymap.set('n', '[e', "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
+	-- jump to previous diagnostic
+	vim.keymap.set('n', ']e', "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
+	-- jump to previous error diagnostic
+	vim.keymap.set('n', '[E', function()
+		require("lspsaga.diagnostic").goto_prev({ severity = vim.diagnostic.severity.ERROR })
+	end, opts)
+	-- jump to next error diagnostic
+	vim.keymap.set('n', ']E', function()
+		require("lspsaga.diagnostic").goto_next({ severity = vim.diagnostic.severity.ERROR })
+	end, opts)
+
+	-- float terminal
+	local term = require('lspsaga.floaterm')
+
+	-- open the float terminal
+	vim.keymap.set('n', '<leader>t', function()
+		term.open_float_terminal()
+	end, { silent = true })
+	vim.keymap.set('n', '[g', function()
+		term.open_float_terminal('lazygit')
+	end, { silent = true })
+	-- close the float terminal
+	vim.keymap.set('t', '<C-d>', function()
+		vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true))
+		term.close_float_terminal()
+	end, { silent = true })
 
 	if client.resolved_capabilities.document_formatting then
-		buf_set_keymap("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+		vim.keymap.set("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 	end
 	if client.resolved_capabilities.document_range_formatting then
-		buf_set_keymap("v", "<space>fo", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+		vim.keymap.set("v", "<space>fo", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
 	end
+	--------------------
+	-- KNAP functions --
+	--------------------
+	-- F3 processes the document once, and refreshes the view
+	--[[ vim.keymap.set('i', '<F3>', function() require("knap").process_once() end, opts)
+	vim.keymap.set('v', '<F3>', function() require("knap").process_once() end, opts)
+	vim.keymap.set('n', '<F3>', function() require("knap").process_once() end, opts) ]]
+
+	-- F6 closes the viewer application, and allows settings to be reset
+	--[[ vim.keymap.set('i', '<F6>', function() require("knap").close_viewer() end, opts)
+	vim.keymap.set('v', '<F6>', function() require("knap").close_viewer() end, opts)
+	vim.keymap.set('n', '<F6>', function() require("knap").close_viewer() end, opts) ]]
+
+	-- F7 toggles the auto-processing on and off
+	--[[ vim.keymap.set('i', '<F7>', function() require("knap").toggle_autopreviewing() end, opts)
+	vim.keymap.set('v', '<F7>', function() require("knap").toggle_autopreviewing() end, opts)
+	vim.keymap.set('n', '<F7>', function() require("knap").toggle_autopreviewing() end, opts) ]]
+
+	-- F8 invokes a SyncTeX forward search, or similar, where appropriate
+	--[[ vim.keymap.set('i', '<F8>', function() require("knap").forward_jump() end, opts)
+	vim.keymap.set('v', '<F8>', function() require("knap").forward_jump() end, opts)
+	vim.keymap.set('n', '<F8>', function() require("knap").forward_jump() end, opts) ]]
 
 	local msg = string.format("Language server %s started!", client.name)
 	notify(msg, 'info', { title = 'LSP Notify', timeout = 1001 })
 end
 
-
--- npm install --global vls @volar/server vscode-langservers-extracted typescript typescript-language-server graphql-language-service-cli dockerfile-language-server-nodejs stylelint-lsp yaml-language-server prettier
+-- npm install --global vls @volar/server @johnsoncodehk/html2pug @volar/pug-language-service @volar/vue-language-server @volar/typescript-language-service @volar/vue-language-service typescript typescript-language-server graphql-language-service-cli dockerfile-language-server-nodejs stylelint-lsp yaml-language-server prettier
 -- can use rls or rust_analyzer
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -950,9 +1085,15 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 -- require("lspconfig").pylsp.setup{} -- necessary to enforce pylsp globally
 
 local function setup_servers()
-	local servers = { "cssls", "html", "rust_analyzer", "tsserver", "graphql", "volar", "jsonls", "dockerls" }
+	local servers = { "cssls", "html", "sumneko_lua", "rust_analyzer", "tsserver", "graphql", "volar", "jsonls", "dockerls" }
 	local nvim_lsp = require 'lspconfig'
 	local lsp_installer = require("nvim-lsp-installer")
+	local sumneko_binary_path = vim.fn.exepath('lua-language-server')
+	local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h:h:h')
+
+	local runtime_path = vim.split(package.path, ';')
+	table.insert(runtime_path, "lua/?.lua")
+	table.insert(runtime_path, "lua/?/init.lua")
 	local opts = {
 		on_attach = on_attach,
 		capabilities = capabilities,
@@ -966,15 +1107,47 @@ local function setup_servers()
 		server:setup(opts)
 	end)
 	for _, server in pairs(servers) do
-		nvim_lsp[server].setup {
-			on_attach = on_attach,
-			capabilities = capabilities,
-			init_options = {
-				onlyAnalyzeProjectsWithOpenFiles = true,
-				sugggestFromUnimportedLibraries = false,
-				closingLabels = true,
+		if server ~= "sumneko_lua" then
+			nvim_lsp[server].setup {
+				on_attach = on_attach,
+				capabilities = capabilities,
+				init_options = {
+					onlyAnalyzeProjectsWithOpenFiles = true,
+					sugggestFromUnimportedLibraries = false,
+					closingLabels = true,
+				},
 			}
-		}
+
+		elseif server == 'sumneko_lua' then
+			nvim_lsp[server].setup {
+				cmd = { sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua" };
+				--[[ on_attach = on_attach,
+				capabilities = capabilities, ]]
+				root_dir = vim.loop.cwd,
+				settings = {
+					Lua = {
+						runtime = {
+							-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+							version = 'LuaJIT',
+							-- Setup your lua path
+							path = runtime_path,
+						},
+						diagnostics = {
+							globals = { 'vim', },
+						},
+						workspace = {
+							-- Make the server aware of Neovim runtime files
+							library = vim.api.nvim_get_runtime_file("", true),
+							maxPreload = 10000,
+							preloadFileSize = 10000
+						},
+						telemetry = {
+							enable = false
+						}
+					}
+				}
+			}
+		end
 	end
 end
 
@@ -983,23 +1156,14 @@ setup_servers()
 -- vim.lsp.set_log_level("debug")
 require("trouble").setup {}
 require('lspkind').init({
-	-- DEPRECATED (use mode instead): enables text annotations
-	--
-	-- default: true
-	-- with_text = true,
-
-	-- defines how annotations are shown
-	-- default: symbol
 	-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
 	mode = 'symbol',
-
 	-- default symbol map
 	-- can be either 'default' (requires nerd-fonts font) or
 	-- 'codicons' for codicon preset (requires vscode-codicons font)
 	--
 	-- default: 'default'
 	preset = 'codicons',
-
 	-- override preset symbols
 	--
 	-- default: {}
@@ -1029,6 +1193,25 @@ require('lspkind').init({
 		Event = "",
 		Operator = "",
 		TypeParameter = ""
+	},
+	-- finder icons
+	finder_icons = {
+		def = '  ',
+		ref = '諭 ',
+		link = '  ',
+	},
+	-- finder do lsp request timeout
+	-- if your project big enough or your server very slow
+	-- you may need to increase this value
+	finder_request_timeout = 1500,
+	finder_action_keys = {
+		open = "o",
+		vsplit = "s",
+		split = "i",
+		tabe = "t",
+		quit = "q",
+		scroll_down = "<C-f>",
+		scroll_up = "<C-b>", -- quit can be a table
 	},
 })
 require 'diffview'.setup {}
@@ -1216,7 +1399,7 @@ require('gitsigns').setup {
 	end
 }
 
-fn.sign_define(
+--[[ fn.sign_define(
 	"LspDiagnosticsSignError",
 	{ texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError" }
 )
@@ -1231,7 +1414,7 @@ fn.sign_define(
 fn.sign_define(
 	"LspDiagnosticsSignInformation",
 	{ texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
-)
+) ]]
 
 g.dashboard_disable_statusline = 1
 g.dashboard_session_directory = vim.fn.stdpath('data') .. "/sessions"
@@ -1305,7 +1488,7 @@ prettier.setup({
 	semi = true,
 	single_quote = true,
 	tab_width = 2,
-	trailing_comma = "es5",
+	trailing_comma = "es7",
 	use_tabs = false,
 	vue_indent_script_and_style = false,
 })
