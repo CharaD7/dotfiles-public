@@ -76,7 +76,7 @@ require('packer').startup(function()
 	use 'jose-elias-alvarez/null-ls.nvim'
 	use { "SmiteshP/nvim-navic", requires = "neovim/nvim-lspconfig" }
 	use 'ryanoasis/vim-devicons' -- optional, for file icon
-	use 'github/copilot.vim' -- for vim copilot
+	-- use 'github/copilot.vim' -- for vim copilot
 	-- using packer.nvim
 	use { 'akinsho/bufferline.nvim', tag = "v2.*", requires = 'kyazdani42/nvim-web-devicons' }
 	use {
@@ -205,7 +205,7 @@ require('packer').startup(function()
 	}
 	use 'antoinemadec/FixCursorHold.nvim' -- Fix neovim's CursorHold issues
 	use 'mtth/scratch.vim' -- For taking notes (Uses 'gs' to invoke command)
-	use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu', config=function ()
+	use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu', config = function()
 		require 'nvim-code-action'.setup()
 	end }
 	use { 'glepnir/lspsaga.nvim', branch = 'main' }
@@ -459,15 +459,15 @@ cmd [[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]]
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
 cmd [[autocmd ColorScheme zephyr highlight Keyword gui=italic cterm=italic]] -- set for all Keywords
 cmd [[autocmd ColorScheme zephyr highlight Comment gui=italic cterm=italic]] -- set for all Comments
-cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
-cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
+-- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+-- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd [[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]] -- set for all Exception
 cmd [[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]] -- set for all Type
 cmd [[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]] -- set for all Label
-cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
-cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
-cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
-cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
+-- cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
+-- cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
+-- cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
+-- cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
 cmd [[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]] -- set for all Special things n a comment
 cmd [[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]] -- set for all generic PreProcessors
 
@@ -601,7 +601,7 @@ require('bufferline').setup {
 		enforce_regular_tabs = false,
 		always_show_bufferline = true,
 		sort_by = 'insert_at_end', -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
-		custom_areas = {
+		--[[ custom_areas = {
 			right = function()
 				local result = {}
 				local seve = vim.diagnostic.severity
@@ -611,24 +611,24 @@ require('bufferline').setup {
 				local hint = #vim.diagnostic.get(0, { severity = seve.HINT })
 
 				-- Was commented to have a clear bufferline background when transparent mode is active.
-				--[[ if error ~= 0 then
-          table.insert(result, {text = "  " .. error, guifg = "#EC5241"})
-        end
+				if error ~= 0 then
+					table.insert(result, { text = "  " .. error, guifg = "#EC5241" })
+				end
 
-        if warning ~= 0 then
-          table.insert(result, {text = "  " .. warning, guifg = "#EFB839"})
-        end
+				if warning ~= 0 then
+					table.insert(result, { text = "  " .. warning, guifg = "#EFB839" })
+				end
 
-        if hint ~= 0 then
-          table.insert(result, {text = "  " .. hint, guifg = "#A3BA5E"})
-        end
+				if hint ~= 0 then
+					table.insert(result, { text = "  " .. hint, guifg = "#A3BA5E" })
+				end
 
-        if info ~= 0 then
-          table.insert(result, {text = "  " .. info, guifg = "#7EA9A7"})
-        end
-        return result ]]
+				if info ~= 0 then
+					table.insert(result, { text = "  " .. info, guifg = "#7EA9A7" })
+				end
+				return result
 			end,
-		}
+		} ]]
 	}
 }
 
@@ -756,7 +756,7 @@ require('nvim-treesitter.configs').setup {
 	},
 	incremental_selection = {
 		enable = true, -- you can also use a table with list of langs here (e.g. { "python", "javascript" })
-		disable = { "cpp", "lua" },
+		-- disable = { "cpp", "lua" },
 		keymaps = { -- mappings for incremental selection (visual mappings)
 			init_selection = "gnn", -- maps in normal mode to init the node/scope selection
 			node_incremental = "grn", -- increment to the upper named parent
@@ -865,79 +865,7 @@ cmp.setup({
 })
 
 -- Lspsaga
-local saga = require("lspsaga")
-saga.init_lsp_saga({
-	-- "single" | "double" | "rounded" | "bold" | "plus"
-	border_style = "single",
-	--the range of 0 for fully opaque window (disabled) to 100 for fully
-	--transparent background. Values between 0-30 are typically most useful.
-	saga_winblend = 0,
-	-- when cursor in saga window you config these to move
-	move_in_saga = { prev = '<C-p>', next = '<C-n>' },
-	-- Error, Warn, Info, Hint
-	-- use emoji like
-	-- { "🙀", "😿", "😾", "😺" }
-	-- or
-	-- { "😡", "😥", "😤", "😐" }
-	-- and diagnostic_header can be a function type
-	-- must return a string and when diagnostic_header
-	-- is function type it will have a param `entry`
-	-- entry is a table type has these filed
-	-- { bufnr, code, col, end_col, end_lnum, lnum, message, severity, source }
-	diagnostic_header = { " ", " ", " ", "ﴞ " },
-	-- show diagnostic source
-	show_diagnostic_source = true,
-	-- add bracket or something with diagnostic source, just have 2 elements
-	diagnostic_source_bracket = {},
-	-- preview lines of lsp_finder and definition preview
-	max_preview_lines = 10,
-	-- use emoji lightbulb in default
-	code_action_icon = "💡",
-	-- if true can press number to execute the codeaction in codeaction window
-	code_action_num_shortcut = true,
-	-- same as nvim-lightbulb but async
-	code_action_lightbulb = {
-		enable = true,
-		sign = true,
-		enable_in_insert = true,
-		sign_priority = 20,
-		virtual_text = true,
-	},
-	code_action_keys = {
-		quit = "q",
-		exec = "<CR>",
-	},
-	rename_action_quit = "<C-c>",
-	rename_in_select = true,
-	definition_preview_icon = "  ",
-	-- show symbols in winbar must nightly
-	symbol_in_winbar = {
-		in_custom = false,
-		enable = false,
-		separator = ' ',
-		show_file = true,
-		click_support = false,
-	},
-	-- show outline
-	show_outline = {
-		win_position = 'right',
-		--set special filetype win that outline window split.like NvimTree neotree
-		-- defx, db_ui
-		win_with = '',
-		win_width = 30,
-		auto_enter = true,
-		auto_preview = true,
-		virt_text = '┃',
-		jump_key = 'o',
-		-- auto refresh when change buffer
-		auto_refresh = true,
-	},
-	-- if you don't use nvim-lspconfig you must pass your server name and
-	-- the related filetypes into this table
-	-- like server_filetype_map = { metals = { "sbt", "scala" } }
-	server_filetype_map = {},
-})
-
+-- require("lspsaga").setup{}
 -- Lspsaga timed hover
 --[[ local show_timed_hover = function()
 	vim.fn.timer_start(100, '<cmd>Lspsaga hover_doc<CR>')
@@ -987,16 +915,6 @@ local on_attach = function(client)
 
 	-- show hover doc and press twice will jump to hover window
 	vim.keymap.set('n', '[o', "<cmd>Lspsaga hover_doc<CR>", opts)
-	-- scroll down hover doc or scroll in definition preview
-	local action = require('lspsaga.action')
-	-- scroll down hover doc or scroll down in definition preview
-	vim.keymap.set('n', '<C-f>', function()
-		action.smart_scroll_with_saga(1)
-	end, opts)
-	-- scroll up hover doc or scroll up in definition preview
-	vim.keymap.set('n', '<C-b>', function()
-		action.smart_scroll_with_saga(-1)
-	end, opts)
 
 	-- show signature help
 	vim.keymap.set('n', '[s', "<cmd>Lspsaga signature_help<CR>", opts)
@@ -1078,80 +996,26 @@ end
 -- npm install --global vls @volar/server @johnsoncodehk/html2pug @volar/pug-language-service @volar/vue-language-server @volar/typescript-language-service @volar/vue-language-service typescript typescript-language-server graphql-language-service-cli dockerfile-language-server-nodejs stylelint-lsp yaml-language-server prettier
 -- can use rls or rust_analyzer
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
--- require("lspconfig").pylsp.setup{} -- necessary to enforce pylsp globally
-
-local function setup_servers()
-	local servers = { "cssls", "html", "sumneko_lua", "rust_analyzer", "tsserver", "graphql", "volar", "jsonls", "dockerls" }
-	local nvim_lsp = require 'lspconfig'
-	local lsp_installer = require("nvim-lsp-installer")
-	local sumneko_binary_path = vim.fn.exepath('lua-language-server')
-	local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h:h:h')
-
-	local runtime_path = vim.split(package.path, ';')
-	table.insert(runtime_path, "lua/?.lua")
-	table.insert(runtime_path, "lua/?/init.lua")
-	local opts = {
-		on_attach = on_attach,
-		capabilities = capabilities,
-		init_options = {
-			onlyAnalyzeProjectsWithOpenFiles = true,
-			sugggestFromUnimportedLibraries = false,
-			closingLabels = true,
+require("nvim-lsp-installer").setup({
+	automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+	ui = {
+		icons = {
+			server_installed = "✓",
+			server_pending = "➜",
+			server_uninstalled = "✗"
 		}
 	}
-	lsp_installer.on_server_ready(function(server)
-		server:setup(opts)
-	end)
-	for _, server in pairs(servers) do
-		if server ~= "sumneko_lua" then
-			nvim_lsp[server].setup {
-				on_attach = on_attach,
-				capabilities = capabilities,
-				init_options = {
-					onlyAnalyzeProjectsWithOpenFiles = true,
-					sugggestFromUnimportedLibraries = false,
-					closingLabels = true,
-				},
-			}
-
-		elseif server == 'sumneko_lua' then
-			nvim_lsp[server].setup {
-				cmd = { sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua" };
-				--[[ on_attach = on_attach,
-				capabilities = capabilities, ]]
-				root_dir = vim.loop.cwd,
-				settings = {
-					Lua = {
-						runtime = {
-							-- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-							version = 'LuaJIT',
-							-- Setup your lua path
-							path = runtime_path,
-						},
-						diagnostics = {
-							globals = { 'vim', },
-						},
-						workspace = {
-							-- Make the server aware of Neovim runtime files
-							library = vim.api.nvim_get_runtime_file("", true),
-							maxPreload = 10000,
-							preloadFileSize = 10000
-						},
-						telemetry = {
-							enable = false
-						}
-					}
-				}
-			}
-		end
-	end
-end
-
-setup_servers()
+})
+require("lspconfig")['sumneko_lua'].setup({
+	on_attach = on_attach,
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = { 'vim', 'use' }
+			},
+		}
+	}
+})
 
 -- vim.lsp.set_log_level("debug")
 require("trouble").setup {}
