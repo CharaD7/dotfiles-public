@@ -945,20 +945,11 @@ local on_attach = function(client)
 	end, opts)
 
 	-- float terminal
-	local term = require('lspsaga.floaterm')
-
 	-- open the float terminal
-	vim.keymap.set('n', '<leader>t', function()
-		term.open_float_terminal()
-	end, { silent = true })
-	vim.keymap.set('n', '[g', function()
-		term.open_float_terminal('lazygit')
-	end, { silent = true })
+	vim.keymap.set('n', '<leader>ft', "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
+	vim.keymap.set('n', '[g', "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
 	-- close the float terminal
-	vim.keymap.set('t', '<C-d>', function()
-		vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true))
-		term.close_float_terminal()
-	end, { silent = true })
+	vim.keymap.set('t', '<C-d>', [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
 
 	if client.resolved_capabilities.document_formatting then
 		vim.keymap.set("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
