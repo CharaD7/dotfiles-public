@@ -536,7 +536,10 @@ require('bufferline').setup {
 		-- NOTE: this plugin is designed with this icon in mind,
 		-- and so changing this is NOT recommended, this is intended
 		-- as an escape hatch for people who cannot bear it for whatever reason
-		indicator_icon = '▎',
+		indicator = {
+				icon = '▎', -- this should be omitted if indicator style is not 'icon'
+				style = 'icon',
+		},
 		buffer_close_icon = '',
 		modified_icon = '●',
 		close_icon = '',
@@ -552,11 +555,16 @@ require('bufferline').setup {
 				return vim.fn.fnamemodify(buf.name, ':t:r')
 			end
 		end,
+		hover = {
+				enabled = true,
+				delay = 200,
+				reveal = {'close'},
+		},
 		max_name_length = 18,
 		max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
 		tab_size = 18,
 		diagnostics = "nvim_lsp",
-		diagnostics_update_in_insert = false,
+		diagnostics_update_in_insert = true,
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			local s = " "
 			for e, n in pairs(diagnostics_dict) do
@@ -601,7 +609,7 @@ require('bufferline').setup {
 		enforce_regular_tabs = false,
 		always_show_bufferline = true,
 		sort_by = 'insert_at_end', -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
-		--[[ custom_areas = {
+		custom_areas = {
 			right = function()
 				local result = {}
 				local seve = vim.diagnostic.severity
@@ -628,7 +636,7 @@ require('bufferline').setup {
 				end
 				return result
 			end,
-		} ]]
+		}
 	}
 }
 
@@ -878,6 +886,27 @@ end ]]
 -- cmd[[autocmd CursorHoldI * lua require('lspsaga.hover').render_hover_doc()]]
 -- cmd[[ autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false }) ]] -- This didn't work either
 
+-- Call up servers on launch
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- require("lspconfig").pylsp.setup{} -- necessary to enforce pylsp globally
+local function setup_servers()
+	local servers = { "cssls", "html", "rust_analyzer", "tsserver", "graphql", "volar", "jsonls", "dockerls" }
+	local nvim_lsp = require 'lspconfig'
+	for _, server in pairs(servers) do
+		nvim_lsp[server].setup {
+			on_attach = on_attach,
+			capabilities = capabilities,
+			init_options = {
+				onlyAnalyzeProjectsWithOpenFiles = true,
+				sugggestFromUnimportedLibraries = false,
+				closingLabels = true,
+			}
+		}
+	end
+end
+setup_servers()
 
 -- Signature help
 require('lsp_signature').on_attach()
@@ -1002,7 +1031,7 @@ require("lspconfig")['sumneko_lua'].setup({
 	settings = {
 		Lua = {
 			diagnostics = {
-				globals = { 'vim', 'use' }
+				globals = { 'vim', 'use', 'on_attach' }
 			},
 		}
 	}
