@@ -419,13 +419,6 @@ vim.opt.listchars:append("eol:↴")
 vim.o.shortmess = vim.o.shortmess .. "c"
 vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
 
-nvim_exec(
-	[[
-command! -nargs=1 Dap :lua require("dapui").toggle()
-]],
-	false
-)
-
 --mappings
 local function map(mode, lhs, rhs, opts)
 	local options = { noremap = true }
@@ -569,6 +562,27 @@ nvim_exec(
   let g:LanguageClient_loggingLevel = 'DEBUG'
   let g:LanguageClient_loggingFile =  expand('~/.local/share/nvim/site/reach-ide/reach-language-client.log')
   let g:LanguageClient_serverStderr = expand('~/.local/share/nvim/site/reach-ide/reach-language-server.log')
+]],
+	false
+)
+
+-- Dapui
+nvim_exec(
+	[[
+		command! -nargs=1 Dap :lua require("dapui").toggle()
+	]],
+	false
+)
+
+-- scrollbar
+nvim_exec(
+	[[
+augroup ScrollbarInit
+  autocmd!
+  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+  autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
+augroup end
 ]],
 	false
 )
@@ -742,19 +756,6 @@ require("guihua.maps").setup({
 
 -- focus screen-autoresizer
 require("focus").setup({ hybridnumber = true })
-
--- scrollbar
-nvim_exec(
-	[[
-augroup ScrollbarInit
-  autocmd!
-  autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
-  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
-  autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
-augroup end
-]],
-	false
-)
 
 g.vista_default_executive = "nvim_lsp"
 
@@ -1041,7 +1042,7 @@ for _, server in pairs(servers) do
 end
 
 -- luasnip setup
-local luasnip = require("luasnip")
+require("luasnip")
 
 -- Signature help
 require("lsp_signature").on_attach()
@@ -1165,7 +1166,7 @@ require("lspconfig")["sumneko_lua"].setup({
 	settings = {
 		Lua = {
 			diagnostics = {
-				globals = { "vim", "use", "on_attach" },
+				globals = { "vim", "luasnip", "db", "use", "on_attach" },
 			},
 		},
 	},
@@ -1445,8 +1446,6 @@ fn.sign_define(
 	{ texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
 ) ]]
 
-g.dashboard_disable_statusline = 1
-g.dashboard_session_directory = vim.fn.stdpath("data") .. "/sessions"
 g.dashboard_default_executive = "telescope"
 
 if vim.fn.has("win33") == 1 then
@@ -1455,20 +1454,23 @@ else
 	cmd("let packages = len(globpath('~/.local/share/nvim/site/pack/packer/start', '*', 1, 1))")
 end
 
+-- Neovim dashboard
 nvim_exec(
 	[[
 	let g:dashboard_custom_footer = ['LuaJIT loaded '..packages..' packages']
 ]],
 	false
 )
-
-g.dashboard_custom_section = {
-	a = { description = { "🔎  Find File                 SPC f f" }, command = "Telescope find_files" },
-	b = { description = { "   Recents                   SPC f r" }, command = "Telescope oldfiles" },
-	c = { description = { "   Find Word                 SPC f w" }, command = "Telescope live_grep" },
-	d = { description = { "洛  New File                  SPC f n" }, command = "DashboardNewFile" },
-	e = { description = { "   Bookmarks                 SPC f m" }, command = "Telescope marks" },
-	f = { description = { "   Load Last Session         SPC s l" }, command = "SessionLoad" },
+local db = require('dashboard')
+db.hide_statusline = 1
+db.session_directory = vim.fn.stdpath("data") .. "/sessions"
+db.custom_center = {
+	{ icon = '🔎  ', desc = 'Find File                 ', shortcut = 'SPC f f', action = 'Telescope find_files' },
+	{ icon = '   ', desc = 'Recents                   ', shortcut = 'SPC f r', action = 'Telescope oldfiles' },
+	{ icon = '   ', desc = 'Find Word                 ', shortcut = 'SPC f w', action = 'Telescope live_grep' },
+	{ icon = '洛  ', desc = 'New File                  ', shortcut = 'SPC f n', action = 'DashboardNewFile' },
+	{ icon = '   ', desc = 'Bookmarks                 ', shortcut = 'SPC f m', action = 'Telescope marks' },
+	{ icon = '   ', desc = 'Load Last Session         ', shortcut = 'SPC s l', action = 'SessionLoad' },
 }
 
 ---------------------------------
@@ -1506,7 +1508,7 @@ g.dashboard_custom_section = {
 ---------------------------------
 -- Auto commands
 ---------------------------------
-vim.cmd([[ autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync() ]])
+cmd([[ autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync() ]])
 
 local prettier = require("prettier")
 prettier.setup({
