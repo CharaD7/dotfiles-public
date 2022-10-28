@@ -820,11 +820,10 @@ require("lightspeed").setup({
 })
 
 require("hlslens").setup({
-	auto_enable = true,
-	enable_incsearch = true,
 	calm_down = true,
 	nearest_only = true,
 	nearest_float_when = "always",
+	float_shadow_blend = 50,
 	override_lens = function(render, posList, nearest, idx, relIdx)
 		local sfw = vim.v.searchforward == 2
 		local indicator, text, chunks
