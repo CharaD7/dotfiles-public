@@ -41,7 +41,7 @@ g.glow_width = 120
 g.glow_use_pager = true
 g.glow_style = "dark"
 
-cmd("let &runtimepath = &runtimepath")
+-- cmd("let &runtimepath = &runtimepath")
 
 -- in millisecond, used for both CursorHold and CursorHoldI,
 
@@ -234,6 +234,7 @@ require("packer").startup(function(use)
 			--   `nvim-notify` is only needed, if you want to use the notification view.
 			--   If not available, we use `mini` as the fallback
 			"rcarriga/nvim-notify",
+			"hrsh7th/nvim-cmp",
 		},
 	})
 	-- Java support
@@ -319,6 +320,10 @@ require("packer").startup(function(use)
 		end,
 	})
 	use("folke/which-key.nvim") -- hint leader button
+	-- intuitive toggleterm
+	use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+		require("toggleterm").setup()
+	end}
 	use("sindrets/diffview.nvim") -- diff compare
 	use({
 		"SmiteshP/nvim-gps",
@@ -474,6 +479,12 @@ map("n", "<c-k>", "<cmd>wincmd k<CR>") --ctrlhjkl to navigate splits
 map("n", "<c-j>", "<cmd>wincmd j<CR>")
 map("n", "<c-h>", "<cmd>wincmd h<CR>")
 map("n", "<c-l>", "<cmd>wincmd l<CR>")
+map("t", "<esc>", "<C-\\><C-n>", { silent = true })
+map("t", "jk", "<C-\\><C-n>", { silent = true })
+map("t", "<c-k>", "<cmd>wincmd k<CR>", { silent = true }) --ctrlhjkl to navigate splits
+map("t", "<c-j>", "<cmd>wincmd j<CR>", { silent = true })
+map("t", "<c-h>", "<cmd>wincmd h<CR>", { silent = true })
+map("t", "<c-l>", "<cmd>wincmd l<CR>", { silent = true })
 map("n", "<c-s>", "<cmd>w!<CR>")
 map("n", "<c-x>", "<cmd>bdelete<CR>")
 map("n", "<leader>b", "<cmd>BufferLinePick<CR>")
@@ -613,7 +624,7 @@ nvim_exec(
 require("telescope").load_extension("emoji")
 
 -- Allowing transparent neovim
---[[ require("transparent").setup({
+require("transparent").setup({
 	enable = false, -- boolean: enable transparent
 	extra_groups = { -- table/string: additional groups that should be cleared
 		-- In particular, when you set it to 'all', that means all available groups
@@ -627,7 +638,11 @@ require("telescope").load_extension("emoji")
 		"BufferLineIndicatorSelected",
 	},
 	exclude = {}, -- table: groups you don't want to clear
-}) ]]
+})
+
+require('toggleterm').setup{
+	direction = 'horizontal' -- could be any of 'vertical' | 'horizontal' | 'tab' | 'float'
+}
 
 require("jc").setup({}) -- Java support
 
@@ -1110,7 +1125,8 @@ local on_attach = function(client)
 
 	-- float terminal
 	-- open the float terminal
-	vim.keymap.set("n", "<leader>tt", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
+	vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { silent = true })
+	-- vim.keymap.set("n", "<leader>tt", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
 	vim.keymap.set("n", "[g", "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
 	-- close the float terminal
 	vim.keymap.set("t", "<C-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
