@@ -244,6 +244,7 @@ require("packer").startup(function(use)
 	use("neovim/nvim-lspconfig")
 	use("williamboman/nvim-lsp-installer")
 	use("nvim-telescope/telescope-media-files.nvim")
+	use("nvim-telescope/telescope-file-browser.nvim")
 	use({ "ellisonleao/glow.nvim", branch = "main" })
 	use("xiyaowong/nvim-transparent")
 	use("quangnguyen30192/cmp-nvim-ultisnips")
@@ -267,7 +268,6 @@ require("packer").startup(function(use)
 	use("folke/lsp-trouble.nvim")
 	use("onsails/lspkind-nvim")
 	use("liuchengxu/vista.vim")
-	use("ray-x/lsp_signature.nvim")
 	use("pantharshit00/vim-prisma") -- prisma support
 	use({
 		"ray-x/navigator.lua",
@@ -288,14 +288,17 @@ require("packer").startup(function(use)
 		end,
 	})
 	use({ "glepnir/lspsaga.nvim", branch = "main" })
+	use("williamboman/mason.nvim")
+	use("williamboman/mason-lspconfig.nvim")
 	-- use 'frabjouv/knap' -- For live serving Markdown, Latex, PDF and HTML files
 	-- use 'tami5/lspsaga.nvim'
 	use("kosayoda/nvim-lightbulb")
-	-- use("jose-elias-alvarez/null-ls.nvim") -- snippet related use 'hrsh7th/vim-vsnip'
+	use("jose-elias-alvarez/null-ls.nvim") -- snippet related use 'hrsh7th/vim-vsnip'
 	use("hrsh7th/cmp-cmdline")
 	use("rafamadriz/friendly-snippets")
 	-- Easy to operate
 	use("tpope/vim-eunuch")
+	use('dinhhuy258/git.nvim') -- git inside neovim
 	use("gennaro-tedesco/nvim-peekup") -- View historical copy and delete registers, shortcut keys ""
 	use("voldikss/vim-translator") -- npm install fanyi -g (install translation)
 	use("windwp/nvim-autopairs") -- Automatic symbol matching
@@ -321,9 +324,9 @@ require("packer").startup(function(use)
 	})
 	use("folke/which-key.nvim") -- hint leader button
 	-- intuitive toggleterm
-	use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
 		require("toggleterm").setup()
-	end}
+	end }
 	use("sindrets/diffview.nvim") -- diff compare
 	use({
 		"SmiteshP/nvim-gps",
@@ -438,7 +441,7 @@ g.mapleader = " " --leader
 g.maplocalleader = ","
 map("i", "jk", "<esc>") --jk to exit
 map("c", "jk", "<C-C>")
-map("n", ";", ":") --semicolon to enter command mode
+-- map("n", ";", ":") --semicolon to enter command mode
 map("n", "j", "gj") --move by visual line not actual line
 map("n", "k", "gk")
 map("n", "q", "<cmd>q<CR>")
@@ -447,19 +450,19 @@ map("n", "<leader>js", "<cmd>set filetype=javascript<CR>") -- for unknown extens
 map("n", "<leader>hw", "<cmd>HopWord<CR>") --easymotion/hop
 map("n", "<leader>hl", "<cmd>HopLine<CR>")
 map("n", "<leader>/", "<cmd>HopPattern<CR>")
-map("n", "<leader>fa", "<cmd>Telescope git_commits<CR>") -- git commits
-map("n", "<leader>fg", "<cmd>Telescope git_bcommits<CR>") -- lists buffer's git commits with diff preview and checks them out on <cr>
-map("n", "<leader>ft", "<cmd>Telescope git_status<CR>") -- lists current changes per file with diff preview and add action.
-map("n", "<leader>fl", "<cmd>Telescope git_branches<CR>") -- lists all branches with log preview, checkout action <cr>, track action <C-t> and rebase action <C-r>
-map("n", "<leader>fh", "<cmd>Telescope git_stash<CR>") -- lists stash items in current repository with ability to apply them on <cr>
-map("n", "<leader>fr", "<cmd>Telescope oldfiles<CR>") --fuzzy
-map("n", "<leader>ff", "<cmd>Telescope find_files<CR>")
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>")
-map("n", "<leader>fw", "<cmd>Telescope live_grep<CR>")
-map("n", "<leader>fs", "<cmd>Telescope treesitter<CR>")
-map("n", "<leader>fc", "<cmd>Telescope commands<CR>")
-map("n", "<leader>fm", "<cmd>Telescope marks<CR>")
-map("n", "<leader>fe", "<cmd>Telescope emoji<CR>")
+map("n", ";gc", "<cmd>Telescope git_commits<CR>") -- git commits
+map("n", ";gbc", "<cmd>Telescope git_bcommits<CR>") -- lists buffer's git commits with diff preview and checks them out on <cr>
+map("n", ";gbs", "<cmd>Telescope git_status<CR>") -- lists current changes per file with diff preview and add action.
+map("n", ";gbr", "<cmd>Telescope git_branches<CR>") -- lists all branches with log preview, checkout action <cr>, track action <C-t> and rebase action <C-r>
+map("n", ";gs", "<cmd>Telescope git_stash<CR>") -- lists stash items in current repository with ability to apply them on <cr>
+map("n", ";to", "<cmd>Telescope oldfiles<CR>") --fuzzy
+map("n", ";tf", "<cmd>Telescope find_files<CR>")
+map("n", ";tb", "<cmd>Telescope buffers<CR>")
+map("n", ";tl", "<cmd>Telescope live_grep<CR>")
+map("n", ";tt", "<cmd>Telescope treesitter<CR>")
+map("n", ";tc", "<cmd>Telescope commands<CR>")
+map("n", ";tm", "<cmd>Telescope marks<CR>")
+map("n", ";te", "<cmd>Telescope emoji<CR>")
 map("n", "[fo", "<cmd>foldopen<CR>")
 map("n", "[fc", "<cmd>foldclose<CR>")
 map("n", "[fl", "<cmd>fold<CR>")
@@ -498,8 +501,8 @@ map("n", "<leader>gs", "<cmd>Gina status<CR>")
 map("n", "<leader>gl", "<cmd>Gina pull<CR>")
 map("n", "<leader>gu", "<cmd>Gina push<CR>")
 map("n", "<leader>tq", "<cmd>TroubleToggle<CR>")
-map("n", "<silent> <F5>", ":call LanguageClient#textDocument_hover()<CR>")
-map("n", "<silent> <F4>", ":call LanguageClient#textDocument_codeAction()<CR>")
+-- map("n", "<silent> <F5>", ":call LanguageClient#textDocument_hover()<CR>")
+-- map("n", "<silent> <F4>", ":call LanguageClient#textDocument_codeAction()<CR>")
 map("n", "<silent> <F6>", ":Bracey<CR>", { silent = true })
 map("n", "<silent> <F7>", ":BraceyStop<CR>", { silent = true })
 map("n", "<silent> <F8>", ":BraceyRelaod<CR>", { silent = true })
@@ -514,6 +517,8 @@ map("n", "<leader>sv", "<cmd>:source ~/.config/nvim/init.lua<CR>")
 map("n", "<C-a>", "ggVG<c-$>")
 -- Line bubbling
 map("n", "<S-A-j>", "<cmd>m .+1<CR>==", { silent = true })
+map('n', '<Tab>', '<Cmd>BufferLineCycleNext<CR>', { silent = true })
+map('n', '<S-Tab>', '<Cmd>BufferLineCyclePrev<CR>', { silent = true })
 map("n", "<S-A-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<S-A-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
@@ -621,7 +626,83 @@ nvim_exec(
 	false
 )
 
+---------------------------------------
+-- REQUIRES
+---------------------------------------
+
+-- telescope setup
 require("telescope").load_extension("emoji")
+local status, telescope = pcall(require, "telescope")
+if (not status) then return end
+local actions = require('telescope.actions')
+local builtin = require("telescope.builtin")
+
+local function telescope_buffer_dir()
+	return vim.fn.expand('%:p:h')
+end
+
+local fb_actions = require "telescope".extensions.file_browser.actions
+
+telescope.setup {
+	defaults = {
+		mappings = {
+			n = {
+				["q"] = actions.close
+			},
+		},
+	},
+	extensions = {
+		file_browser = {
+			theme = "dropdown",
+			-- disables netrw and use telescope-file-browser in its place
+			hijack_netrw = true,
+			mappings = {
+				-- your custom insert mode mappings
+				["i"] = {
+					["<C-w>"] = function() vim.cmd('normal vbd') end,
+				},
+				["n"] = {
+					-- your custom normal mode mappings
+					["N"] = fb_actions.create,
+					["h"] = fb_actions.goto_parent_dir,
+					["/"] = function()
+						vim.cmd('startinsert')
+					end
+				},
+			},
+		},
+	},
+}
+
+telescope.load_extension("file_browser")
+
+vim.keymap.set("n", "sf", function()
+	telescope.extensions.file_browser.file_browser({
+		path = "%:p:h",
+		cwd = telescope_buffer_dir(),
+		respect_gitignore = false,
+		hidden = true,
+		grouped = true,
+		previewer = true,
+		initial_mode = "normal",
+		layout_config = { height = 50 }
+	})
+end)
+
+-- Git inside neovim
+local status, git = pcall(require, "git")
+if (not status) then return end
+
+git.setup({
+	keymaps = {
+		-- Open blame window
+		blame = "<Leader>gb",
+		-- Open file/folder in git repository
+		browse = "<Leader>go",
+	}
+})
+
+
 
 -- Allowing transparent neovim
 require("transparent").setup({
@@ -640,7 +721,22 @@ require("transparent").setup({
 	exclude = {}, -- table: groups you don't want to clear
 })
 
-require('toggleterm').setup{
+
+-- Null_ls setup
+local status, null_ls = pcall(require, "null-ls")
+if (not status) then return end
+
+null_ls.setup({
+	sources = {
+		null_ls.builtins.diagnostics.eslint_d.with({
+			diagnostics_format = '[eslint] #{m}\n(#{c})'
+		}),
+		-- null_ls.builtins.diagnostics.fish
+	}
+})
+
+
+require('toggleterm').setup {
 	direction = 'horizontal' -- could be any of 'vertical' | 'horizontal' | 'tab' | 'float'
 }
 
@@ -649,6 +745,7 @@ require("jc").setup({}) -- Java support
 require("bufferline").setup({
 	options = {
 		mode = "buffers", -- set to "tabs" to only show tabpages instead
+		separator_style = "slant",
 		numbers = function(opts)
 			return string.format("%s", opts.raise(opts.ordinal))
 			-- return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
@@ -728,7 +825,7 @@ require("bufferline").setup({
 		persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
 		-- can also be a table containing 2 custom separators
 		-- [focused and unfocused]. eg: { '|', '|' }
-		separator_style = "thin", -- 'slant' | 'thin' | 'thick'
+		-- separator_style = "thin", -- 'slant' | 'thin' | 'thick'
 		enforce_regular_tabs = false,
 		always_show_bufferline = true,
 		sort_by = "insert_at_end", -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
@@ -877,54 +974,23 @@ require("nvim-treesitter.configs").setup({
 		},
 	},
 	refactor = { highlight_definitions = { enable = true } },
-	textobjects = {
-		select = {
-			enable = true,
-			lookahead = true,
-			keymaps = {
-				["af"] = "@function.outer",
-				["if"] = "@function.inner",
-				["ac"] = "@class.outer",
-				["ic"] = "@class.inner",
-				--[[ ["iF"] = {
-          javascript = "(function_definition) @function",
-          typescript = "(function_definition) @function",
-          rust = "(function_definition) @function",
-        }, ]]
-			},
-		},
-		lsp_interop = {
-			enable = true,
-			border = "none",
-			peek_definition_code = {
-				["df"] = "@function.outer",
-				["dF"] = "@class.outer",
-			},
-		},
-		move = {
-			enable = true,
-			set_jumps = true, -- whether to set jumps in the jumplist
-			goto_next_start = {
-				["]m"] = "@function.outer",
-				["]]"] = "@class.outer",
-			},
-			goto_next_end = {
-				["]M"] = "@function.outer",
-				["]["] = "@class.outer",
-			},
-			goto_previous_start = {
-				["[m"] = "@function.outer",
-				["[["] = "@class.outer",
-			},
-			goto_previous_end = {
-				["[M"] = "@function.outer",
-				["[]"] = "@class.outer",
-			},
-		},
-	},
 })
 
-local cmp = require("cmp")
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.tsx.filetype_to_parsername = { "javascript", "typescript.tsx" }
+
+-- nvim-ts-autotag setup
+local status, autotag = pcall(require, "nvim-ts-autotag")
+if (not status) then return end
+
+autotag.setup({})
+
+
+
+-- cmp setup
+local status, cmp = pcall(require, "cmp")
+if (not status) then return end
+local lspkind = require 'lspkind'
 
 cmp.setup({
 	completion = {
@@ -1019,6 +1085,11 @@ cmp.setup({
 	},
 })
 
+cmd([[
+	set completeopt=menuone,noinsert,noselect
+  highlight! default link CmpItemKind CmpItemMenuDefault
+]])
+
 -- Lspsaga
 -- require("lspsaga").setup{}
 -- Lspsaga timed hover
@@ -1034,44 +1105,55 @@ end ]]
 -- cmd[[ autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false }) ]] -- This didn't work either
 
 -- Call up servers on launch
-local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-capabilities.textDocument.completion.completionItem.snippetSupport = true
--- require("lspconfig").pylsp.setup{} -- necessary to enforce pylsp globally
-local servers =
-{ "cssls", "html", "rust_analyzer", "tsserver", "graphql", "volar", "jsonls", "dockerls", "tailwindcss" }
-local nvim_lsp = require("lspconfig")
-for _, server in pairs(servers) do
-	nvim_lsp[server].setup({
-		on_attach = function(client, bufnr)
-			vim.api.nvim_exec_autocmds("User", { pattern = "LspAttached" })
-			client.server_capabilities.document_formatting = false
-		end,
-		capabilities = capabilities,
-		init_options = {
-			onlyAnalyzeProjectsWithOpenFiles = true,
-			sugggestFromUnimportedLibraries = true,
-			closingLabels = true,
-		},
-	})
+local status, nvim_lsp = pcall(require, "lspconfig")
+if (not status) then return end
+
+local protocol = require('vim.lsp.protocol')
+
+local on_attach = function(client, bufnr)
+	-- format on save
+	if client.server_capabilities.documentFormattingProvider then
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			group = vim.api.nvim_create_augroup("Format", { clear = true }),
+			buffer = bufnr,
+			callback = function() vim.lsp.buf.formatting_seq_sync() end
+		})
+	end
 end
+
+-- TypeScript
+nvim_lsp.tsserver.setup {
+	on_attach = on_attach,
+	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+	cmd = { "typescript-language-server", "--stdio" }
+}
+nvim_lsp.tailwindcss.setup {}
+
+
+-- mason lsp config setup
+local status, mason = pcall(require, "mason")
+if (not status) then return end
+local status2, lspconfig = pcall(require, "mason-lspconfig")
+if (not status2) then return end
+
+mason.setup({
+	ui = {
+		icons = {
+			package_installed = "✓",
+			package_pending = "➜",
+			package_uninstalled = "✗"
+		}
+	}
+})
+
+lspconfig.setup {
+	automatic_installation = true,
+	ensure_installed = { "sumneko_lua", "tailwindcss" },
+}
+
 
 -- luasnip setup
 require("luasnip")
-
--- Signature help
-require("lsp_signature").on_attach()
-
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
--- 	vim.lsp.diagnostic.on_publish_diagnostics, {
--- 	virtual_text = {
--- 		prefix = "",
--- 		spacing = 1,
--- 	},
--- 	signs = true,
--- 	underline = true,
--- 	update_in_insert = true,
--- }
--- )
 
 local on_attach = function(client)
 	-- Mappings.
@@ -1136,28 +1218,6 @@ local on_attach = function(client)
 	if client.server_capabilities.document_range_formatting then
 		vim.keymap.set("v", "<space>fo", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
 	end
-	--------------------
-	-- KNAP functions --
-	--------------------
-	-- F3 processes the document once, and refreshes the view
-	--[[ vim.keymap.set('i', '<F3>', function() require("knap").process_once() end, opts)
-	vim.keymap.set('v', '<F3>', function() require("knap").process_once() end, opts)
-	vim.keymap.set('n', '<F3>', function() require("knap").process_once() end, opts) ]]
-
-	-- F6 closes the viewer application, and allows settings to be reset
-	--[[ vim.keymap.set('i', '<F6>', function() require("knap").close_viewer() end, opts)
-	vim.keymap.set('v', '<F6>', function() require("knap").close_viewer() end, opts)
-	vim.keymap.set('n', '<F6>', function() require("knap").close_viewer() end, opts) ]]
-
-	-- F7 toggles the auto-processing on and off
-	--[[ vim.keymap.set('i', '<F7>', function() require("knap").toggle_autopreviewing() end, opts)
-	vim.keymap.set('v', '<F7>', function() require("knap").toggle_autopreviewing() end, opts)
-	vim.keymap.set('n', '<F7>', function() require("knap").toggle_autopreviewing() end, opts) ]]
-
-	-- F8 invokes a SyncTeX forward search, or similar, where appropriate
-	--[[ vim.keymap.set('i', '<F8>', function() require("knap").forward_jump() end, opts)
-	vim.keymap.set('v', '<F8>', function() require("knap").forward_jump() end, opts)
-	vim.keymap.set('n', '<F8>', function() require("knap").forward_jump() end, opts) ]]
 
 	local msg = string.format("Language server %s started!", client.name)
 	notify(msg, "info", { title = "LSP Notify", timeout = 1001 })
@@ -1173,16 +1233,6 @@ require("nvim-lsp-installer").setup({
 			server_installed = "✓",
 			server_pending = "➜",
 			server_uninstalled = "✗",
-		},
-	},
-})
-require("lspconfig")["sumneko_lua"].setup({
-	on_attach = on_attach,
-	settings = {
-		Lua = {
-			diagnostics = {
-				globals = { "vim", "luasnip", "db", "use", "on_attach" },
-			},
 		},
 	},
 })
@@ -1249,7 +1299,15 @@ require("lspkind").init({
 	},
 })
 require("diffview").setup({})
-require("nvim-autopairs").setup({})
+
+-- nvim autopairs setup
+local status, autopairs = pcall(require, "nvim-autopairs")
+if (not status) then return end
+
+autopairs.setup({
+	disable_filetype = { "TelescopePrompt", "vim" },
+})
+
 
 local gps = require("nvim-gps")
 require("lualine").setup({
@@ -1349,100 +1407,7 @@ require("nvim-tree").setup({
 })
 
 --gitsigns
-require("gitsigns").setup({
-	signs = {
-		add = { hl = "GitSignsAdd", text = "│", numhl = "GitSignsAddNr", linehl = "GitSignsAddLn" },
-		change = { hl = "GitSignsChange", text = "│", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
-		delete = { hl = "GitSignsDelete", text = "_", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-		topdelete = { hl = "GitSignsDelete", text = "‾", numhl = "GitSignsDeleteNr", linehl = "GitSignsDeleteLn" },
-		changedelete = { hl = "GitSignsChange", text = "~", numhl = "GitSignsChangeNr", linehl = "GitSignsChangeLn" },
-	},
-	numhl = true,
-	linehl = false,
-	signcolumn = true,
-	word_diff = false,
-	watch_gitdir = {
-		interval = 500,
-		follow_files = true,
-	},
-	attach_to_untracked = true,
-	current_line_blame = true,
-	current_line_blame_opts = {
-		virt_text = true,
-		virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right-align'
-		delay = 500,
-		ignore_whitespace = false,
-	},
-	current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
-	sign_priority = 6,
-	update_debounce = 100,
-	preview_config = {
-		-- Options passed to nvim_open_win
-		border = "single",
-		style = "minimal",
-		relative = "cursor",
-		row = 0,
-		col = 1,
-	},
-	yadm = {
-		enable = false,
-	},
-	status_formatter = nil, -- Use default
-	max_file_length = 40000,
-	diff_opts = {
-		internal = false,
-	},
-	on_attach = function(bufnr)
-		local gs = package.loaded.gitsigns
-
-		local function map(mode, l, r, opts)
-			opts = opts or {}
-			opts.buffer = bufnr
-			vim.keymap.set(mode, l, r, opts)
-		end
-
-		-- Navigation
-		map("n", "]c", function()
-			if vim.wo.diff then
-				return "]c"
-			end
-			vim.schedule(function()
-				gs.next_hunk()
-			end)
-			return "<Ignore>"
-		end, { expr = true })
-
-		map("n", "[c", function()
-			if vim.wo.diff then
-				return "[c"
-			end
-			vim.schedule(function()
-				gs.prev_hunk()
-			end)
-			return "<Ignore>"
-		end, { expr = true })
-
-		-- Actions
-		map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>")
-		map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>")
-		map("n", "<leader>hS", gs.stage_buffer)
-		map("n", "<leader>hu", gs.undo_stage_hunk)
-		map("n", "<leader>hR", gs.reset_buffer)
-		map("n", "<leader>hp", gs.preview_hunk)
-		map("n", "<leader>hb", function()
-			gs.blame_line({ full = true })
-		end)
-		map("n", "<leader>tb", gs.toggle_current_line_blame)
-		map("n", "<leader>hd", gs.diffthis)
-		map("n", "<leader>hD", function()
-			gs.diffthis("~")
-		end)
-		map("n", "<leader>td", gs.toggle_deleted)
-
-		-- Text object
-		map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
-	end,
-})
+require("gitsigns").setup()
 
 --[[ fn.sign_define(
 	"LspDiagnosticsSignError",
@@ -1488,49 +1453,17 @@ db.custom_center = {
 	{ icon = '   ', desc = 'Load Last Session         ', shortcut = 'SPC s l', action = 'SessionLoad' },
 }
 
----------------------------------
--- Formatting
----------------------------------
--- local diagnostics = require("null-ls").builtins.diagnostics
--- local formatting = require("null-ls").builtins.formatting
--- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-
--- require("null-ls").setup({
--- 	sources = {
--- 		formatting.black,
--- 		formatting.rustfmt,
--- 		formatting.phpcsfixer,
--- 		formatting.prettier,
--- 		formatting.stylua,
--- 	},
--- 	on_attach = function(client, bufnr)
--- 		if client.name == "tsserver" or client.name == "rust_analyzer" or client.name == "pyright" then
--- 			client.resolved_capabilities.document_formatting = false
--- 		end
-
--- 		if client.supports_method("textDocument/formatting") then
--- 			vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
--- 			vim.api.nvim_create_autocmd("BufWritePre", {
--- 				group = augroup,
--- 				callback = function()
--- 					vim.lsp.buf.formatting_sync()
--- 				end,
--- 			})
--- 		end
--- 	end,
--- })
 
 ---------------------------------
 -- Auto commands
 ---------------------------------
-cmd([[ autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync() ]])
+-- cmd([[ autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync() ]])
 
 local prettier = require("prettier")
 prettier.setup({
 	bin = "prettier", -- or `prettierd`
 	filetypes = {
 		"css",
-		"graphql",
 		"html",
 		"javascript",
 		"javascriptreact",
@@ -1545,27 +1478,12 @@ prettier.setup({
 		"rust",
 	},
 
-	-- prettier format options (you can use config files too. ex: `.prettierrc`)
-	arrow_parens = "always",
-	bracket_spacing = true,
-	embedded_language_formatting = "auto",
-	end_of_line = "lf",
-	html_whitespace_sensitivity = "css",
-	jsx_bracket_same_line = false,
-	jsx_single_quote = true,
-	print_width = 80,
-	prose_wrap = "preserve",
-	quote_props = "as-needed",
-	semi = true,
-	single_quote = true,
-	tab_width = 2,
-	trailing_comma = "es7",
-	use_tabs = false,
-	vue_indent_script_and_style = false,
 })
 
+-- which keys
 require("which-key").setup({})
 
+-- TODO comments
 require("todo-comments").setup({
 	signs = true, -- show icons in the signs column
 	sign_priority = 9, -- sign priority
