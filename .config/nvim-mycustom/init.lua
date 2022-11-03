@@ -110,7 +110,8 @@ require("packer").startup(function(use)
 	use("sheerun/vim-polyglot") -- This is to help with razor files
 	use("nvim-lua/plenary.nvim")
 	use("turbio/bracey.vim") --	For live serving HTML and JavaScript documents
-	-- use 'folke/tokyonight.nvim'
+	use('folke/tokyonight.nvim')
+	use("navarasu/onedark.nvim")
 	use("nathom/filetype.nvim")
 	use("mhinz/vim-signify")
 	use("MunifTanjim/prettier.nvim")
@@ -123,7 +124,7 @@ require("packer").startup(function(use)
 	use("JoosepAlviste/nvim-ts-context-commentstring")
 	use("SmiteshP/nvim-navic")
 	use("ryanoasis/vim-devicons") -- optional, for file icon
-	use({ "github/copilot.vim", run = ":Copilot setup" }) -- for vim copilot
+	-- use({ "github/copilot.vim", run = ":Copilot setup" }) -- for vim copilot
 	-- using packer.nvim
 	use({ "akinsho/bufferline.nvim", tag = "v2.*", requires = "kyazdani42/nvim-web-devicons" })
 	use({
@@ -171,7 +172,6 @@ require("packer").startup(function(use)
 	use("f-person/git-blame.nvim") -- show git message
 	-- Syntax highlighting
 	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
-	-- use 'tree-sitter/tree-sitter'
 	use("nvim-treesitter/nvim-treesitter-textobjects")
 	use("nvim-treesitter/nvim-treesitter-refactor")
 	use({
@@ -256,13 +256,15 @@ require("packer").startup(function(use)
 		requires = {
 			{ "hrsh7th/cmp-path" },
 			{ "hrsh7th/cmp-buffer" },
-			-- { 'hrsh7th/cmp-vsnip' },
 			{ "ray-x/cmp-treesitter" },
 			{ "hrsh7th/cmp-calc" },
 			{ "hrsh7th/cmp-emoji" },
 			{ "tzachar/cmp-tabnine", run = "./install.sh" },
 		},
 	})
+	-- use('hrsh7th/cmp-vsnip')
+	-- use('hrsh7th/vim-vsnip')
+	-- use('hrsh7th/vim-vsnip-integ')
 	use("xiyaowong/telescope-emoji.nvim") -- allow looking up and using emojies inside out files
 	-- Grammar tips
 	use("folke/lsp-trouble.nvim")
@@ -380,19 +382,23 @@ opt("o", "smartcase", true) -- Don't ignore case with capitals
 opt("o", "splitbelow", true) -- Put new windows below current
 opt("o", "splitright", true) -- Put new windows right of current
 opt("o", "autowrite", true) -- Autowrite buffers or file
+opt("o", "winblend", 15)
+opt("o", "wildoptions", "pum")
 opt("o", "clipboard", "unnamed")
-opt("o", "pumblend", 26)
+opt("o", "pumblend", 15) -- enables pseudo-transparency level for pop-up menus
 opt("o", "shell", "/usr/bin/tmux")
 opt("o", "softtabstop", indent)
 opt("o", "swapfile", false)
+opt("o", "termguicolors", true)
 opt("o", "background", "dark")
+opt("o", "t_Co", 256)
 opt("o", "backup", false)
 opt("w", "number", true) -- Print line number
 opt("o", "lazyredraw", false)
 opt("o", "signcolumn", "yes")
 opt("o", "mouse", "a")
 opt("o", "cmdheight", 2)
-opt("o", "guifont", "Fira Code iScript:h10.6") -- Download this font package and install from https://github.com/kencrocken/FiraCodeiScript
+opt("o", "guifont", "Fira Code iScript:h10") -- Download this font package and install from https://github.com/kencrocken/FiraCodeiScript
 opt("o", "wrap", false)
 opt("o", "relativenumber", true)
 opt("o", "hlsearch", true)
@@ -501,8 +507,8 @@ map("n", "<leader>gs", "<cmd>Gina status<CR>")
 map("n", "<leader>gl", "<cmd>Gina pull<CR>")
 map("n", "<leader>gu", "<cmd>Gina push<CR>")
 map("n", "<leader>tq", "<cmd>TroubleToggle<CR>")
--- map("n", "<silent> <F5>", ":call LanguageClient#textDocument_hover()<CR>")
--- map("n", "<silent> <F4>", ":call LanguageClient#textDocument_codeAction()<CR>")
+map("n", "<silent> <F5>", ":call LanguageClient#textDocument_hover()<CR>")
+map("n", "<silent> <F4>", ":call LanguageClient#textDocument_codeAction()<CR>")
 map("n", "<silent> <F6>", ":Bracey<CR>", { silent = true })
 map("n", "<silent> <F7>", ":BraceyStop<CR>", { silent = true })
 map("n", "<silent> <F8>", ":BraceyRelaod<CR>", { silent = true })
@@ -543,25 +549,50 @@ cmd([[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightb
 cmd(
 	[[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1001})]]
 )
+-- Bufferline backgorund
+cmd([[highlight bufferline guibg=#262a33 gui=nocombine]])
+
+-- comments
+cmd([[highlight Comment guibg=#262a33 ctermbg=262a33 gui=nocombine]])
+
+-- indentation colors
 cmd([[highlight IndentBlanklineIndent2 guifg=#E06C75 gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent3 guifg=#E5C07B gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent4 guifg=#98C379 gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent5 guifg=#56B6C2 gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent6 guifg=#61AFEF gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]])
-
+-- Fix weird TSHighlighting
+-- TODO
+--
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
 cmd([[autocmd ColorScheme zephyr highlight Keyword gui=italic cterm=italic]]) -- set for all Keywords
+cmd([[autocmd ColorScheme zephyr highlight Comment guifg=#6D7077 gui=nocombine]]) -- set for all Comments
 cmd([[autocmd ColorScheme zephyr highlight Comment gui=italic cterm=italic]]) -- set for all Comments
--- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+-- Setting for Selected Bufferline
+cmd([[autocmd ColorScheme zephyr highlight BufferLineBufferSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd([[autocmd ColorScheme zephyr highlight BufferLineNumbersSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+-- Setting for Selected Warning Bufferline
+cmd([[autocmd ColorScheme zephyr highlight BufferLineWarningSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd([[autocmd ColorScheme zephyr highlight BufferLineWarningDiagnosticSelected ctermbg=262a33 guifg=#EFB839 gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+-- Setting for Selected Error Bufferline
+cmd([[autocmd ColorScheme zephyr highlight BufferLineErrorSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd([[autocmd ColorScheme zephyr highlight BufferLineErrorDiagnosticSelected ctermbg=262a33 guifg=#EC5241 gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+-- Setting for Selected Info Bufferline
+cmd([[autocmd ColorScheme zephyr highlight BufferLineInfoSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd([[autocmd ColorScheme zephyr highlight BufferLineInfoDiagnosticSelected ctermbg=262a33 guifg=#7EA9A7 gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+-- Setting for Selected Hint Bufferline
+cmd([[autocmd ColorScheme zephyr highlight BufferLineHintSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd([[autocmd ColorScheme zephyr highlight BufferLineHintDiagnosticSelected ctermbg=262a33 guifg=#A3BA5E gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
 -- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd([[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]]) -- set for all Exception
 cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
 cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
 -- cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
 -- cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
--- cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
--- cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
+cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
+cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
 cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
 cmd([[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]]) -- set for all generic PreProcessors
 
@@ -630,6 +661,16 @@ nvim_exec(
 -- REQUIRES
 ---------------------------------------
 
+-- onedark theme setup
+-- local status, onedark = pcall(require, "onedark")
+-- if (not status) then return end
+--
+-- onedark.setup({
+-- 	style = 'deep',
+-- })
+-- onedark.load()
+
+
 -- telescope setup
 require("telescope").load_extension("emoji")
 local status, telescope = pcall(require, "telescope")
@@ -689,6 +730,7 @@ vim.keymap.set("n", "sf", function()
 	})
 end)
 
+
 -- Git inside neovim
 local status, git = pcall(require, "git")
 if (not status) then return end
@@ -707,17 +749,7 @@ git.setup({
 -- Allowing transparent neovim
 require("transparent").setup({
 	enable = false, -- boolean: enable transparent
-	extra_groups = { -- table/string: additional groups that should be cleared
-		-- In particular, when you set it to 'all', that means all available groups
-
-		-- example of akinsho/nvim-bufferline.lua
-		"BufferLineTabClose",
-		"BufferlineBufferSelected",
-		"BufferLineFill",
-		"BufferLineBackground",
-		"BufferLineSeparator",
-		"BufferLineIndicatorSelected",
-	},
+	extra_groups = { "all" },
 	exclude = {}, -- table: groups you don't want to clear
 })
 
@@ -728,7 +760,7 @@ if (not status) then return end
 
 null_ls.setup({
 	sources = {
-		null_ls.builtins.diagnostics.eslint_d.with({
+		null_ls.builtins.diagnostics.eslint.with({
 			diagnostics_format = '[eslint] #{m}\n(#{c})'
 		}),
 		-- null_ls.builtins.diagnostics.fish
@@ -744,46 +776,15 @@ require("jc").setup({}) -- Java support
 
 require("bufferline").setup({
 	options = {
-		mode = "buffers", -- set to "tabs" to only show tabpages instead
 		separator_style = "slant",
 		numbers = function(opts)
 			return string.format("%s", opts.raise(opts.ordinal))
 			-- return string.format('%s.%s', opts.ordinal, opts.raise(opts.id))
 		end,
-		close_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
-		right_mouse_command = "bdelete! %d", -- can be a string | function, see "Mouse actions"
-		left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
-		middle_mouse_command = nil, -- can be a string | function, see "Mouse actions"
-		-- NOTE: this plugin is designed with this icon in mind,
-		-- and so changing this is NOT recommended, this is intended
-		-- as an escape hatch for people who cannot bear it for whatever reason
 		indicator = {
 			icon = "▎", -- this should be omitted if indicator style is not 'icon'
 			style = "icon",
 		},
-		buffer_close_icon = "",
-		modified_icon = "●",
-		close_icon = "",
-		left_trunc_marker = "",
-		right_trunc_marker = "",
-		--- name_formatter can be used to change the buffer's label in the bufferline.
-		--- Please note some names can/will break the
-		--- bufferline so use this at your discretion knowing that it has
-		--- some limitations that will *NOT* be fixed.
-		name_formatter = function(buf) -- buf contains a "name", "path" and "bufnr"
-			-- remove extension from markdown files for example
-			if buf.name:match("%.md") then
-				return vim.fn.fnamemodify(buf.name, ":t:r")
-			end
-		end,
-		hover = {
-			enabled = true,
-			delay = 200,
-			reveal = { "close" },
-		},
-		max_name_length = 18,
-		max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
-		tab_size = 18,
 		diagnostics = "nvim_lsp",
 		diagnostics_update_in_insert = true,
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
@@ -794,38 +795,11 @@ require("bufferline").setup({
 			end
 			return s
 		end,
-		-- NOTE: this will be called a lot so don't do any heavy processing here
-		custom_filter = function(buf_number, buf_numbers)
-			-- filter out filetypes you don't want to see
-			if vim.bo[buf_number].filetype ~= "<i-dont-want-to-see-this>" then
-				return true
-			end
-			-- filter out by buffer name
-			if vim.fn.bufname(buf_number) ~= "<buffer-name-I-dont-want>" then
-				return true
-			end
-			-- filter out based on arbitrary rules
-			-- e.g. filter out vim wiki buffer from tabline in your work repo
-			if vim.fn.getcwd() == "<work-repo>" and vim.bo[buf_number].filetype ~= "wiki" then
-				return true
-			end
-			-- filter out by it's index number in list (don't show first buffer)
-			-- if buf_numbers[1] ~= buf_number then
-			if buf_numbers[0] ~= buf_number then
-				return true
-			end
-		end,
-		offsets = { { filetype = "NvimTree", text = "File Explorer", text_align = "left" } }, -- this allows for splits not to have bufferlines in them
 		color_icons = true, -- whether or not to add the filetype icon highlights
 		show_buffer_icons = true, -- disable filetype icons for buffers
-		show_buffer_close_icons = true,
 		show_buffer_default_icon = true, -- whether or not an unrecognised filetype should show a default icon
-		show_close_icon = true,
 		show_tab_indicators = true,
 		persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
-		-- can also be a table containing 2 custom separators
-		-- [focused and unfocused]. eg: { '|', '|' }
-		-- separator_style = "thin", -- 'slant' | 'thin' | 'thick'
 		enforce_regular_tabs = false,
 		always_show_bufferline = true,
 		sort_by = "insert_at_end", -- 'insert_at_end' | 'insert_after_current' | 'id' | 'extension' | 'relative_directory'
@@ -888,15 +862,11 @@ require("indent_blankline").setup({
 
 --theme
 cmd("colorscheme zephyr")
--- Get zephyr color
-require("zephyr")
--- local zephyr =  require('zephyr').zephyr.yellow/teal/fg/bg
--- cmd 'colorscheme nightfly'
 
 local notify = require("notify")
---[[ notify.setup({
-	background_colour = "#000000",
-}) ]]
+-- notify.setup({
+-- 	background_colour = "#000000",
+-- })
 
 -- lightspeed config
 require("lightspeed").setup({
@@ -916,6 +886,10 @@ require("lightspeed").setup({
 	cycle_group_bwd_key = nil,
 })
 
+-- luasnip
+require("luasnip")
+
+-- hlslens
 require("hlslens").setup({
 	calm_down = true,
 	nearest_only = true,
@@ -954,9 +928,11 @@ require("hlslens").setup({
 require("telescope").load_extension("media_files")
 
 --nvim treesitter
-require("nvim-treesitter.configs").setup({
+local status, treesitter = pcall(require, "nvim-treesitter.configs")
+if (not status) then return end
+treesitter.setup({
 	ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-	context_commentstring = { enable = true },
+	sync_install = true,
 	highlight = { enable = true },
 	rainbow = { enable = true, extended_mode = true },
 	indent = { enable = true },
@@ -984,7 +960,6 @@ local status, autotag = pcall(require, "nvim-ts-autotag")
 if (not status) then return end
 
 autotag.setup({})
-
 
 
 -- cmp setup
@@ -1031,7 +1006,7 @@ cmp.setup({
 	sources = {
 		{ name = "path" },
 		{ name = "nvim_lsp" },
-		{ name = "luasnp" },
+		{ name = "vsnip" },
 		{ name = "cmp_tabnine" },
 		{ name = "buffer" },
 		{ name = "treesitter" },
@@ -1070,7 +1045,7 @@ cmp.setup({
 				path = "   [Path]",
 				buffer = "   [Buffer]",
 				nvim_lsp = "   [LSP]",
-				vsnip = "   [luasnip]",
+				vsnip = "   [vsnip]",
 				treesitter = "   [Ts]",
 				calc = "   [Calc]",
 				spell = "   [Spell]",
@@ -1091,7 +1066,7 @@ cmd([[
 ]])
 
 -- Lspsaga
--- require("lspsaga").setup{}
+-- require("lspsaga").setup {}
 -- Lspsaga timed hover
 --[[ local show_timed_hover = function()
 	vim.fn.timer_start(100, '<cmd>Lspsaga hover_doc<CR>')
@@ -1137,6 +1112,7 @@ local status2, lspconfig = pcall(require, "mason-lspconfig")
 if (not status2) then return end
 
 mason.setup({
+	automatic_installation = true,
 	ui = {
 		icons = {
 			package_installed = "✓",
@@ -1146,72 +1122,76 @@ mason.setup({
 	}
 })
 
+
+-- Lspconfig setup
+local servers = { "sumneko_lua", "tailwindcss", "cssls", "html", "rust_analyzer", "tsserver", "graphql", "volar",
+	"jsonls", "dockerls", "zk", "prismals", "pyright", "solidity", "volar" }
+
 lspconfig.setup {
+	ensure_installed = servers,
 	automatic_installation = true,
-	ensure_installed = { "sumneko_lua", "tailwindcss" },
 }
 
+-- lspsaga configuration
+local setup, saga = pcall(require, "lspsaga")
+if (not status) then return end
+saga.init_lsp_saga({
+	border_style = "rounded",
+})
 
--- luasnip setup
-require("luasnip")
+-- Mappings.
+local opts = { noremap = true, silent = true }
+
+-- See `:help vim.lsp.*` for documentation on any of the below functions
+vim.keymap.set("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
+vim.keymap.set("n", "<space>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
+vim.keymap.set("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
+
+vim.keymap.set("n", "[f", "<cmd>Lspsaga lsp_finder<CR>", opts)
+
+-- code action
+vim.keymap.set("n", "[a", "<cmd>Lspsaga code_action<CR>", opts)
+-- range code action
+vim.keymap.set("v", "[a", "<cmd><C-U>Lspsaga range_code_action<CR>", opts)
+
+-- show hover doc and press twice will jump to hover window
+vim.keymap.set("n", "[o", "<cmd>Lspsaga hover_doc<CR>", opts)
+
+-- show signature help
+vim.keymap.set("n", "[s", "<cmd>Lspsaga signature_help<CR>", opts)
+
+-- toggle code outline
+vim.keymap.set("n", "[t", "<cmd>LSoutlineToggle<CR>", opts)
+
+-- rename
+vim.keymap.set("n", "[n", "<cmd>Lspsaga rename<CR>", opts)
+
+-- preview definition
+vim.keymap.set("n", "gd", "<cmd>Lspsaga preview_definition<CR>", opts)
+-- show line and cursor diagnostics
+vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_line_diagnostics<CR>", opts)
+vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts)
+
+-- jump to next diagnostic
+vim.keymap.set("n", "[e", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
+-- jump to previous diagnostic
+vim.keymap.set("n", "]e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
+-- jump to previous error diagnostic
+vim.keymap.set("n", "[E", function()
+	require("lspsaga.diagnostic").goto_prev({ severity = vim.diagnostic.severity.ERROR })
+end, opts)
+-- jump to next error diagnostic
+vim.keymap.set("n", "]E", function()
+	require("lspsaga.diagnostic").goto_next({ severity = vim.diagnostic.severity.ERROR })
+end, opts)
+-- open the float terminal
+vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { silent = true })
+-- vim.keymap.set("n", "<leader>tt", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
+vim.keymap.set("n", "[g", "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
+-- close the float terminal
+vim.keymap.set("t", "<C-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
 
 local on_attach = function(client)
-	-- Mappings.
-	local opts = { noremap = true, silent = true }
-
-	-- See `:help vim.lsp.*` for documentation on any of the below functions
-	vim.keymap.set("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-	vim.keymap.set("n", "<space>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-	vim.keymap.set("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
-
-	require("lspsaga")
-
-	vim.keymap.set("n", "[f", "<cmd>Lspsaga lsp_finder<CR>", opts)
-
-	-- code action
-	vim.keymap.set("n", "[a", "<cmd>Lspsaga code_action<CR>", opts)
-	-- range code action
-	vim.keymap.set("v", "[a", "<cmd><C-U>Lspsaga range_code_action<CR>", opts)
-
-	-- show hover doc and press twice will jump to hover window
-	vim.keymap.set("n", "[o", "<cmd>Lspsaga hover_doc<CR>", opts)
-
-	-- show signature help
-	vim.keymap.set("n", "[s", "<cmd>Lspsaga signature_help<CR>", opts)
-
-	-- toggle code outline
-	vim.keymap.set("n", "[t", "<cmd>LSoutlineToggle<CR>", opts)
-
-	-- rename
-	vim.keymap.set("n", "[n", "<cmd>Lspsaga rename<CR>", opts)
-
-	-- preview definition
-	vim.keymap.set("n", "gd", "<cmd>Lspsaga preview_definition<CR>", opts)
-	-- show line and cursor diagnostics
-	vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_line_diagnostics<CR>", opts)
-	vim.keymap.set("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts)
-
-	-- jump to next diagnostic
-	vim.keymap.set("n", "[e", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
-	-- jump to previous diagnostic
-	vim.keymap.set("n", "]e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
-	-- jump to previous error diagnostic
-	vim.keymap.set("n", "[E", function()
-		require("lspsaga.diagnostic").goto_prev({ severity = vim.diagnostic.severity.ERROR })
-	end, opts)
-	-- jump to next error diagnostic
-	vim.keymap.set("n", "]E", function()
-		require("lspsaga.diagnostic").goto_next({ severity = vim.diagnostic.severity.ERROR })
-	end, opts)
-
-	-- float terminal
-	-- open the float terminal
-	vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { silent = true })
-	-- vim.keymap.set("n", "<leader>tt", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
-	vim.keymap.set("n", "[g", "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
-	-- close the float terminal
-	vim.keymap.set("t", "<C-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
-
 	if client.server_capabilities.document_formatting then
 		vim.keymap.set("n", "<space>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 	end
@@ -1221,7 +1201,9 @@ local on_attach = function(client)
 
 	local msg = string.format("Language server %s started!", client.name)
 	notify(msg, "info", { title = "LSP Notify", timeout = 1001 })
+
 end
+
 
 -- npm install --global vls @volar/server @johnsoncodehk/html2pug @volar/pug-language-service @volar/vue-language-server @volar/typescript-language-service @volar/vue-language-service typescript typescript-language-server graphql-language-service-cli dockerfile-language-server-nodejs stylelint-lsp yaml-language-server prettier
 -- can use rls or rust_analyzer
@@ -1242,61 +1224,11 @@ require("trouble").setup({})
 require("lspkind").init({
 	-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
 	mode = "symbol",
-	-- default symbol map
-	-- can be either 'default' (requires nerd-fonts font) or
-	-- 'codicons' for codicon preset (requires vscode-codicons font)
-	--
-	-- default: 'default'
 	preset = "codicons",
-	-- override preset symbols
-	--
-	-- default: {}
-	symbol_map = {
-		Text = "",
-		Method = "",
-		Function = "",
-		Constructor = "",
-		Field = "ﰠ",
-		Variable = "",
-		Class = "ﴯ",
-		Interface = "",
-		Module = "",
-		Property = "ﰠ",
-		Unit = "塞",
-		Value = "",
-		Enum = "",
-		Keyword = "",
-		Snippet = "",
-		Color = "",
-		File = "",
-		Reference = "",
-		Folder = "",
-		EnumMember = "",
-		Constant = "",
-		Struct = "פּ",
-		Event = "",
-		Operator = "",
-		TypeParameter = "",
-	},
-	-- finder icons
-	finder_icons = {
-		def = "  ",
-		ref = "諭 ",
-		link = "  ",
-	},
 	-- finder do lsp request timeout
 	-- if your project big enough or your server very slow
 	-- you may need to increase this value
 	finder_request_timeout = 1500,
-	finder_action_keys = {
-		open = "o",
-		vsplit = "s",
-		split = "i",
-		tabe = "t",
-		quit = "q",
-		scroll_down = "<C-f>",
-		scroll_up = "<C-b>", -- quit can be a table
-	},
 })
 require("diffview").setup({})
 
@@ -1404,27 +1336,30 @@ require("nvim-tree").setup({
 			list = {},
 		},
 	},
+	renderer = {
+		add_trailing = true,
+		group_empty = false,
+		highlight_git = false,
+		full_name = false,
+		highlight_opened_files = "none",
+		root_folder_modifier = ":~",
+		indent_width = 2,
+		indent_markers = {
+			enable = true,
+			inline_arrows = false,
+			icons = {
+				corner = "└",
+				edge = "│",
+				item = "│",
+				bottom = "─",
+				none = " ",
+			},
+		},
+	},
 })
 
 --gitsigns
 require("gitsigns").setup()
-
---[[ fn.sign_define(
-	"LspDiagnosticsSignError",
-	{ texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError" }
-)
-fn.sign_define(
-	"LspDiagnosticsSignWarning",
-	{ texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning" }
-)
-fn.sign_define(
-	"LspDiagnosticsSignHint",
-	{ texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint" }
-)
-fn.sign_define(
-	"LspDiagnosticsSignInformation",
-	{ texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
-) ]]
 
 g.dashboard_default_executive = "telescope"
 
