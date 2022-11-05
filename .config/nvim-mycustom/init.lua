@@ -72,15 +72,9 @@ vim.cmd([[
   augroup packer_user_config
     autocmd!
     autocmd BufWritePost init.lua source <afile> | PackerSync
+    autocmd VimEnter * source $MYVIMRC
   augroup end
 ]])
-
--- vim.cmd([[
---   augroup packer_user_config
---     autocmd!
---     autocmd VimEnter * source $MYVIMRC
---   augroup end
--- ]])
 
 -- Use a protected call so we don't error out on first use
 local status_ok, packer = pcall(require, "packer")
@@ -111,8 +105,8 @@ require("packer").startup(function(use)
 	use("sheerun/vim-polyglot") -- This is to help with razor files
 	use("nvim-lua/plenary.nvim")
 	use("turbio/bracey.vim") --	For live serving HTML and JavaScript documents
-	use('folke/tokyonight.nvim')
-	use("navarasu/onedark.nvim")
+	-- use('folke/tokyonight.nvim')
+	-- use("navarasu/onedark.nvim")
 	use("nathom/filetype.nvim")
 	use("mhinz/vim-signify")
 	use("MunifTanjim/prettier.nvim")
@@ -598,10 +592,6 @@ cmd([[highlight IndentBlanklineIndent7 guifg=#C678DD gui=nocombine]])
 -- Fix weird TSHighlighting
 -- TODO
 --
--- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
-cmd([[autocmd ColorScheme zephyr highlight Keyword gui=italic cterm=italic]]) -- set for all Keywords
-cmd([[autocmd ColorScheme zephyr highlight Comment guifg=#6D7077 gui=nocombine]]) -- set for all Comments
-cmd([[autocmd ColorScheme zephyr highlight Comment gui=italic cterm=italic]]) -- set for all Comments
 -- Setting for Selected Bufferline
 cmd([[autocmd ColorScheme zephyr highlight BufferLineBufferSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
 cmd([[autocmd ColorScheme zephyr highlight BufferLineNumbersSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
@@ -617,14 +607,18 @@ cmd([[autocmd ColorScheme zephyr highlight BufferLineInfoDiagnosticSelected cter
 -- Setting for Selected Hint Bufferline
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintDiagnosticSelected ctermbg=262a33 guifg=#A3BA5E gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
-cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+-- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
+-- cmd([[autocmd ColorScheme zephyr highlight Keyword ctermbg=262a33 gui=italic cterm=italic]]) -- set for all Keywords
+-- cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=nocombine]]) -- set for all Comments
+cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=italic cterm=italic]]) -- set for all Comments
+-- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
 -- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd([[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]]) -- set for all Exception
-cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
-cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
+-- cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
+-- cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
 -- cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
 -- cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
-cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
+-- cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
 cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
 cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
 cmd([[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]]) -- set for all generic PreProcessors
@@ -702,15 +696,6 @@ nvim_exec(
 ---------------------------------------
 -- REQUIRES
 ---------------------------------------
-
--- onedark theme setup
--- local status, onedark = pcall(require, "onedark")
--- if (not status) then return end
---
--- onedark.setup({
--- 	style = 'deep',
--- })
--- onedark.load()
 
 -- noedev setup
 require("neodev").setup({
@@ -928,6 +913,7 @@ require("indent_blankline").setup({
 
 --theme
 cmd("colorscheme zephyr")
+-- require("zephyr")
 
 local notify = require("notify")
 -- notify.setup({
@@ -1102,10 +1088,8 @@ cmp.setup({
 		mapping = cmp.mapping.preset.cmdline(),
 		sources = cmp.config.sources({
 			{ name = "path" },
-			{ name = "luasnip" },
-		},
-		{
-			{ name = "cmdline" }, 
+		}, {
+			{ name = "cmdline" },
 		}),
 	}),
 
