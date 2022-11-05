@@ -1,3 +1,4 @@
+-- require("config")
 -- make life easier
 local cmd = vim.cmd
 local g = vim.g
@@ -168,6 +169,9 @@ require("packer").startup(function(use)
 	use({ "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } })
 	use("tpope/vim-repeat")
 	use("tpope/vim-fugitive")
+	use('teal-language/vim-teal')
+	use('dense-analysis/ale')
+	use("tpope/vim-endwise")
 	use("lambdalisue/gina.vim")
 	use("f-person/git-blame.nvim") -- show git message
 	-- Syntax highlighting
@@ -248,6 +252,28 @@ require("packer").startup(function(use)
 	use({ "ellisonleao/glow.nvim", branch = "main" })
 	use("xiyaowong/nvim-transparent")
 	use("quangnguyen30192/cmp-nvim-ultisnips")
+	use({ "diepm/vim-rest-console", ft = { "rest" } }) -- rest live testing
+	use({
+		"NTBBloodbath/rest.nvim",
+		config = function()
+			require("rest-nvim").setup {}
+		end,
+	})
+	use({
+		"nvim-neotest/neotest",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"antoinemadec/FixCursorHold.nvim",
+			"nvim-neotest/neotest-python",
+			"nvim-neotest/neotest-plenary",
+			"nvim-neotest/neotest-go",
+			"haydenmeade/neotest-jest",
+			"nvim-neotest/neotest-vim-test",
+		}
+	})
+	use("folke/neodev.nvim")
+	use('epilande/vim-react-snippets')
 	use("hrsh7th/nvim-cmp")
 	use("L3MON4D3/LuaSnip")
 	use("saadparwaiz1/cmp_luasnip")
@@ -341,12 +367,6 @@ require("packer").startup(function(use)
 	use("ThePrimeagen/vim-be-good")
 	-- Give me some glepnir beauty in there
 	use("glepnir/zephyr-nvim")
-	use({
-		"NTBBloodbath/rest.nvim",
-		config = function()
-			require("rest-nvim").setup()
-		end,
-	})
 	use({ "rcarriga/nvim-notify", config = 'vim.notify = require("notify")' })
 	-- use 'metakirby6/codi.vim'
 	use({ "michaelb/sniprun", run = "bash ./install.sh" })
@@ -473,16 +493,30 @@ map("n", "[fo", "<cmd>foldopen<CR>")
 map("n", "[fc", "<cmd>foldclose<CR>")
 map("n", "[fl", "<cmd>fold<CR>")
 map("n", "<c-g>", ":Glow<CR>")
+map("n", ";rr", "<cmd>RestNvim<CR>") -- execute test under the current cursor with ;rp
+map("n", ";rp", "<cmd>RestNvimPreview<CR>") -- preview the request curl command
+map("n", ";rl", "<cmd>RestNvimLast<CR>") -- rerun the request
+-- For neotest
+map("n", ";na", "<cmd>lua require('neotest').run.attach()<CR>")
+map("n", ";nf", "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>")
+map("n", ";nF", "<cmd>lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<CR>")
+map("n", ";nl", "<cmd>lua require('neotest').run.run_last()<CR>")
+map("n", ";nL", "<cmd>lua require('neotest').run.run_last({ strategy = 'dap' })<CR>")
+map("n", ";nn", "<cmd>lua require('neotest').run.run()<CR>")
+map("n", ";nN", "<cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>")
+map("n", ";no", "<cmd>lua require('neotest').output.open({ enter = true })<CR>")
+map("n", ";nS", "<cmd>lua require('neotest').run.stop()<CR>")
+map("n", ";ns", "<cmd>lua require('neotest').summary.toggle()<CR>")
 map("n", "<leader>h", ":FocusSplitLeft<CR>", { silent = true })
 map("n", "<leader>j", ":FocusSplitDown<CR>", { silent = true })
 map("n", "<leader>k", ":FocusSplitUp<CR>", { silent = true })
 map("n", "<leader>l", ":FocusSplitRight<CR>", { silent = true })
 map("n", "<leader>n", "<cmd>NvimTreeToggle<CR>") --nvimtree
-map("n", "<leader>ss", "<cmd>SaveSession .sessions<CR>")
-map("n", "<leader>sh", "<cmd>Telescope session-lens search_session<CR>")
-map("n", "<leader>sr", "<cmd>RestoreSession .sessions<CR>")
-map("n", "<leader>sd", "<cmd>DeleteSession .sessions<CR>")
-map("n", "<leader>sl", "<cmd>SessionLoad .sessions<CR>")
+map("n", ";ss", "<cmd>SaveSession .sessions<CR>")
+map("n", ";sh", "<cmd>Telescope session-lens search_session<CR>")
+map("n", ";sr", "<cmd>RestoreSession .sessions<CR>")
+map("n", ";sd", "<cmd>DeleteSession .sessions<CR>")
+map("n", ";sl", "<cmd>SessionLoad .sessions<CR>")
 map("t", "<leader>o", "<cmd>Vista<CR>") --fuzzN
 map("n", "<c-k>", "<cmd>wincmd k<CR>") --ctrlhjkl to navigate splits
 map("n", "<c-j>", "<cmd>wincmd j<CR>")
@@ -497,16 +531,16 @@ map("t", "<c-l>", "<cmd>wincmd l<CR>", { silent = true })
 map("n", "<c-s>", "<cmd>w!<CR>")
 map("n", "<c-x>", "<cmd>bdelete<CR>")
 map("n", "<leader>b", "<cmd>BufferLinePick<CR>")
-map("n", "<leader>bp", "<cmd>BufferLineTogglePin<CR>")
-map("n", "<leader>bj", "<cmd>bprevious<CR>")
-map("n", "<leader>bn", "<cmd>bnext<CR>")
-map("n", "<leader>be", "<cmd>tabedit<CR>")
-map("n", "<leader>ga", "<cmd>Gina add .<CR>")
-map("n", "<leader>gm", "<cmd>Gina commit<CR>")
-map("n", "<leader>gs", "<cmd>Gina status<CR>")
-map("n", "<leader>gl", "<cmd>Gina pull<CR>")
-map("n", "<leader>gu", "<cmd>Gina push<CR>")
-map("n", "<leader>tq", "<cmd>TroubleToggle<CR>")
+map("n", ";bp", "<cmd>BufferLineTogglePin<CR>")
+map("n", ";bj", "<cmd>bprevious<CR>")
+map("n", ";bn", "<cmd>bnext<CR>")
+map("n", ";be", "<cmd>tabedit<CR>")
+map("n", ";ga", "<cmd>Gina add .<CR>")
+map("n", ";gm", "<cmd>Gina commit<CR>")
+map("n", ";gs", "<cmd>Gina status<CR>")
+map("n", ";gl", "<cmd>Gina pull<CR>")
+map("n", ";gu", "<cmd>Gina push<CR>")
+map("n", ";tq", "<cmd>TroubleToggle<CR>")
 map("n", "<silent> <F5>", ":call LanguageClient#textDocument_hover()<CR>")
 map("n", "<silent> <F4>", ":call LanguageClient#textDocument_codeAction()<CR>")
 map("n", "<silent> <F6>", ":Bracey<CR>", { silent = true })
@@ -533,16 +567,18 @@ map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
 -- map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 -- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
+
+-------------------------------------------
+-- AUTOCOMMANDS
+-------------------------------------------
 cmd([[autocmd BufWritePre * %s/\s\+$//e]]) --remove trailing whitespaces
 cmd([[autocmd BufWritePre * %s/\n\+\%$//e]])
 cmd([[autocmd BufRead * ColorizerAttachToBuffer]]) -- Attach colorizer to all buffers
 cmd([[autocmd BufRead *.rsh set filetype=reach]])
 -- Open in last edit place
 cmd([[ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif ]])
-
 -- Live compile sass files
 cmd([[autocmd bufwritepost [^_]*.sass,[^_]*.scss  silent exec "!sass %:p %:r.css"]])
-
 -- cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd([[autocmd BufRead *.rsh set syntax=javascript]])
 cmd([[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]])
@@ -551,10 +587,8 @@ cmd(
 )
 -- Bufferline backgorund
 cmd([[highlight bufferline guibg=#262a33 gui=nocombine]])
-
 -- comments
 cmd([[highlight Comment guibg=#262a33 ctermbg=262a33 gui=nocombine]])
-
 -- indentation colors
 cmd([[highlight IndentBlanklineIndent2 guifg=#E06C75 gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent3 guifg=#E5C07B gui=nocombine]])
@@ -596,6 +630,12 @@ cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- 
 cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
 cmd([[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]]) -- set for all generic PreProcessors
 
+
+
+----------------------------------------------------
+-- NVIM EXECUTIONS
+----------------------------------------------------
+
 local numbers =
 { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "12", "13", "14", "15", "16", "17", "18", "19", "20" }
 for _, num in pairs(numbers) do
@@ -612,6 +652,9 @@ nvim_exec(
 ]],
 	false
 )
+
+-- rest-nvim
+nvim_exec([[ let g:vrc_trigger = '<C-v>' ]], false)
 
 -- Dapui
 nvim_exec(
@@ -670,6 +713,9 @@ nvim_exec(
 -- })
 -- onedark.load()
 
+-- noedev setup
+require("neodev").setup({
+})
 
 -- telescope setup
 require("telescope").load_extension("emoji")
@@ -731,6 +777,11 @@ vim.keymap.set("n", "sf", function()
 end)
 
 
+-- Teal
+local tl = require("tl")
+tl.loader()
+
+
 -- Git inside neovim
 local status, git = pcall(require, "git")
 if (not status) then return end
@@ -744,6 +795,22 @@ git.setup({
 	}
 })
 
+
+-- neotest config
+require("neotest").setup({
+	adapters = {
+		require("neotest-python")({
+			dap = { justMyCode = false },
+			runner = "unittest",
+		}),
+		require("neotest-plenary"),
+		require("neotest-go"),
+		require("neotest-jest"),
+		require("neotest-vim-test")({
+			ignore_file_types = { "python", "vim", "lua" },
+		}),
+	},
+})
 
 
 -- Allowing transparent neovim
@@ -1103,6 +1170,19 @@ nvim_lsp.tsserver.setup {
 	cmd = { "typescript-language-server", "--stdio" }
 }
 nvim_lsp.tailwindcss.setup {}
+nvim_lsp.cssls.setup {}
+nvim_lsp.html.setup {}
+nvim_lsp.rust_analyzer.setup {}
+nvim_lsp.graphql.setup {}
+nvim_lsp.volar.setup {}
+nvim_lsp.jsonls.setup {}
+nvim_lsp.dockerls.setup {}
+nvim_lsp.zk.setup {}
+nvim_lsp.prismals.setup {}
+nvim_lsp.pyright.setup {}
+nvim_lsp.solidity.setup {}
+nvim_lsp.yamlls.setup {}
+nvim_lsp.teal_ls.setup {}
 
 
 -- mason lsp config setup
@@ -1124,12 +1204,18 @@ mason.setup({
 
 
 -- Lspconfig setup
-local servers = { "sumneko_lua", "tailwindcss", "cssls", "html", "rust_analyzer", "tsserver", "graphql", "volar",
-	"jsonls", "dockerls", "zk", "prismals", "pyright", "solidity", "volar" }
+local servers = { "sumneko_lua", "jsonls", "volar", }
 
 lspconfig.setup {
 	ensure_installed = servers,
 	automatic_installation = true,
+	settings = {
+		Lua = {
+			completion = {
+				callSnippet = "Replace"
+			}
+		}
+	}
 }
 
 -- lspsaga configuration
@@ -1186,7 +1272,7 @@ vim.keymap.set("n", "]E", function()
 end, opts)
 -- open the float terminal
 vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { silent = true })
--- vim.keymap.set("n", "<leader>tt", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
+vim.keymap.set("n", "<leader>ft", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
 vim.keymap.set("n", "[g", "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
 -- close the float terminal
 vim.keymap.set("t", "<C-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
