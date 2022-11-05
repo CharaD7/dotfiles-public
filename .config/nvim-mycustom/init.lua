@@ -1103,8 +1103,10 @@ cmp.setup({
 		mapping = cmp.mapping.preset.cmdline(),
 		sources = cmp.config.sources({
 			{ name = "path" },
-		}, {
-			{ name = "cmdline" },
+			{ name = "luasnip" },
+		},
+		{
+			{ name = "cmdline" }, 
 		}),
 	}),
 
@@ -1115,7 +1117,7 @@ cmp.setup({
 				path = "   [Path]",
 				buffer = "   [Buffer]",
 				nvim_lsp = "   [LSP]",
-				vsnip = "   [vsnip]",
+				luasnip = "   [luasnip]",
 				treesitter = "   [Ts]",
 				calc = "   [Calc]",
 				spell = "   [Spell]",
