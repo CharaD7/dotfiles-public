@@ -953,7 +953,6 @@ require("lightspeed").setup({
 })
 
 -- luasnip
-require("luasnip")
 -- loading snippets relative to the directory of $MYVIMRC
 require("luasnip.loaders.from_vscode").load({ paths = "./snippets/rust" })
 require("luasnip.loaders.from_vscode").load({ paths = "./snippets/python" })
@@ -1076,7 +1075,7 @@ cmp.setup({
 	sources = {
 		{ name = "path" },
 		{ name = "nvim_lsp" },
-		{ name = "vsnip" },
+		{ name = "luasnip" },
 		{ name = "cmp_tabnine" },
 		{ name = "buffer" },
 		{ name = "treesitter" },
