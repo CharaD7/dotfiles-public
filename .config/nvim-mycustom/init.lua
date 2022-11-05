@@ -170,7 +170,6 @@ require("packer").startup(function(use)
 	use("tpope/vim-repeat")
 	use("tpope/vim-fugitive")
 	use('teal-language/vim-teal')
-	use('dense-analysis/ale')
 	use("tpope/vim-endwise")
 	use("lambdalisue/gina.vim")
 	use("f-person/git-blame.nvim") -- show git message
@@ -955,6 +954,10 @@ require("lightspeed").setup({
 
 -- luasnip
 require("luasnip")
+-- loading snippets relative to the directory of $MYVIMRC
+require("luasnip.loaders.from_vscode").load({ paths = "./snippets/rust" })
+require("luasnip.loaders.from_vscode").load({ paths = "./snippets/python" })
+require("luasnip.loaders.from_vscode").load({ paths = "./snippets/typescript" })
 
 -- hlslens
 require("hlslens").setup({
