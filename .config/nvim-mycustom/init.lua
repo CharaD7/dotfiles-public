@@ -6,8 +6,8 @@ local g = vim.g
 local nvim_exec = vim.api.nvim_exec
 local remap = vim.api.nvim_set_keymap
 
-g.loaded_python_provider = 0
-g.loaded_python4_provider = 3
+-- g.loaded_python_provider = 0
+-- g.loaded_python4_provider = 3
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
@@ -41,6 +41,10 @@ g.glow_border = "rounded"
 g.glow_width = 120
 g.glow_use_pager = true
 g.glow_style = "dark"
+
+-- jupytext
+g.jupytext_fmt = 'py'
+g.jupytext_style = 'hydrogen'
 
 -- cmd("let &runtimepath = &runtimepath")
 
@@ -310,6 +314,12 @@ require("packer").startup(function(use)
 	})
 	use({ "glepnir/lspsaga.nvim", branch = "main" })
 	use("williamboman/mason.nvim")
+	use("luk400/vim-jukit") -- For ipython support
+	use({ 'hkupty/iron.nvim' })
+	use('kana/vim-textobj-user')
+	use('kana/vim-textobj-line')
+	use('GCBallesteros/vim-textobj-hydrogen')
+	use('GCBallesteros/jupytext.vim')
 	use("williamboman/mason-lspconfig.nvim")
 	-- use 'frabjouv/knap' -- For live serving Markdown, Latex, PDF and HTML files
 	-- use 'tami5/lspsaga.nvim'
@@ -324,6 +334,14 @@ require("packer").startup(function(use)
 	use("voldikss/vim-translator") -- npm install fanyi -g (install translation)
 	use("windwp/nvim-autopairs") -- Automatic symbol matching
 	use("windwp/nvim-ts-autotag")
+	-- for saving code snapshots
+	use({
+		"narutoxy/silicon.lua",
+		requires = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require('silicon').setup({})
+		end
+	})
 	use({
 		"ur4ltz/surround.nvim",
 		config = function()
@@ -474,21 +492,21 @@ map("n", ";gbc", "<cmd>Telescope git_bcommits<CR>") -- lists buffer's git commit
 map("n", ";gbs", "<cmd>Telescope git_status<CR>") -- lists current changes per file with diff preview and add action.
 map("n", ";gbr", "<cmd>Telescope git_branches<CR>") -- lists all branches with log preview, checkout action <cr>, track action <C-t> and rebase action <C-r>
 map("n", ";gs", "<cmd>Telescope git_stash<CR>") -- lists stash items in current repository with ability to apply them on <cr>
-map("n", ";to", "<cmd>Telescope oldfiles<CR>") --fuzzy
-map("n", ";tf", "<cmd>Telescope find_files<CR>")
-map("n", ";tb", "<cmd>Telescope buffers<CR>")
-map("n", ";tl", "<cmd>Telescope live_grep<CR>")
-map("n", ";tt", "<cmd>Telescope treesitter<CR>")
-map("n", ";tc", "<cmd>Telescope commands<CR>")
-map("n", ";tm", "<cmd>Telescope marks<CR>")
-map("n", ";te", "<cmd>Telescope emoji<CR>")
+map("n", ";fo", "<cmd>Telescope oldfiles<CR>") --fuzzy
+map("n", ";ff", "<cmd>Telescope find_files hidden=true<CR>")
+map("n", ";fb", "<cmd>Telescope buffers<CR>")
+map("n", ";fl", "<cmd>Telescope live_grep<CR>")
+map("n", ";ft", "<cmd>Telescope treesitter<CR>")
+map("n", ";fc", "<cmd>Telescope commands<CR>")
+map("n", ";fm", "<cmd>Telescope marks<CR>")
+map("n", ";fe", "<cmd>Telescope emoji<CR>")
 map("n", "[fo", "<cmd>foldopen<CR>")
 map("n", "[fc", "<cmd>foldclose<CR>")
 map("n", "[fl", "<cmd>fold<CR>")
 map("n", "<c-g>", ":Glow<CR>")
-map("n", ";rr", "<cmd>RestNvim<CR>") -- execute test under the current cursor with ;rp
-map("n", ";rp", "<cmd>RestNvimPreview<CR>") -- preview the request curl command
-map("n", ";rl", "<cmd>RestNvimLast<CR>") -- rerun the request
+map("n", ";Rr", "<cmd>RestNvim<CR>") -- execute test under the current cursor with ;rp
+map("n", ";Rp", "<cmd>RestNvimPreview<CR>") -- preview the request curl command
+map("n", ";Rl", "<cmd>RestNvimLast<CR>") -- rerun the request
 -- For neotest
 map("n", ";na", "<cmd>lua require('neotest').run.attach()<CR>")
 map("n", ";nf", "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>")
@@ -525,9 +543,18 @@ map("n", "<c-s>", "<cmd>w!<CR>")
 map("n", "<c-x>", "<cmd>bdelete<CR>")
 map("n", "<leader>b", "<cmd>BufferLinePick<CR>")
 map("n", ";bp", "<cmd>BufferLineTogglePin<CR>")
-map("n", ";bj", "<cmd>bprevious<CR>")
-map("n", ";bn", "<cmd>bnext<CR>")
+map("v", "<leader>s", "<cmd>lua require('silicon').visualise_cmdline()<CR>", { silent = true }) -- generate image of lines in a visual selection
+map("v", "<leader>bs", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true, show_buf = true})<CR>",
+	{ silent = true }) -- generate image of a whole buffer, with lines in a visual selection highlighted
+map("n", "<leader>bs", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true, visible = true})<CR>",
+	{ silent = true }) -- generate image of visible portion of a buffer
+map("n", "<leader>s", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true})<CR>", { silent = true }) -- generate image of current bufferline
+map("n", ";rs", "<cmd>IronRepl<CR>")
+map("n", ";rr", "<cmd>IronRestart<CR>")
+map("n", ";rf", "<cmd>IronFocus<CR>")
+map("n", ";rh", "<cmd>IronHide<CR>")
 map("n", ";be", "<cmd>tabedit<CR>")
+map("n", "]x", "ctrih/^# %%<CR><CR>")
 map("n", ";ga", "<cmd>Gina add .<CR>")
 map("n", ";gm", "<cmd>Gina commit<CR>")
 map("n", ";gs", "<cmd>Gina status<CR>")
@@ -574,6 +601,7 @@ cmd([[ autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | ex
 cmd([[autocmd bufwritepost [^_]*.sass,[^_]*.scss  silent exec "!sass %:p %:r.css"]])
 -- cmd [[autocmd Filetype reach set syntax=javascript]]
 cmd([[autocmd BufRead *.rsh set syntax=javascript]])
+cmd([[autocmd BufRead *.ipynb set syntax=python]])
 cmd([[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]])
 cmd(
 	[[autocmd FileChangedShellPost * call v:lua.vim.notify("File changed on disk. Buffer reloaded!", 'warn', {'title': 'File Notify', 'timeout': 1001})]]
@@ -699,6 +727,32 @@ nvim_exec(
 
 -- noedev setup
 require("neodev").setup({
+})
+
+-- iron setup
+local status, iron = pcall(require, "iron.core")
+if (not status) then return end
+iron.setup({
+	config = {
+		repl_definition = {
+			sh = {
+				command = { "ipython" },
+				format = require("iron.fts.common").bracketed_paste,
+			}
+		},
+		repl_open_cmd = require('iron.view').bottom(40),
+	},
+	keymaps = {
+		send_motion = "ctr",
+		visual_send = "ctr",
+	},
+})
+
+-- silicon code shotter setup
+local status, silicon = pcall(require, "silicon")
+if (not status) then return end
+silicon.setup({
+	output = ("~/Pictures/Screenshots/SILICON_$year-$month-$date-$time.png"),
 })
 
 -- telescope setup
@@ -1167,7 +1221,7 @@ nvim_lsp.jsonls.setup {}
 nvim_lsp.dockerls.setup {}
 nvim_lsp.zk.setup {}
 nvim_lsp.prismals.setup {}
-nvim_lsp.pyright.setup {}
+-- nvim_lsp.pyright.setup {}
 nvim_lsp.solidity.setup {}
 nvim_lsp.yamlls.setup {}
 nvim_lsp.teal_ls.setup {}
