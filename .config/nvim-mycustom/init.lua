@@ -1211,6 +1211,7 @@ nvim_lsp.tsserver.setup {
 	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 	cmd = { "typescript-language-server", "--stdio" }
 }
+nvim_lsp.tsserver.setup {}
 nvim_lsp.tailwindcss.setup {}
 nvim_lsp.cssls.setup {}
 nvim_lsp.html.setup {}
@@ -1225,6 +1226,7 @@ nvim_lsp.prismals.setup {}
 nvim_lsp.solidity.setup {}
 nvim_lsp.yamlls.setup {}
 nvim_lsp.teal_ls.setup {}
+nvim_lsp.eslint.setup {}
 
 
 -- mason lsp config setup
