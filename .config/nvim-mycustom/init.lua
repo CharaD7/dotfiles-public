@@ -226,7 +226,19 @@ require("packer").startup(function(use)
 		"folke/noice.nvim",
 		event = "VimEnter",
 		config = function()
-			require("noice").setup()
+			require("noice").setup({
+				lsp = {
+					override = {
+						["vim.lsp.textDocument_hover"] = false,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+					hover = {
+						enabled = false,
+					}
+				},
+			})
 		end,
 		requires = {
 			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
@@ -635,6 +647,8 @@ cmd([[autocmd ColorScheme zephyr highlight BufferLineInfoDiagnosticSelected cter
 -- Setting for Selected Hint Bufferline
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintDiagnosticSelected ctermbg=262a33 guifg=#A3BA5E gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
+-- Setting for nvim-cmp border color
+-- cmd([[autocmd ColorScheme zephyr highlight FloatBorder guifg=#61afef]])
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
 -- cmd([[autocmd ColorScheme zephyr highlight Keyword ctermbg=262a33 gui=italic cterm=italic]]) -- set for all Keywords
 -- cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=nocombine]]) -- set for all Comments
@@ -1119,6 +1133,7 @@ cmp.setup({
 		{ name = "cmp_tabnine" },
 		{ name = "buffer" },
 		{ name = "treesitter" },
+		{ name = "nvim_lsp_signature_help" },
 		{ name = "calc" },
 		{ name = "emoji" },
 		{ name = "spell" },
@@ -1226,7 +1241,15 @@ nvim_lsp.prismals.setup {}
 nvim_lsp.solidity.setup {}
 nvim_lsp.yamlls.setup {}
 nvim_lsp.teal_ls.setup {}
-nvim_lsp.eslint.setup {}
+nvim_lsp.eslint.setup {
+	enable = true,
+	format = { enable = true }, -- this will enable formatting
+	autoFixOnSave = true,
+	codeActionSave = {
+		mode = "all",
+		rules = { "!debugger", "!no-only-tests/*" },
+	},
+}
 
 
 -- mason lsp config setup
