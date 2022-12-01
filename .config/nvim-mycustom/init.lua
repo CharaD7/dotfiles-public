@@ -201,7 +201,7 @@ require("packer").startup(function(use)
 	use("bluz71/vim-nightfly-guicolors")
 	use({ "lukas-reineke/indent-blankline.nvim", config = function() end })
 	-- navigation finder operator
-	use("kevinhwang91/nvim-hlslens")
+	-- use("kevinhwang91/nvim-hlslens")
 	use("haya14busa/vim-asterisk")
 	use("nvim-lualine/lualine.nvim")
 	use("mg979/vim-visual-multi")
@@ -326,7 +326,7 @@ require("packer").startup(function(use)
 	})
 	use({ "glepnir/lspsaga.nvim", branch = "main" })
 	use("williamboman/mason.nvim")
-	use("luk400/vim-jukit") -- For ipython support
+	-- use("luk400/vim-jukit") -- For ipython support
 	use({ 'hkupty/iron.nvim' })
 	use('kana/vim-textobj-user')
 	use('kana/vim-textobj-line')
@@ -334,7 +334,6 @@ require("packer").startup(function(use)
 	use('GCBallesteros/jupytext.vim')
 	use("williamboman/mason-lspconfig.nvim")
 	-- use 'frabjouv/knap' -- For live serving Markdown, Latex, PDF and HTML files
-	-- use 'tami5/lspsaga.nvim'
 	use("kosayoda/nvim-lightbulb")
 	use("jose-elias-alvarez/null-ls.nvim") -- snippet related use 'hrsh7th/vim-vsnip'
 	use("hrsh7th/cmp-cmdline")
@@ -448,7 +447,9 @@ opt("o", "hlsearch", true)
 opt("o", "inccommand", "split")
 opt("o", "smarttab", true)
 opt("o", "incsearch", true)
-opt("o", "foldmethod", "manual")
+opt("o", "foldmethod", "indent")
+opt("o", "foldlevel", 1)
+opt("o", "foldclose", "all")
 opt("o", "breakindent", true)
 opt("o", "lbr", true)
 opt("o", "formatoptions", "l")
@@ -651,18 +652,18 @@ cmd([[autocmd ColorScheme zephyr highlight BufferLineHintDiagnosticSelected cter
 -- cmd([[autocmd ColorScheme zephyr highlight FloatBorder guifg=#61afef]])
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
 -- cmd([[autocmd ColorScheme zephyr highlight Keyword ctermbg=262a33 gui=italic cterm=italic]]) -- set for all Keywords
--- cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=nocombine]]) -- set for all Comments
+cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=nocombine]]) -- set for all Comments
 cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=italic cterm=italic]]) -- set for all Comments
--- cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
--- cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
+cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
+cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd([[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]]) -- set for all Exception
 -- cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
 -- cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
 -- cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
--- cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
+cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
 -- cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
 cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
-cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
+-- cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
 cmd([[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]]) -- set for all generic PreProcessors
 
 
@@ -744,29 +745,29 @@ require("neodev").setup({
 })
 
 -- iron setup
-local status, iron = pcall(require, "iron.core")
-if (not status) then return end
-iron.setup({
-	config = {
-		repl_definition = {
-			sh = {
-				command = { "ipython" },
-				format = require("iron.fts.common").bracketed_paste,
-			}
-		},
-		repl_open_cmd = require('iron.view').bottom(40),
-	},
-	keymaps = {
-		send_motion = "ctr",
-		visual_send = "ctr",
-	},
-})
+-- local status, iron = pcall(require, "iron.core")
+-- if (not status) then return end
+-- iron.setup({
+-- 	config = {
+-- 		repl_definition = {
+-- 			sh = {
+-- 				command = { "ipython" },
+-- 				format = require("iron.fts.common").bracketed_paste,
+-- 			}
+-- 		},
+-- 		repl_open_cmd = require('iron.view').bottom(40),
+-- 	},
+-- 	keymaps = {
+-- 		send_motion = "ctr",
+-- 		visual_send = "ctr",
+-- 	},
+-- })
 
 -- silicon code shotter setup
 local status, silicon = pcall(require, "silicon")
 if (not status) then return end
 silicon.setup({
-	output = ("~/Pictures/Screenshots/SILICON_$year-$month-$date-$time.png"),
+	-- output = ("~/Pictures/Screenshots/SILICON_$year-$month-$date-$time.png"),
 })
 
 -- telescope setup
@@ -873,16 +874,16 @@ require("transparent").setup({
 })
 
 
--- Null_ls setup
+-- Null_ls setup <= commented out because it seriously slows down the ide
 local status, null_ls = pcall(require, "null-ls")
 if (not status) then return end
 
 null_ls.setup({
 	sources = {
-		null_ls.builtins.diagnostics.eslint.with({
-			diagnostics_format = '[eslint] #{m}\n(#{c})'
-		}),
-		-- null_ls.builtins.diagnostics.fish
+		-- null_ls.builtins.diagnostics.eslint,
+		null_ls.builtins.diagnostics.djlint,
+		null_ls.builtins.code_actions.gitsigns,
+		null_ls.builtins.diagnostics.fish
 	}
 })
 
@@ -1013,39 +1014,8 @@ require("luasnip.loaders.from_vscode").load({ paths = "./snippets/python" })
 require("luasnip.loaders.from_vscode").load({ paths = "./snippets/typescript" })
 
 -- hlslens
-require("hlslens").setup({
-	calm_down = true,
-	nearest_only = true,
-	nearest_float_when = "always",
-	float_shadow_blend = 50,
-	override_lens = function(render, posList, nearest, idx, relIdx)
-		local sfw = vim.v.searchforward == 2
-		local indicator, text, chunks
-		local absRelIdx = math.abs(relIdx)
-		if absRelIdx > 2 then
-			indicator = ("%d%s"):format(absRelIdx, sfw ~= (relIdx > 2) and "▲" or "▼")
-		elseif absRelIdx == 2 then
-			indicator = sfw ~= (relIdx == 2) and "▲" or "▼"
-		else
-			indicator = ""
-		end
-
-		local lnum, col = unpack(posList[idx])
-		if nearest then
-			local cnt = #posList
-			if indicator ~= "" then
-				text = ("[%s %d/%d]"):format(indicator, idx, cnt)
-			else
-				text = ("[%d/%d]"):format(idx, cnt)
-			end
-			chunks = { { " ", "Ignore" }, { text, "HlSearchLensNear" } }
-		else
-			text = ("[%s %d]"):format(indicator, idx)
-			chunks = { { " ", "Ignore" }, { text, "HlSearchLens" } }
-		end
-		render.setVirt(1, lnum - 1, col - 1, chunks, nearest)
-	end,
-})
+-- require("hlslens").setup({
+-- })
 
 -- telescope media renderer
 require("telescope").load_extension("media_files")
@@ -1247,7 +1217,7 @@ nvim_lsp.eslint.setup {
 	autoFixOnSave = true,
 	codeActionSave = {
 		mode = "all",
-		rules = { "!debugger", "!no-only-tests/*" },
+		-- rules = { "!debugger", "!no-only-tests/*" },
 	},
 }
 
@@ -1286,14 +1256,14 @@ lspconfig.setup {
 }
 
 -- lspsaga configuration
-local setup, saga = pcall(require, "lspsaga")
+local status, saga = pcall(require, "lspsaga")
 if (not status) then return end
 saga.init_lsp_saga({
 	border_style = "rounded",
 })
 
 -- Mappings.
-local opts = { noremap = true, silent = true }
+local opts = { silent = true }
 
 -- See `:help vim.lsp.*` for documentation on any of the below functions
 vim.keymap.set("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
