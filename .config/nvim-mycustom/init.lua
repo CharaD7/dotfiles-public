@@ -138,6 +138,14 @@ require("packer").startup(function(use)
 	})
 	use({ "dsznajder/vscode-es7-javascript-react-snippets", run = "yarn install && yarn compile" })
 	use("vscode-langservers/vscode-css-languageserver-bin")
+	-- for resolving git merge conflicts directly in neovim
+	use({
+		'akinsho/git-conflict.nvim',
+		tag = "*",
+		config = function()
+			require('git-conflict').setup()
+		end,
+	})
 	use("glepnir/dashboard-nvim")
 	-- git related
 	use("sainnhe/everforest")
@@ -449,6 +457,7 @@ opt("o", "smarttab", true)
 opt("o", "incsearch", true)
 opt("o", "foldmethod", "indent")
 opt("o", "foldlevel", 2)
+opt("o", "foldexpr", "getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'<1':1")
 opt("o", "foldclose", "all")
 opt("o", "breakindent", true)
 opt("o", "lbr", true)
@@ -543,6 +552,13 @@ map("n", ";sd", "<cmd>DeleteSession .sessions<CR>")
 map("n", ";sl", "<cmd>SessionLoad .sessions<CR>")
 map("t", "<leader>o", "<cmd>Vista<CR>") --fuzzN
 map("n", "<c-k>", "<cmd>wincmd k<CR>") --ctrlhjkl to navigate splits
+-- For git merge conflict resolution
+-- co => choose ours
+-- ct => choose theirs
+-- cb => choose both
+-- c0 => choose none
+-- ]x => move to previous conflict
+-- [x => move to next conflict
 map("n", "<c-j>", "<cmd>wincmd j<CR>")
 map("n", "<c-h>", "<cmd>wincmd h<CR>")
 map("n", "<c-l>", "<cmd>wincmd l<CR>")
@@ -881,9 +897,18 @@ if (not status) then return end
 null_ls.setup({
 	sources = {
 		-- null_ls.builtins.diagnostics.eslint,
-		null_ls.builtins.diagnostics.djlint,
+		-- null_ls.builtins.diagnostics.djlint,
+		null_ls.builtins.diagnostics.fish,
+		null_ls.builtins.diagnostics.dotenv_linter,
+		null_ls.builtins.diagnostics.editorconfig_checker,
+		null_ls.builtins.diagnostics.golangci_lint,
+		null_ls.builtins.diagnostics.hadolint, -- for docker linting
+		null_ls.builtins.diagnostics.jsonlint,
+		null_ls.builtins.diagnostics.teal,
+		null_ls.builtins.diagnostics.xo,
 		null_ls.builtins.code_actions.gitsigns,
-		null_ls.builtins.diagnostics.fish
+		null_ls.builtins.code_actions.xo,
+		null_ls.builtins.formatting.prettierd,
 	}
 })
 
@@ -1214,7 +1239,7 @@ nvim_lsp.teal_ls.setup {}
 nvim_lsp.eslint.setup {
 	enable = true,
 	format = { enable = true }, -- this will enable formatting
-	autoFixOnSave = true,
+	-- autoFixOnSave = true,
 	codeActionSave = {
 		mode = "all",
 		-- rules = { "!debugger", "!no-only-tests/*" },
