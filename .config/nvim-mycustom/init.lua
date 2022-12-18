@@ -14,7 +14,7 @@ g.loaded_perl_provider = 0
 -- Neovide configurations
 g.neovide_fullscreen = true
 g.neovide_floating_blur_amount_x = 2.0
-g.floaterm_winblend = 20
+g.floaterm_winblend = 15
 g.neovide_floating_blur_amount_y = 2.0
 g.neovide_remember_window_size = true
 -- g.neovide_transparency = 0.8
@@ -114,6 +114,7 @@ require("packer").startup(function(use)
 	use("nathom/filetype.nvim")
 	use("mhinz/vim-signify")
 	use("MunifTanjim/prettier.nvim")
+	use({ "CRAG666/code_runner.nvim", requires = { "nvim-lua/plenary.nvim" } })
 	use({
 		"numToStr/Comment.nvim",
 		config = function()
@@ -355,11 +356,8 @@ require("packer").startup(function(use)
 	use("windwp/nvim-ts-autotag")
 	-- for saving code snapshots
 	use({
-		"narutoxy/silicon.lua",
-		requires = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require('silicon').setup({})
-		end
+		"krivahtoo/silicon.nvim",
+		run = './install.sh'
 	})
 	use({
 		"ur4ltz/surround.nvim",
@@ -382,9 +380,7 @@ require("packer").startup(function(use)
 	})
 	use("folke/which-key.nvim") -- hint leader button
 	-- intuitive toggleterm
-	use { "akinsho/toggleterm.nvim", tag = '*', config = function()
-		require("toggleterm").setup()
-	end }
+	use { "akinsho/toggleterm.nvim", tag = '*' }
 	use("sindrets/diffview.nvim") -- diff compare
 	use({
 		"SmiteshP/nvim-gps",
@@ -572,12 +568,7 @@ map("n", "<c-s>", "<cmd>w!<CR>")
 map("n", "<c-x>", "<cmd>bdelete<CR>")
 map("n", "<leader>b", "<cmd>BufferLinePick<CR>")
 map("n", ";bp", "<cmd>BufferLineTogglePin<CR>")
-map("v", "<leader>s", "<cmd>lua require('silicon').visualise_cmdline()<CR>", { silent = true }) -- generate image of lines in a visual selection
-map("v", "<leader>bs", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true, show_buf = true})<CR>",
-	{ silent = true }) -- generate image of a whole buffer, with lines in a visual selection highlighted
-map("n", "<leader>bs", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true, visible = true})<CR>",
-	{ silent = true }) -- generate image of visible portion of a buffer
-map("n", "<leader>s", "<cmd>lua require('silicon').visualise_cmdline({to_clip = true})<CR>", { silent = true }) -- generate image of current bufferline
+-- map("v", "<leader>s", "<cmd>Silicon ~/Pictures/Screenshots/SILICON_$year-$month-$date-$time.png<CR>", { silent = true })
 map("n", ";rs", "<cmd>IronRepl<CR>")
 map("n", ";rr", "<cmd>IronRestart<CR>")
 map("n", ";rf", "<cmd>IronFocus<CR>")
@@ -637,8 +628,6 @@ cmd(
 )
 -- Bufferline backgorund
 cmd([[highlight bufferline guibg=#262a33 gui=nocombine]])
--- comments
-cmd([[highlight Comment guibg=#262a33 ctermbg=262a33 gui=nocombine]])
 -- indentation colors
 cmd([[highlight IndentBlanklineIndent2 guifg=#E06C75 gui=nocombine]])
 cmd([[highlight IndentBlanklineIndent3 guifg=#E5C07B gui=nocombine]])
@@ -665,21 +654,20 @@ cmd([[autocmd ColorScheme zephyr highlight BufferLineInfoDiagnosticSelected cter
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintSelected ctermbg=262a33 gui=underline gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
 cmd([[autocmd ColorScheme zephyr highlight BufferLineHintDiagnosticSelected ctermbg=262a33 guifg=#A3BA5E gui=bold cterm=italic guisp=#61afef guibg=#262a33]])
 -- Setting for nvim-cmp border color
--- cmd([[autocmd ColorScheme zephyr highlight FloatBorder guifg=#61afef]])
+cmd([[autocmd ColorScheme zephyr highlight FloatBorder guifg=#61afef]])
 -- Enable italics font for some neovim highlights. Please feel free to enable all you want but it might make your ide look odd
--- cmd([[autocmd ColorScheme zephyr highlight Keyword ctermbg=262a33 gui=italic cterm=italic]]) -- set for all Keywords
-cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=nocombine]]) -- set for all Comments
+cmd([[autocmd ColorScheme zephyr highlight Keyword ctermbg=262a33 gui=italic cterm=italic]]) -- set for all Keywords
 cmd([[autocmd ColorScheme zephyr highlight Comment ctermbg=262a33 guifg=#6D7077 gui=italic cterm=italic]]) -- set for all Comments
 cmd [[autocmd ColorScheme zephyr highlight Function gui=italic cterm=italic]] -- set for all Functions
 cmd [[autocmd ColorScheme zephyr highlight Constant gui=italic cterm=italic]] -- set for all Constants
 cmd([[autocmd ColorScheme zephyr highlight Exception gui=italic cterm=italic]]) -- set for all Exception
--- cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
--- cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
--- cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
+cmd([[autocmd ColorScheme zephyr highlight Type gui=italic cterm=italic]]) -- set for all Type
+cmd([[autocmd ColorScheme zephyr highlight Label gui=italic cterm=italic]]) -- set for all Label
+cmd [[autocmd ColorScheme zephyr highlight Include gui=italic cterm=italic]] -- set for all Include
 cmd [[autocmd ColorScheme zephyr highlight StorageClass gui=italic cterm=italic]] -- set for all StorageClass
--- cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
+cmd [[autocmd ColorScheme zephyr highlight Structure gui=italic cterm=italic]] -- set for all Structure
 cmd [[autocmd ColorScheme zephyr highlight Typedef gui=italic cterm=italic]] -- set for all Typedefinitions
--- cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
+cmd([[autocmd ColorScheme zephyr highlight SpecialComment gui=italic cterm=italic]]) -- set for all Special things n a comment
 cmd([[autocmd ColorScheme zephyr highlight PreProc gui=italic cterm=italic]]) -- set for all generic PreProcessors
 
 
@@ -783,7 +771,8 @@ require("neodev").setup({
 local status, silicon = pcall(require, "silicon")
 if (not status) then return end
 silicon.setup({
-	-- output = ("~/Pictures/Screenshots/SILICON_$year-$month-$date-$time.png"),
+	font = 'Fira Code iScript=14',
+	theme = 'Monokai Extended',
 })
 
 -- telescope setup
@@ -864,6 +853,19 @@ git.setup({
 	}
 })
 
+-- code runner
+local status, code_runner = pcall(require, 'code_runner')
+if (not status) then return end
+
+code_runner.setup({
+	filetype = {
+		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+		javascript = "node",
+		python = "python3 -u",
+		typescript = "deno run",
+		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+	},
+})
 
 -- neotest config
 require("neotest").setup({
@@ -905,16 +907,27 @@ null_ls.setup({
 		null_ls.builtins.diagnostics.hadolint, -- for docker linting
 		null_ls.builtins.diagnostics.jsonlint,
 		null_ls.builtins.diagnostics.teal,
-		null_ls.builtins.diagnostics.xo,
 		null_ls.builtins.code_actions.gitsigns,
-		null_ls.builtins.code_actions.xo,
 		null_ls.builtins.formatting.prettierd,
 	}
 })
 
 
 require('toggleterm').setup {
-	direction = 'horizontal' -- could be any of 'vertical' | 'horizontal' | 'tab' | 'float'
+	autochdir = true,
+	direction = 'float', -- could be any of 'vertical' | 'horizontal' | 'tab' | 'float'
+	highlights = {
+		FloatBorder = {
+			guibg = "#61afef",
+		},
+		Normal = {
+			guibg = "#61afef",
+		}
+	},
+	float_opts = {
+		border = 'curved',
+		winblend = 15
+	},
 }
 
 require("jc").setup({}) -- Java support
@@ -1239,13 +1252,12 @@ nvim_lsp.teal_ls.setup {}
 nvim_lsp.eslint.setup {
 	enable = true,
 	format = { enable = true }, -- this will enable formatting
-	-- autoFixOnSave = true,
+	autoFixOnSave = true,
 	codeActionSave = {
 		mode = "all",
 		-- rules = { "!debugger", "!no-only-tests/*" },
 	},
 }
-
 
 -- mason lsp config setup
 local status, mason = pcall(require, "mason")
