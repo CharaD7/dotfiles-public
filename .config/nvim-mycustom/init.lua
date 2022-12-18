@@ -1345,8 +1345,10 @@ vim.keymap.set("n", "]E", function()
 	require("lspsaga.diagnostic").goto_next({ severity = vim.diagnostic.severity.ERROR })
 end, opts)
 -- open the float terminal
-vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { silent = true })
-vim.keymap.set("n", "<leader>ft", "<cmd>Lspsaga open_floaterm<CR>", { silent = true })
+vim.keymap.set("n", "<leader>tf", "<cmd>ToggleTerm<CR>", { silent = true })
+vim.keymap.set("n", "<leader>th", "<cmd>ToggleTerm direction=horizontal<CR>", { silent = true })
+vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm direction=tab<CR>", { silent = true })
+vim.keymap.set("n", "<leader>tv", "<cmd>ToggleTerm direction=vertical<CR>", { silent = true })
 vim.keymap.set("n", "[g", "<cmd>Lspsaga open_floaterm lazygit<CR>", { silent = true })
 -- close the float terminal
 vim.keymap.set("t", "<C-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], { silent = true })
