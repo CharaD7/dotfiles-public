@@ -602,9 +602,26 @@ map('n', '<S-Tab>', '<Cmd>BufferLineCyclePrev<CR>', { silent = true })
 map("n", "<S-A-k>", "<cmd>m .-2<CR>==", { silent = true })
 map("v", "<S-A-k>", ":m '<-2<CR>==gv=gv", { silent = true })
 map("v", "<S-A-j>", ":m '>+1<CR>==gv=gv", { silent = true })
--- Split screen
--- map("n", "sh", ":split<CR>", { silent = true }) -- Split horizontally
--- map("n", "sv", ":vsplit<CR>", { silent = true }) -- Split vertically
+-- Remove newbie crutches in COMMAND mode
+map("c", "<Up>", "<Nop>")
+map("c", "<Down>", "<Nop>")
+map("c", "<Left>", "<Nop>")
+map("c", "<Right>", "<Nop>")
+-- Remove newbie crutches in INSERT mode
+map("i", "<Up>", "<Nop>")
+map("i", "<Down>", "<Nop>")
+map("i", "<Left>", "<Nop>")
+map("i", "<Right>", "<Nop>")
+-- Remove newbie crutches in NORMAL mode
+map("n", "<Up>", "<Nop>")
+map("n", "<Down>", "<Nop>")
+map("n", "<Left>", "<Nop>")
+map("n", "<Right>", "<Nop>")
+-- Remove newbie crutches in VISUAL mode
+map("v", "<Up>", "<Nop>")
+map("v", "<Down>", "<Nop>")
+map("v", "<Left>", "<Nop>")
+map("v", "<Right>", "<Nop>")
 -- cmd [[autocmd FocusLost * :wa]] -- Autosave buffer files on focus lost
 -- cmd [[autocmd CursorHold,CursorHoldI * update]] -- Autosave buffer files after every edit
 
