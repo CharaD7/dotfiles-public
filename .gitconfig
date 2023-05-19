@@ -19,6 +19,8 @@
         rao = remote add origin
         rso = remote set-url origin
 
+        rc = rm --cached
+
         acm = "!f() { git add . && git commit -m \"$(echo $@)\"; }; f";
         aca = "!f() { git commit --ammend -m \"$(echo $@)\"; }; f";
         c = checkout
@@ -75,8 +77,8 @@
         # git unstage file1 file2 ...
         unstage = reset HEAD -- #file;
 [user]
-        name = CharaD7
-        email = jijakahn6@gmail.com
+        name = username
+        email = email@domain.extension
 
 [core]
         ignorecase = false
